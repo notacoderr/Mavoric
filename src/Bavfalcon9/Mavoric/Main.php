@@ -25,7 +25,7 @@ use Bavfalcon9\Mavoric\Command\{
 
 /* Events */
 use Bavfalcon9\Mavoric\EventManager;
-use Bavfalcon9\Mavoric\misc\Lightning;
+//use Bavfalcon9\Mavoric\misc\Lightning;
 
 class Main extends PluginBase {
     public $EventManager;
