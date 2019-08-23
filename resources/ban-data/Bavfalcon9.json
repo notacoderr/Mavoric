@@ -1,0 +1,207 @@
+{
+    "EVENTS" : ["ENTITYDAMAGEBYENTITYEVENT"],
+    "WAS_ACCURATE": true,
+    "PRECENTILE" : 0.93,
+    "ON_TRIGGERED" : {
+        "VIOLATION" : {
+            "KILL_AURA" : [
+                {
+                    "PREPLAYER": {
+                        "YAW": 0,
+                        "PITCH": 0,
+                        "EFFECTS": [
+                            "ID:TIME"
+                        ],
+                        "INVENTORY": [
+                            "SLOT:ITEM"
+                        ],
+                        "ARMOR": [
+                            ""
+                        ],
+                        "DIRECTIONAL_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "OFFSET_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "DAMAGE_DEALT" : 0,
+                        "ENTITY_DAMAGED" : {
+                            "NAME" : "NONE",
+                            "YAW": 0,
+                            "PITCH": 0,
+                            "EFFECTS": [
+                                "ID:TIME"
+                            ],
+                            "INVENTORY": [
+                                "SLOT:ITEM"
+                            ],
+                            "ARMOR": [
+                                ""
+                            ],
+                            "DIRECTIONAL_POSITION": [
+                                0,
+                                0,
+                                0
+                            ],
+                            "OFFSET_POSITION": [
+                                0,
+                                0,
+                                0
+                            ]
+                        }
+                    },
+                    "POSTPLAYER": {
+                        "YAW": 0,
+                        "PITCH": 0,
+                        "EFFECTS": [
+                            "ID:TIME"
+                        ],
+                        "INVENTORY": [
+                            "SLOT:ITEM"
+                        ],
+                        "ARMOR": [
+                            ""
+                        ],
+                        "DIRECTIONAL_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "OFFSET_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "DAMAGE_DEALT": 0,
+                        "ENTITY_DAMAGED": {
+                            "NAME": "NONE",
+                            "YAW": 0,
+                            "PITCH": 0,
+                            "EFFECTS": [
+                                "ID:TIME"
+                            ],
+                            "INVENTORY": [
+                                "SLOT:ITEM"
+                            ],
+                            "ARMOR": [
+                                ""
+                            ],
+                            "DIRECTIONAL_POSITION": [
+                                0,
+                                0,
+                                0
+                            ],
+                            "OFFSET_POSITION": [
+                                0,
+                                0,
+                                0
+                            ]
+                        }
+                    }
+                },
+                {
+                    "PREPLAYER": {
+                        "YAW": 0,
+                        "PITCH": 0,
+                        "EFFECTS": [
+                            "ID:TIME"
+                        ],
+                        "INVENTORY": [
+                            "SLOT:ITEM"
+                        ],
+                        "ARMOR": [
+                            ""
+                        ],
+                        "DIRECTIONAL_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "OFFSET_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "DAMAGE_DEALT": 0,
+                        "ENTITY_DAMAGED": {
+                            "NAME": "NONE",
+                            "YAW": 0,
+                            "PITCH": 0,
+                            "EFFECTS": [
+                                "ID:TIME"
+                            ],
+                            "INVENTORY": [
+                                "SLOT:ITEM"
+                            ],
+                            "ARMOR": [
+                                ""
+                            ],
+                            "DIRECTIONAL_POSITION": [
+                                0,
+                                0,
+                                0
+                            ],
+                            "OFFSET_POSITION": [
+                                0,
+                                0,
+                                0
+                            ]
+                        }
+                    },
+                    "POSTPLAYER": {
+                        "YAW": 0,
+                        "PITCH": 0,
+                        "EFFECTS": [
+                            "ID:TIME"
+                        ],
+                        "INVENTORY": [
+                            "SLOT:ITEM"
+                        ],
+                        "ARMOR": [
+                            ""
+                        ],
+                        "DIRECTIONAL_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "OFFSET_POSITION": [
+                            0,
+                            0,
+                            0
+                        ],
+                        "DAMAGE_DEALT": 0,
+                        "ENTITY_DAMAGED": {
+                            "NAME": "NONE",
+                            "YAW": 0,
+                            "PITCH": 0,
+                            "EFFECTS": [
+                                "ID:TIME"
+                            ],
+                            "INVENTORY": [
+                                "SLOT:ITEM"
+                            ],
+                            "ARMOR": [
+                                ""
+                            ],
+                            "DIRECTIONAL_POSITION": [
+                                0,
+                                0,
+                                0
+                            ],
+                            "OFFSET_POSITION": [
+                                0,
+                                0,
+                                0
+                            ]
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}
