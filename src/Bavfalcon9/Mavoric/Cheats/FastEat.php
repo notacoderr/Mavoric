@@ -46,7 +46,7 @@ class FastEat implements Listener {
 
         $consumed = $this->lastConsumed[$player->getName()];
 
-        if (microtime(true) - $consumed->consumedAt <= 2.9) {
+        if (microtime(true) - $consumed->consumedAt <= 2) {
             $event->setCancelled(true);
             $this->mavoric->getFlag($player)->addViolation(Mavoric::FastEat);
         } else {
