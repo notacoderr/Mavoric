@@ -226,7 +226,7 @@ class Mavoric {
     }
 
     private function generateMavName() {
-        return 'Mav' . rand(0, 9000);
+        return 'Mavoric' . rand(0, 9000);
     }
 
     public function messageStaff(String $message) {
@@ -241,7 +241,7 @@ class Mavoric {
         $pitch = (!$target) ? 0 : $target->getPitch();
         $pk = new MovePlayerPacket();
         $pk->position = $newPosition;
-        $pk->yaw = $yaw; //This forces movement even if the movement is not large enough
+        $pk->yaw = $yaw;
         $pk->pitch = $pitch;
         $pk->entityRuntimeId = $p->getId();
         $pla = $this->plugin->getServer()->getOnlinePlayers();
