@@ -1,4 +1,5 @@
-# Mavoric
+# Mavoric - v DEV
+# DO NOT USE THIS VERSION, THIS VERSION IS NOT STABLE AND HAS MANY BUGS.
 ## The best AntiCheat for Pocketmine
 
 ### Introduction
