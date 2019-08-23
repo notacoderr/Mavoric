@@ -8,7 +8,7 @@ class Analytics {
     private $start;
 
 
-    public __construct($mavoric) {
+    public function __construct($mavoric) {
         $this->mavoric = $mavoric;
         $this->start = time();
     }

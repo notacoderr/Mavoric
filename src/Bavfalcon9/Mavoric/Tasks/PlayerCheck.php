@@ -55,20 +55,8 @@ class PlayerCheck extends Task {
             }
             $this->mav->updateMotion($fakePlayer, new Vector3($oldPos->getX(), $oldPos->getY() + 4, $oldPos->getZ() + 1), $this->target);
 
-        } catch(\ParseError $e) {
-            return;
-        } catch(\UnexpectedValueException $e) {
-            return;
-        } catch(\ErrorException $e) {
-            return;
-        } catch(\Error $e) {
-            return;
-        } catch(\BadMethodCallException $e) {
-            return;
-        } catch(\BadFunctionCallException $e) {
-            return;
-        } catch(\Exception $e) {
-            return;
+        } catch (\Throwable $error) {
+            return null;
         }
 
         // Reference https://github.com/falkirks/Specter/blob/master/src/specter/Specter.php pls thx

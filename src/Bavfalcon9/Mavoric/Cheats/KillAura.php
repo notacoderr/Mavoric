@@ -127,8 +127,6 @@ class KillAura implements Listener {
     private function canSee($dam, $p) {
         $expectedLook = $this->getRotationTo($dam, $p);
         $actualLook = [$dam->getYaw(), $dam->getPitch()];
-        var_dump($expectedLook);
-        var_dump($actualLook);
         if ($expectedLook[0] !== $dam->getYaw() && $expectedLook[1] !== $dam->getPitch()) return false;
         else return true;
     }

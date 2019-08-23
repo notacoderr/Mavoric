@@ -37,9 +37,10 @@ class Map {
         return $entries;
     }
 
-    public function forEach(Function $func) {
-        return foreach($this->data as $k=>$v) {
+    public function forEach($func) {
+        foreach($this->data as $k=>$v) {
             $func($k, $v, array_search($k, $this->data));
         }
+        return;
     }
 }
