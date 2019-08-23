@@ -35,7 +35,7 @@ class Main extends PluginBase {
         $this->EventManager = new EventManager($this);
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
         $this->loadCommands();
-        Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
+        //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();
     }
@@ -74,7 +74,7 @@ class Main extends PluginBase {
         }
     }
 
-    private function playsound(String $sound, $player=null) {
+    public function playsound(String $sound, $player=null) {
         if ($player === null) $player = $this->getServer()->getOnlinePlayers()[0];
         $x = $player->getX();
         $y = $player->getY();
