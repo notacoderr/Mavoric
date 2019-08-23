@@ -43,7 +43,7 @@ class KillAura implements Listener {
 
         if ($this->mavoric->hasTaskFor($damager)) {
             if ($entity instanceof SpecterPlayer) {
-                $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7.');
+                //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7.');
             }
         }
 
@@ -53,14 +53,13 @@ class KillAura implements Listener {
 
             $multiAura = $this->queue[$damager->getName()];
             $distance = $this->getDistance($damager, $entity);
-            var_dump($distance);
-            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) &&  ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return $this->plugin->playSound('beacon.ambient', $damager);
+            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) &&  ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
             if (!in_array($entity->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $entity->getName());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
                 $f = $this->mavoric->getFlag($damager)->getTotalViolations();
                 $this->mavoric->getFlag($damager)->addViolation(Mavoric::KillAura);
                 $this->mavoric->startTask($damager, 90);
-                $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7');
+                //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7');
             }
             if (($multiAura['time'] + 0.25) <= time()) {
                 $this->queue[$damager->getName()] = [
