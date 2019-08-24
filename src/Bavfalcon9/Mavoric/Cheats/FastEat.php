@@ -39,18 +39,28 @@ class FastEat implements Listener {
 
         if (!isset($this->lastConsumed[$player->getName()])) {
             $this->lastConsumed[$player->getName()] = [
-                "consumedAt" => microtime(true),
-                "food" => $event->getItem()->getName()
+                "consumedAt" => time(),
+                "food" => $event->getItem()->getName(),
+                "consumed" => []
             ];
         }
 
         $consumed = $this->lastConsumed[$player->getName()];
+        array_push($this->lastConsumed[$player->getName()]['consumed'], $event->getItem()->getName());
 
-        if (microtime(true) - $consumed->consumedAt <= 2) {
-            $event->setCancelled(true);
-            $this->mavoric->getFlag($player)->addViolation(Mavoric::FastEat);
+        if (time() - $consumed['consumedAt'] <= 2) {
+            $t = time() - $consumed['consumedAt'];
+            $food = sizeof($consumed['consumed']);
+
+            if ($food <= 1) return;
+
+            $player->sendMessage('Fast eat >> Timings: Ate: ' . $food . ' in ' . $t . ' seconds.');
+            $player->setFood(1);
+            $this->mavoric->getFlag($player)->addViolation(Mavoric::FastEat, 20);
+            $this->plugin->playsound('note.pling', $player);
+            return;
         } else {
-            unset($this->lasConsumed[$player->getName()]);
+            unset($this->lastConsumed[$player->getName()]);
             return;
         }
     }

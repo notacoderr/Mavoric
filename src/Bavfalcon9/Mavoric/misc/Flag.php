@@ -39,11 +39,11 @@ class Flag {
         return $current['cheat'];
     }
 
-    public function addViolation($cheat) {
+    public function addViolation($cheat, $amount=1) {
         if (!isset($this->flags[$cheat])) {
-            $this->flags[$cheat] = 1;
+            $this->flags[$cheat] = $amount;
         } else {
-            $this->flags[$cheat]++;
+            $this->flags[$cheat] += $amount;
         }
         return $this->flags[$cheat];
     }

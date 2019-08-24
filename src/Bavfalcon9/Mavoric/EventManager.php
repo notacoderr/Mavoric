@@ -35,6 +35,10 @@ class EventManager implements Listener {
             $event->setCancelled();
         }
     }
+
+    public function onBan(Player $p, String $reason) {
+        
+    }
 /*
     public function onJoin(PlayerPreLoginEvent $event) {
         $player = $event->getPlayer();

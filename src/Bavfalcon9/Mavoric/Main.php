@@ -46,8 +46,8 @@ class Main extends PluginBase {
         //Entity::createEntity('Lightning', $p->getLevel(), $nbt);
         $this->getServer()->broadcastMessage('§4§lMavoric §f>§r '.$p->getName()." has been suspended for §b$reason"."§r!");
         $this->EventManager->onBan($p, $reason);
-        //$p->close('', '§4§lMavoric§r §f§l> §r§b'.$reason);
-        //$this->mavBan($p, $reason);
+        $p->close('', '§4§lMavoric§r §f§l> §r§b'.$reason);
+        $this->mavBan($p, $reason);
     }
 
     private function mavBan(Player $p, String $reason) {
