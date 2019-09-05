@@ -29,6 +29,8 @@ use pocketmine\network\mcpe\protocol\RespawnPacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use Bavfalcon9\Mavoric\entity\SpecterPlayer;
+use Bavfalcon9\Mavoric\misc\MessageHandler;
+
 use pocketmine\math\Vector3;
 
 class Mavoric {
@@ -66,14 +68,17 @@ class Mavoric {
     public const Teleport = 33; // Triggered with tp-arua
 
     private $plugin;
+    private $messageHandler;
     private $cheats = [];
     private $flags = [];
     private $interface;
     private $tasks = [];
+    public $ignoredPlayers = [];
 
     public function __construct(Main $plugin) {
         $this->plugin = $plugin;
         $this->interface = new SpecterInterface($plugin);
+        $this->messageHandler = new MessageHandler($plugin, $this);
     }
 
     public function loadDetections() {
@@ -229,11 +234,14 @@ class Mavoric {
         return 'Mavoric' . rand(0, 9000);
     }
 
-    public function messageStaff(String $message) {
-        $players = $this->getServer()->getOnlinePlayers();
-        foreach ($players as $p) {
-            if ($p->hasPermission('staffchat')) return $p->sendMessage($message);
+    public function messageStaff(String $type, $player=null, String $message='') {
+        if ($type === 'detection') {
+            if (in_array($player->getName(), $this->ignoredPlayers)) return;
+            $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
+        } else {
+            $message = "§c[MAVORIC]: $message";
         }
+        $this->messageHandler->queueMessage($message);
     }
 
     public function updateMotion(Player $p, Vector3 $newPosition, $target=null) {

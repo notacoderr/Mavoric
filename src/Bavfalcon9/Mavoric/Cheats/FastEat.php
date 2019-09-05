@@ -53,11 +53,10 @@ class FastEat implements Listener {
             $food = sizeof($consumed['consumed']);
 
             if ($food <= 1) return;
-
-            $player->sendMessage('Fast eat >> Timings: Ate: ' . $food . ' in ' . $t . ' seconds.');
-            $player->setFood(1);
+            $event->setCancelled();
+            $player->setFood(0);
             $this->mavoric->getFlag($player)->addViolation(Mavoric::FastEat, 20);
-            $this->plugin->playsound('note.pling', $player);
+            $this->mavoric->messageStaff('detection', $player, 'FastEat');
             return;
         } else {
             unset($this->lastConsumed[$player->getName()]);

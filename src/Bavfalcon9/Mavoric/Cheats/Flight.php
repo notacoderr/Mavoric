@@ -29,12 +29,13 @@ class Flight implements Listener {
         $this->plugin = $plugin;
         $this->mavoric = $mavoric;
     }
-
+/*
     public function onMove(PlayerMoveEvent $event) {
         $isFlying = $this->checkFlight($event);
         $player = $event->getPlayer();
         if ($isFlying === true) {
            // $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$player->getName().'§7 is using: §bFlight.');
+           $this->mavoric->messageStaff('detection', $player, 'Flight');
         }
     }
 
@@ -74,5 +75,5 @@ class Flight implements Listener {
         if ($to->getY() >= $from->getY()) return false;
         else return true;
 
-    }
+    }*/
 }

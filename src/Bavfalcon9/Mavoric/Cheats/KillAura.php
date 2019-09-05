@@ -58,8 +58,8 @@ class KillAura implements Listener {
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
                 $f = $this->mavoric->getFlag($damager)->getTotalViolations();
                 $this->mavoric->getFlag($damager)->addViolation(Mavoric::KillAura);
-                $this->mavoric->startTask($damager, 90);
-                //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7');
+                //$this->mavoric->startTask($damager, 90); - DO NOT RUN TASK ON PRODUCTION SERVERS, THIS FEATURE IS IN DEV
+                $this->mavoric->messageStaff('detection', $damager, 'KillAura');
             }
             if (($multiAura['time'] + 0.25) <= time()) {
                 $this->queue[$damager->getName()] = [

@@ -8,27 +8,21 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 
-class animate extends Command {
+class mreport extends Command {
     private $pl;
 
     public function __construct($pl) {
-        parent::__construct("animate");
+        parent::__construct("mreport");
         $this->pl = $pl;
-        $this->description = "Animate";
-        $this->usageMessage = "/animate <player>";
-        $this->setPermission("mavoric.command");
+        $this->description = "Report a player for violating a rule.";
+        $this->usageMessage = "/mreport <player> <violation>";
+        $this->setPermission("mavoric.report");
     }
     
     public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
-        $this->pl->banAnimation($sender);
-        return true;
-        if (!$sender->hasPermission('mavoric.command') && !$sender->isOp()) {
+        if (!$sender->hasPermission('mavoric.report') && !$sender->isOp()) {
             $sender->sendMessage(TF::RED . "You do not have permission to use this command.");
             return false;
         }
     }
 }
-
-/**
- * THIS COMMAND IS USED TO BE DISABLED!
- */

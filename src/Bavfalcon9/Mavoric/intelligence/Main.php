@@ -19,6 +19,6 @@ class Main {
     private $cache;
 
     public static function compare(Data $dataSet, Data $dataSet2) : Data {
-        # USE CPP
+       
     }
 }

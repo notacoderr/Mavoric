@@ -20,7 +20,7 @@ use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 
 /* Commands */
 use Bavfalcon9\Mavoric\Command\{
-    animate
+    alert
 };
 
 /* Events */
@@ -41,12 +41,12 @@ class Main extends PluginBase {
     }
 
     public function banAnimation(Player $p, String $reason = 'Cheating') {
-        $this->playsound('mob.enderdragon.growl', $p);
-        $nbt = Entity::createBaseNBT($p->getPosition(), null, lcg_value() * 360, 0);
+        //$this->playsound('mob.enderdragon.growl', $p);
+        //$nbt = Entity::createBaseNBT($p->getPosition(), null, lcg_value() * 360, 0);
         //Entity::createEntity('Lightning', $p->getLevel(), $nbt);
-        $this->getServer()->broadcastMessage('§4§lMavoric §f>§r '.$p->getName()." has been suspended for §b$reason"."§r!");
+        $this->getServer()->broadcastMessage("§c[MAVORIC]: {$p->getName()} was detected for {$reason} and was banned.");
         $this->EventManager->onBan($p, $reason);
-        $p->close('', '§4§lMavoric§r §f§l> §r§b'.$reason);
+        $p->close('', '§c[MAVORIC] You were banned: '.$reason);
         $this->mavBan($p, $reason);
     }
 
@@ -58,10 +58,11 @@ class Main extends PluginBase {
     private function loadCommands() {
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->registerAll('mavoric', [
-            new animate($this)
+            new alert($this)
         ]);
         $this->addPerms([
-            new Permission('mavoric.command', 'Example permission node.', Permission::DEFAULT_OP)
+            new Permission('mavoric.command', 'No', Permission::DEFAULT_OP),
+            new Permission('mavoric.alerts', 'View and use mavoric alerts.', Permission::DEFAULT_OP)
         ]);
     }
 

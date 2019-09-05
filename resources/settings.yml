@@ -1,11 +1,33 @@
-UseNPC-Detection: true # WARNING THIS WILL CAUSE LAG ON LARGER SERVERS!
+UseNPC-Detection: false # WARNING THIS WILL CAUSE LAG ON LARGER SERVERS!
 UseBanWave: true # Should the AntiCheat ban in waves (EG: Hacker logs in, another logs in, both get banned at the same time VS ban on detection)
 # This option allows Mavoric to further analyze a player
+Reports:
+  enabled: false
+  vote-ban: true
+  votes-require: 10
+  vote-detection: true
+  vote-broadcast: true
+  vote-broadcast-message: 'A player has been suspected for cheating, please report any players now.'
+  vote-ai: false
+  vote-check: false
+  report-check: true
+  report-ban: true
+
+Cheats:
+  KillAura:
+    enabled: true
+    points: default # Default
+    ban: false
+    kick: true
+    ban-message: false
+    kick-message: false
+    
+
 
 
 # PLEASE NOTE THE AI IS IN BETA TESTING
-use-ai: true # Should mavoric use intelligence instead of hard coded checks?
-use-hardCode: false # Should mavoric ever use Hard coded checks? Useful if a result was marked as false (CHECK GITHUB)
+use-ai: false # Should mavoric use intelligence instead of hard coded checks?
+use-hardCode: true # Should mavoric ever use Hard coded checks? Useful if a result was marked as false (CHECK GITHUB)
 
 ArtificalIntelligence: # MISUSE OR REDISTRIBUTION OF THIS CODE IS NOT ALLOWED AT ANY TIME
   storage: '/players'

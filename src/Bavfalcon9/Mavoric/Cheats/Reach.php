@@ -39,21 +39,27 @@ class Reach implements Listener {
 
 
         
-        if ($damager->getPing() > 450) {
+        if ($damager->getPing() > 380) {
             // Value could not be accurately predicted, cancel the event.
-            $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 has high ping. §b'.$damager->getPing());
+            //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 has high ping. §b'.$damager->getPing());
+            //$event->setCancelled();
+            //$damager->sendMessage('§4§lMavoric §f> §r§7You can not hit whilst §bhigh ping§7.');
+            return;
         }
         if ($entity instanceof Player) {
-            if ($entity->getPing() > 450) {
-                $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$entity->getName().'§7 has high ping. §b'.$entity->getPing());
-                return; // Add checks to be more lenient on high ping
+            if ($entity->getPing() > 380) {
+               // $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$entity->getName().'§7 has high ping. §b'.$entity->getPing());
+               // return;
+                 // Add checks to be more lenient on high ping
             }
         }
 
         /* Reach Check */
         if ($this->checkReach($damager, $entity) === true) {
-            if (!$damager->isCreative()) $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
-            //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bReach§7.');
+            if (!$damager->isCreative()) {
+                $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
+                $this->mavoric->messageStaff('detection', $damager, 'Reach');
+            }
         }
     }
 
@@ -67,11 +73,10 @@ class Reach implements Listener {
 
         $distanceX = sqrt(pow(($px - $dx), 2) + pow(($py - $dy), 2));
         $distanceZ = sqrt(pow(($pz - $dz), 2) + pow(($py - $dy), 2));
-        // DEBUG
-        //$dam->sendMessage("§4§lMavoric Debugger§f > §r§bDistance X: $distanceX §r§bDistance Z: $distanceZ");
+
         if ($dam->isCreative()) return false;
-        if ($distanceX >= 5 || $distanceZ >= 5) return true;
-        if ($distanceX <= -5 || $distanceZ <= -5) return true;
+        if ($distanceX >= 7.5 || $distanceZ >= 7.5) return true;
+        if ($distanceX <= -7.5 || $distanceZ <= -7.5) return true;
         return false;
     }
 }

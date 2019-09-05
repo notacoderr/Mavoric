@@ -20,15 +20,18 @@ class ViolationCheck extends Task {
             $flag = $this->mav->getFlag($player);
             $top = $flag->getMostViolations();
 
-            if ($flag->getTotalViolations() >= 15) {
+            if ($flag->getTotalViolations() >= 20) {
                 $reason = $this->mav->getCheat($flag->getMostViolations());
                 $flag->clearViolations();
+                if ($top === Mavoric::Reach) return;
                 if ($top === Mavoric::NoClip) return $this->mav->kick($player, $reason);
                 $this->mav->ban($player, $reason);
                 return true;
             }
 
             if ($top !== -1) {
+                if ($top === Mavoric::Reach) return;
+                
                 $reason = $this->mav->getCheat($flag->getMostViolations());
                 $count = $flag->getViolations($top);
                 if ($this->mav->hasTaskFor($player)) return false;
@@ -39,6 +42,7 @@ class ViolationCheck extends Task {
                     $this->mav->ban($player, $reason);
                     return true;
                 } 
+                
                 if ($flag->getViolations($top) >= 4) {
                     if ($this->mav->hasTaskFor($player)) return false;
                     $flag->clearViolations();

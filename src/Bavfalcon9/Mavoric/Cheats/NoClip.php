@@ -40,7 +40,7 @@ class NoClip implements Listener {
         if ($blockAtA->isSolid()) {
             if (in_array($blockAtA->getId(), $this->slabs)) return false;
             $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip);
-            //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$player->getName().'§7 detected for §bNoClip§7.');
+            $this->mavoric->messageStaff('detection', $player, 'NoClip');
         }
     }
 }
