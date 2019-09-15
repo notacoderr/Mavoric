@@ -8,6 +8,7 @@ class MessageHandler {
     private $queue = [];
     private $sent = [];
     private $ignored = [];
+    private $staffIgnored = [];
 
     public function __construct($plugin, $mavoric) {
         $this->plugin = $plugin;
@@ -35,6 +36,7 @@ class MessageHandler {
         $players = $this->plugin->getServer()->getOnlinePlayers();
         foreach ($players as $p) {
             if ($p->hasPermission('mavoric.alerts')) {
+                if (in_array($p->getName(), $this->staffIgnored)) return;
                 $p->sendMessage($message);
             }
         }

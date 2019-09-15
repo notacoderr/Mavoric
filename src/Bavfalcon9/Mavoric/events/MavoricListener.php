@@ -1,6 +1,4 @@
 <?php
-
-//require('./Main.cpp');
 /***
  *      __  __                       _      
  *     |  \/  |                     (_)     
@@ -15,11 +13,6 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-class Main {
-    private $mode;
-    private $cache;
-
-    public static function compare(Data $dataSet, Data $dataSet2) : Data {
-       
-    }
+interface MavoricListener {
+    
 }
