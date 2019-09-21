@@ -15,6 +15,7 @@ class ViolationCheck extends Task {
     public function onRun(int $tick) {
         // Do players
         // Add per cheat violation
+        return;
         $players = $this->mav->getPlugin()->getServer()->getOnlinePlayers();
         foreach ($players as $player) {
             $flag = $this->mav->getFlag($player);
@@ -34,9 +35,9 @@ class ViolationCheck extends Task {
                 
                 $reason = $this->mav->getCheat($flag->getMostViolations());
                 $count = $flag->getViolations($top);
-                if ($this->mav->hasTaskFor($player)) return false;
+                //if ($this->mav->hasTaskFor($player)) return false;
                 
-                if ($flag->getViolations($top) >= 10) {
+                if ($flag->getViolations($top) >= 8) {
                     $flag->clearViolations();
                     if ($top === Mavoric::NoClip) return $this->mav->kick($player, $reason);
                     $this->mav->ban($player, $reason);

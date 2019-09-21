@@ -8,20 +8,20 @@ use Bavfalcon9\Mavoric\Mavoric;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent,
-    EntityDamageByChildEntityEvent
-};
-use pocketmine\{
-    Player,
-    Server
-};
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageByChildEntityEvent;
+use pocketmine\event\entity\EntityTeleportEvent;
+use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\Player;
+use pocketmine\Server;
 
 /* API CHANGE (Player) */
 
 class Reach implements Listener {
     private $mavoric;
     private $plugin;
+    private $ender_pearls;
+    private $teleported;
 
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->plugin = $plugin;
@@ -32,23 +32,45 @@ class Reach implements Listener {
         $entity = $event->getEntity();
         $damager = $event->getDamager();
 
-        // Do player check.
-        //if (!$entity instanceof Player) return;
         if ($event instanceof EntityDamageByChildEntityEvent) return;
         if (!$damager instanceof Player) return;
 
-        /* Reach Check */
         if ($this->checkReach($damager, $entity) === true) {
+            if ($this->pearledAway($entity) === true) return;
+            if ($this->pearledAway($damager) === true) return;
             if (!$damager->isCreative()) {
-                if ($damager->getPing() > 180) {
-                    $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
-                    $this->mavoric->messageStaff('detection', $damager, 'Reach [High Ping]');
-                } else {
                     $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
                     $this->mavoric->messageStaff('detection', $damager, 'Reach');
-                }
             }
         }
+    }
+
+    public function onTeleport(EntityTeleportEvent $event) {
+        $player = $event->getEntity();
+
+        if (!$player instanceof Player) return;
+        // Causes? Assume enderpearl thrown. Time to test :)
+        if (!isset($this->ender_pearls[$player->getName()])) return; // No Enderpearl.
+        else {
+            $this->teleported[$player->getName()] = [
+                'thrownAt' => $this->ender_pearls[$player->getName()],
+                'elapsed' => microtime(true) - $this->ender_pearls[$player->getName()]
+            ]; // Possible add stuff?
+            unset($this->ender_pearls[$player->getName()]);
+
+            return;
+        }
+    }
+    
+    public function onInteract(PlayerInteractEvent $event) {
+        $player = $event->getPlayer();
+        $item = $event->getItem();
+        $action = $event->getAction(); //check this
+        if ($item->getId() !== 368) return;
+        if ($event->isCancelled()) return;
+        // Expect an enderpearl throw
+        $this->ender_pearls[$player->getName()] = microtime(true);
+        return;
     }
 
     private function checkReach($dam, $p) {
@@ -63,8 +85,28 @@ class Reach implements Listener {
         $distanceZ = sqrt(pow(($pz - $dz), 2) + pow(($py - $dy), 2));
 
         if ($dam->isCreative()) return false;
-        if ($distanceX >= 7.7 || $distanceZ >= 7.7) return true;
-        if ($distanceX <= -7.7 || $distanceZ <= -7.7) return true;
+        if ($distanceX >= 6 || $distanceZ >= 6) return true;
+        if ($distanceX <= -6 || $distanceZ <= -6) return true;
         return false;
     }
+
+    private function pearledAway($p) {
+        $p = $p->getName();
+        if (empty($this->teleported)) return false;
+        if (!isset($this->teleported[$p])) return false; // wtf lol
+        if (microtime(true) - $this->teleported[$p]['thrownAt'] >= 3) {
+            // Three seconds passed since teleport, ignore, but still return teleport if within 5 seconds?
+            $cache = $this->teleported[$p]['thrownAt'];
+            unset($this->teleported[$p]);
+
+            if (microtime(true) - $cache >= 5) return false;
+            else {
+                return true;
+            }
+        } else {
+            return true;
+        }
+    }
+
+    
 }

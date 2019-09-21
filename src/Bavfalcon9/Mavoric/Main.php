@@ -25,6 +25,7 @@ use Bavfalcon9\Mavoric\Command\{
 
 /* Events */
 use Bavfalcon9\Mavoric\EventManager;
+use Bavfalcon9\Mavoric\misc\SpeedTest;
 //use Bavfalcon9\Mavoric\misc\Lightning;
 
 class Main extends PluginBase {
@@ -33,7 +34,9 @@ class Main extends PluginBase {
     public function onEnable() {
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
+        //$this->SpeedTest = new SpeedTest($this); DO NOT ENABLE SLKfjlasdkjfasdkfjasdf
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
+        //$this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
         $this->loadCommands();
         //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
         $this->mavoric->loadDetections();
