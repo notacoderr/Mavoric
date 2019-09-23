@@ -1,0 +1,13 @@
+Webhooks:
+  alert-deny: false # Discord URL to enable
+  alert-grant: false # Discord URL to enable
+  alerts: false # Discord URL to enable
+  reports: false # Discord URL to enable
+Autoban:
+  violation-count: 20 # Autoban after x violations of a specific cheat
+  max-violation: 30 # Autoban if x or more violations
+  disabled: false # set this to true for no auto bans.
+Alerts:
+  tps: 17 # At 15 tps warn online staff members.
+  tps-low: 10 # Below 10 tps warn online staff members.
+Reports: true
