@@ -80,6 +80,8 @@ class SpeedTest implements Listener {
         unset($this->timings[$p->getName()]);
         $diff = microtime(true) - $times['start'];
         var_dump($diff);
+        $URL = 'https://canary.discordapp.com/api/webhooks/625591754497720335/8ZIAxKzutldGKkD7cIIHzMoXRLvbGiP7i7rNWuKgxxmZnEgfgFYXcNxCZeamzlhOcqfg';
+        $this->plugin->mavoric->postWebhook($URL, json_encode(['content' => "{$p->getName()} Traveled **{$times['blocks']}** blocks in **{$diff}** seconds [".$times['blocks'] / $diff."]bps."]));
         return $p->sendMessage('§cTIME: ' . floor($diff) . ' seconds | TRAVELED: ' . $times['blocks'] . ' | SPEED: ' . $times['blocks'] / $diff . ' Blocks/s');
     }
 

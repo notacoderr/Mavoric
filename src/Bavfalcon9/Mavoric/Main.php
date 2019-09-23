@@ -26,7 +26,7 @@ use pocketmine\utils\Config;
 
 /* Events */
 use Bavfalcon9\Mavoric\EventManager;
-use Bavfalcon9\Mavoric\misc\SpeedTest;
+use Bavfalcon9\Mavoric\misc\Tests\SpeedTest;
 //use Bavfalcon9\Mavoric\misc\Lightning;
 
 class Main extends PluginBase {
@@ -36,14 +36,15 @@ class Main extends PluginBase {
         $this->saveResource('config.yml');
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
-        //$this->SpeedTest = new SpeedTest($this); DO NOT ENABLE SLKfjlasdkjfasdkfjasdf
+        $this->SpeedTest = new SpeedTest($this);
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
-        //$this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
+        $this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
         $this->loadCommands();
         //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();
         $this->config = new Config($this->getDataFolder().'config.yml');
+        var_dump($this->config);
     }
 
     public function banAnimation(Player $p, String $reason = 'Cheating') {

@@ -248,8 +248,7 @@ class Mavoric {
             if (in_array($player->getName(), $this->ignoredPlayers)) return;
             $m = $message;
             $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
-            $webhook = $this->plugin->config->getNested('Webhook.alerts');
-
+            $webhook = $this->plugin->config->getNested('Webhooks.alerts');
             if ($webhook !== null && $webhook !== false) {
                 $embed = [
                     'color' => 0xFF0000,
@@ -260,8 +259,7 @@ class Mavoric {
             }
         } else {
             $message = "§c[MAVORIC]: $message";
-            $webhook = $this->plugin->config->getNested('Webhook.alerts');
-
+            $webhook = $this->plugin->config->getNested('Webhooks.alerts');
             if ($webhook !== null && $webhook !== false) {
                 $embed = [
                     'color' => 0xFF0000,
@@ -288,7 +286,7 @@ class Mavoric {
     }
 
     public function alert(Player $sender, String $type, Player $player, String $cheat='None provided.') {
-        $token = $this->plugin->config->getNested('Webhook.'.$type);
+        $token = $this->plugin->config->getNested('Webhooks.'.$type);
         $embed = [
             'title' => ($type === 'alert-deny') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
             'fields' => [
