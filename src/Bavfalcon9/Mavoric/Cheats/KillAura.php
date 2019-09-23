@@ -53,11 +53,11 @@ class KillAura implements Listener {
 
             $multiAura = $this->queue[$damager->getName()];
             $distance = $this->getDistance($damager, $entity);
-            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) &&  ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
+            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
             if (!in_array($entity->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $entity->getName());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
                 $f = $this->mavoric->getFlag($damager)->getTotalViolations();
-                $this->mavoric->getFlag($damager)->addViolation(Mavoric::KillAura, 90);
+                $this->mavoric->getFlag($damager)->addViolation(Mavoric::KillAura);
                 //$this->mavoric->startTask($damager, 90); - DO NOT RUN TASK ON PRODUCTION SERVERS, THIS FEATURE IS IN DEV
                 $this->mavoric->messageStaff('detection', $damager, 'KillAura');
             }

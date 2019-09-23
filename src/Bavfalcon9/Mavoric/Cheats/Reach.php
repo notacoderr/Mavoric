@@ -34,13 +34,18 @@ class Reach implements Listener {
 
         if ($event instanceof EntityDamageByChildEntityEvent) return;
         if (!$damager instanceof Player) return;
+        if ($entity instanceof Player) {
+            if ($entity->getPing() >= 400) return;
+            if ($damager->getPing() >= 450) return;
+        }
 
-        if ($this->checkReach($damager, $entity) === true) {
+        if ($this->checkReach($damager, $entity) !== false) {
             if ($this->pearledAway($entity) === true) return;
             if ($this->pearledAway($damager) === true) return;
             if (!$damager->isCreative()) {
+                    $total_reach = $this->checkReach($damager, $entity);
                     $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
-                    $this->mavoric->messageStaff('detection', $damager, 'Reach');
+                    $this->mavoric->messageStaff('detection', $damager, 'Reach', " [{$total_reach} blocks]");
             }
         }
     }
@@ -85,8 +90,7 @@ class Reach implements Listener {
         $distanceZ = sqrt(pow(($pz - $dz), 2) + pow(($py - $dy), 2));
 
         if ($dam->isCreative()) return false;
-        if ($distanceX >= 6 || $distanceZ >= 6) return true;
-        if ($distanceX <= -6 || $distanceZ <= -6) return true;
+        if (abs($distanceX) >= 6.23 || abs($distanceZ >= 6.23)) return (abs($distanceX) > abs($distanceZ)) ? abs($distanceX) : abs($distanceZ);
         return false;
     }
 

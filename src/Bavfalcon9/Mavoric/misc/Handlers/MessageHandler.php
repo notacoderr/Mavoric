@@ -1,6 +1,18 @@
 <?php
-
-namespace Bavfalcon9\Mavoric\misc;
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
+ */
+namespace Bavfalcon9\Mavoric\misc\Handlers;
 
 class MessageHandler {
     private $plugin;
@@ -15,29 +27,29 @@ class MessageHandler {
         $this->mavoric = $mavoric;
     }
 
-    public function queueMessage(String $message) {
+    public function queueMessage(String $message, String $append='') {
         $this->purgeOldCache();
         if (in_array($message, $this->ignored)) return;
         if (isset($this->sent[$message])) {
             if ($this->sent[$message]['time'] + 3 <= time()) {
                 unset($this->sent[$message]);
-                $this->sendMessage($message);
+                $this->sendMessage($message, $append);
             } else return;
         } else {
-            $this->sendMessage($message);
+            $this->sendMessage($message, $append);
         }
     }
 
-    public function sendMessage(String $message) {
+    public function sendMessage(String $message, $append) {
         $this->sent[$message] = [
             'time' => time()
         ];
-
+        $this->plugin->getLogger()->info($message.$append);
         $players = $this->plugin->getServer()->getOnlinePlayers();
         foreach ($players as $p) {
             if ($p->hasPermission('mavoric.alerts')) {
                 if (in_array($p->getName(), $this->staffIgnored)) return;
-                $p->sendMessage($message);
+                $p->sendMessage($message.$append);
             }
         }
     }

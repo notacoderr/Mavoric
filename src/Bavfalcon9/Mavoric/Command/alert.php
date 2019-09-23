@@ -43,6 +43,7 @@ class alert extends Command {
                 return true;
             } else {
                 $cheat = $this->pl->mavoric->getCheat($flag->getMostViolations());
+                $this->pl->mavoric->postWebhook($sender, 'ADD', $player, $cheat);
                 $this->pl->mavoric->ban($player, $cheat);
                 $sender->sendMessage('§aIssued ban.');
                 return true;
@@ -55,6 +56,7 @@ class alert extends Command {
                 $sender->sendMessage('§cPlayer does not have any violations detected.');
                 return true;
             } else {
+                $this->pl->mavoric->postWebhook($sender, 'REMOVE', $player, $this->pl->mavoric->getCheat($flag->getMostViolations()));
                 $this->pl->mavoric->getFlag($player)->clearViolations();
                 $sender->sendMessage('§aCleared vioations for specified player.');
                 return true;

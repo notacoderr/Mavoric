@@ -22,6 +22,7 @@ use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use Bavfalcon9\Mavoric\Command\{
     alert
 };
+use pocketmine\utils\Config;
 
 /* Events */
 use Bavfalcon9\Mavoric\EventManager;
@@ -30,8 +31,9 @@ use Bavfalcon9\Mavoric\misc\SpeedTest;
 
 class Main extends PluginBase {
     public $EventManager;
-
+    public $config;
     public function onEnable() {
+        $this->saveResource('config.yml');
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
         //$this->SpeedTest = new SpeedTest($this); DO NOT ENABLE SLKfjlasdkjfasdkfjasdf
@@ -41,6 +43,7 @@ class Main extends PluginBase {
         //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();
+        $this->config = new Config($this->getDataFolder().'config.yml');
     }
 
     public function banAnimation(Player $p, String $reason = 'Cheating') {

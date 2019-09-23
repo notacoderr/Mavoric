@@ -9,9 +9,10 @@ use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use Bavfalcon9\Mavoric\Tasks\PlayerCheck;
+use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 
 use Bavfalcon9\Mavoric\Cheats\{
-    Speed, KillAura, NoClip, AntiKb,
+    Speed, AutoClicker, KillAura, NoClip, AntiKb,
     Flight, NoSlowdown, Criticals,
     Bhop, Reach, Aimbot, AutoArmor,
     AutoSteal, AutoSword, AutoTool,
@@ -29,11 +30,13 @@ use pocketmine\network\mcpe\protocol\RespawnPacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use Bavfalcon9\Mavoric\entity\SpecterPlayer;
-use Bavfalcon9\Mavoric\misc\MessageHandler;
+use Bavfalcon9\Mavoric\misc\Handlers\MessageHandler;
+use Bavfalcon9\Mavoric\misc\Handlers\TpsCheck;
 
 use pocketmine\math\Vector3;
 
 class Mavoric {
+    public const AutoClicker = 0; // AutoClicker
     public const KillAura = 1; // Kill Arua
     public const Speed = 2; // Fast movement
     public const NoClip = 4; // going through blocks
@@ -69,6 +72,7 @@ class Mavoric {
 
     private $plugin;
     private $messageHandler;
+    private $tpsCheck;
     private $cheats = [];
     private $flags = [];
     private $interface;
@@ -79,9 +83,11 @@ class Mavoric {
         $this->plugin = $plugin;
         $this->interface = new SpecterInterface($plugin);
         $this->messageHandler = new MessageHandler($plugin, $this);
+        $this->tpsCheck = new TpsCheck($plugin, $this);
     }
 
     public function loadDetections() {
+        $this->cheats[self::AutoClicker] = new AutoClicker($this->plugin, $this);
         $this->cheats[self::KillAura] = new KillAura($this->plugin, $this);
         $this->cheats[self::Speed] = new Speed($this->plugin, $this);
         $this->cheats[self::NoClip] = new NoClip($this->plugin, $this);
@@ -131,38 +137,39 @@ class Mavoric {
      */
 
     public function getCheat(int $number) : String {
-        if ($number === self::KillAura)   return 'Kill Aura';
-        if ($number === self::Reach)      return 'Reach';
-        if ($number === self::Speed)      return 'Speed';
-        if ($number === self::NoClip)     return 'NoClip';
-        if ($number === self::AntiKb)     return 'Anti-Knockback';
-        if ($number === self::Flight)     return 'Flight';
-        if ($number === self::NoSlowdown) return 'No Slowdown';
-        if ($number === self::Criticals)  return 'Criticals';
-        if ($number === self::Bhop)       return 'Bunny Hop';
-        if ($number === self::Aimbot)     return 'Aimbot';
-        if ($number === self::AutoArmor)  return 'Auto Armor';
-        if ($number === self::AutoSteal)  return 'Auto Steal';
-        if ($number === self::AutoSword)  return 'Auto Sword';
-        if ($number === self::AutoTool)   return 'Auto Tool';
-        if ($number === self::AntiFire)   return 'AntiFire';
-        if ($number === self::AntiSlip)   return 'AntiSlip';
-        if ($number === self::NoDamage)   return 'NoDamage';
-        if ($number === self::BackStep)   return 'Back Step';
-        if ($number === self::FastPlace)  return 'Fast Place';
-        if ($number === self::FastBreak)  return 'Fast Break';
-        if ($number === self::Follow)     return 'Follow';
-        if ($number === self::FreeCam)    return 'FreeCam';
-        if ($number === self::FastEat)    return 'Fast Eat';
-        if ($number === self::FastLadder) return 'Fast Ladder';
-        if ($number === self::GhostReach) return 'GhostReach';
-        if ($number === self::HighJump)   return 'HighJump';
-        if ($number === self::JetPack)    return 'JetPack';
-        if ($number === self::NoEffects)  return 'No Effects';
-        if ($number === self::MenuWalk)   return 'Menu Walk';
-        if ($number === self::Spider)     return 'Spider';
-        if ($number === self::Timer)      return 'Timer';
-        if ($number === self::Teleport)   return 'Teleport';
+        if ($number === self::AutoClicker) return 'AutoClicker';
+        if ($number === self::KillAura)    return 'Kill Aura';
+        if ($number === self::Reach)       return 'Reach';
+        if ($number === self::Speed)       return 'Speed';
+        if ($number === self::NoClip)      return 'NoClip';
+        if ($number === self::AntiKb)      return 'Anti-Knockback';
+        if ($number === self::Flight)      return 'Flight';
+        if ($number === self::NoSlowdown)  return 'No Slowdown';
+        if ($number === self::Criticals)   return 'Criticals';
+        if ($number === self::Bhop)        return 'Bunny Hop';
+        if ($number === self::Aimbot)      return 'Aimbot';
+        if ($number === self::AutoArmor)   return 'Auto Armor';
+        if ($number === self::AutoSteal)   return 'Auto Steal';
+        if ($number === self::AutoSword)   return 'Auto Sword';
+        if ($number === self::AutoTool)    return 'Auto Tool';
+        if ($number === self::AntiFire)    return 'AntiFire';
+        if ($number === self::AntiSlip)    return 'AntiSlip';
+        if ($number === self::NoDamage)    return 'NoDamage';
+        if ($number === self::BackStep)    return 'Back Step';
+        if ($number === self::FastPlace)   return 'Fast Place';
+        if ($number === self::FastBreak)   return 'Fast Break';
+        if ($number === self::Follow)      return 'Follow';
+        if ($number === self::FreeCam)     return 'FreeCam';
+        if ($number === self::FastEat)     return 'Fast Eat';
+        if ($number === self::FastLadder)  return 'Fast Ladder';
+        if ($number === self::GhostReach)  return 'GhostReach';
+        if ($number === self::HighJump)    return 'HighJump';
+        if ($number === self::JetPack)     return 'JetPack';
+        if ($number === self::NoEffects)   return 'No Effects';
+        if ($number === self::MenuWalk)    return 'Menu Walk';
+        if ($number === self::Spider)      return 'Spider';
+        if ($number === self::Timer)       return 'Timer';
+        if ($number === self::Teleport)    return 'Teleport';
         return 'Cheating';
     }
 
@@ -173,6 +180,7 @@ class Mavoric {
 
     public function getFlag(Player $p) {
         if ($p === null) return new Flag('Invalid');
+        if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return new Flag('TPS CHECK');
         if (!isset($this->flags[$p->getName()])) {
             $this->flags[$p->getName()] = new Flag($p->getName());
         }
@@ -184,7 +192,7 @@ class Mavoric {
         $name = $p->getName();
         $bans = $this->getServer()->getNameBans();
         if ($bans->isBanned($p)) return false;
-        
+        $this->getFlag($p)->clearViolations();
         $this->killTask($p->getName());
         return $this->plugin->banAnimation($p, $reason);
     }
@@ -194,7 +202,7 @@ class Mavoric {
         $name = $p->getName();
         $p->kill();
         $this->killTask($p->getName());
-        return $p->close('', '§4§lMavoric §f>§r§b (Kick) '.$reason);
+        return $p->close('', '§c[MAVORIC]: §7Kicked for: §c'.$reason);
     }
 
 
@@ -234,14 +242,15 @@ class Mavoric {
         return 'Mavoric' . rand(0, 9000);
     }
 
-    public function messageStaff(String $type, $player=null, String $message='') {
+    public function messageStaff(String $type, $player=null, String $message='', String $appendance='') {
+        if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return;
         if ($type === 'detection') {
             if (in_array($player->getName(), $this->ignoredPlayers)) return;
             $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
         } else {
             $message = "§c[MAVORIC]: $message";
         }
-        $this->messageHandler->queueMessage($message);
+        $this->messageHandler->queueMessage($message, $appendance);
     }
 
     public function updateMotion(Player $p, Vector3 $newPosition, $target=null) {
@@ -257,6 +266,38 @@ class Mavoric {
         $this->plugin->getServer()->broadcastPacket($pla, $pk);
     }
 
+    public function postWebhook(Player $sender, String $type, Player $player, String $cheat='None provided.') {
+        $token = $this->plugin->config->get('webhook');
+        $embed = [
+            'title' => ($type === 'REMOVE') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
+            'fields' => [
+                [
+                    'inline' => true,
+                    'name' => 'Staff Member',
+                    'value' => $sender->getName()
+                ],
+                [
+                    'inline' => true,
+                    'name' => 'Player',
+                    'value' => $player->getName()
+                ],
+                [
+                    'inline' => true,
+                    'name' => 'Violation',
+                    'value' => $cheat
+                ]
+                ],
+            'color' => ($type === 'REMOVE') ? 0xFF0000 : 0x33ffa7,
+            'footer' => [
+                'text' => 'Issued',
+                'icon_url' => 'https://cdn.discordapp.com/attachments/602697368718147587/625249121057636383/Mavoric.png'
+            ]
+        ];
+        if (!$token) return;
+        $post = new DiscordPost($token, $embed, $sender->getName());
+        $task = $this->getServer()->getAsyncPool()->submitTask($post);
+    }
+    
     public function getPlugin() {
         return $this->plugin;
     }

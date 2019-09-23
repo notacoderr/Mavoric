@@ -1,6 +1,6 @@
 <?php
 
-namespace Bavfalcon9\Mavoric\misc;
+namespace Bavfalcon9\Mavoric\misc\Tests;
 /***
  *      __  __                       _      
  *     |  \/  |                     (_)     
