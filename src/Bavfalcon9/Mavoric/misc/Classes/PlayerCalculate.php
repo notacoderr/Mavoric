@@ -59,6 +59,22 @@ class PlayerCalculate {
         return $surroundings;
     }
 
+    public static function isOnGround(Player $player) : ?Bool {
+        $x = $player->getX();
+        $y = $player->getY();
+        $z = $player->getZ();
+        $pos = new Vector3($x, $y, $z);
+        return ($player->getLevel()->getBlock($pos)->getId() !== Block::AIR);
+    }
+
+    public static function isAllAir(Array $blocks) : ?Bool {
+        foreach ($blocks as $block) {
+            if (Block::AIR !== $block->getId()) return false;
+        }
+
+        return true;
+    }
+
     public static function getFlight() {
 
     }
