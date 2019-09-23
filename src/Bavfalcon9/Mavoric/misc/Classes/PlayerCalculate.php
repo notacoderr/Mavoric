@@ -15,6 +15,9 @@
 
 namespace Bavfalcon9\Mavoric\misc;
 
+use pocketmine\block\Block;
+use pocketmine\math\Vector3;
+
 class PlayerCalculate {
     /* DEFAULTS */
     public const DEFAULT_WALKSPEED = 0.2;
@@ -36,6 +39,24 @@ class PlayerCalculate {
 
     public static function handleLagFor(int $ping, int $cheat) {
 
+    }
+
+    public static function Surroundings(Player $player) : Array {
+        $x = $player->getX();
+        $y = $player->getY();
+        $z = $player->getZ();
+        $surroundings = [];
+        // Check 3 blocks in every direction
+        for ($xidx = $x-1; $xidx <= $x+1; $xidx = $xidx + 1) {
+            for ($zidx = $z-1; $zidx <= $z+1; $zidx = $zidx + 1) {
+                for ($yidx = $y-1; $yidx <= $y; $yidx = $yidx + 1) {
+                    $pos = new Vector3($xidx, $yidx, $zidx);
+                    $block = $level->getBlock($pos);
+                    array_push($surroundings, $block);
+                }
+            }
+        }
+        return $surroundings;
     }
 
     public static function getFlight() {
