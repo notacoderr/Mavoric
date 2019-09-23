@@ -246,9 +246,30 @@ class Mavoric {
         if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return;
         if ($type === 'detection') {
             if (in_array($player->getName(), $this->ignoredPlayers)) return;
+            $m = $message;
             $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
+            $webhook = $this->plugin->config->getNested('Webhook.alerts');
+
+            if ($webhook !== null && $webhook !== false) {
+                $embed = [
+                    'color' => 0xFF0000,
+                    'title' => 'Mavoric Detection',
+                    'description' => "**Player:** {$player->getName()}\n**Violation:** {$m}\n**Violation-Info:** {$appendance}"
+                ];
+                $this->postWebhook($webhook, json_encode(["embeds" => $embed]));
+            }
         } else {
             $message = "§c[MAVORIC]: $message";
+            $webhook = $this->plugin->config->getNested('Webhook.alerts');
+
+            if ($webhook !== null && $webhook !== false) {
+                $embed = [
+                    'color' => 0xFF0000,
+                    'title' => 'Mavoric Alert',
+                    'description' => "{$message}"
+                ];
+                $this->postWebhook($webhook, json_encode(["embeds" => $embed]));
+            }
         }
         $this->messageHandler->queueMessage($message, $appendance);
     }
@@ -266,10 +287,10 @@ class Mavoric {
         $this->plugin->getServer()->broadcastPacket($pla, $pk);
     }
 
-    public function postWebhook(Player $sender, String $type, Player $player, String $cheat='None provided.') {
-        $token = $this->plugin->config->get('webhook');
+    public function alert(Player $sender, String $type, Player $player, String $cheat='None provided.') {
+        $token = $this->plugin->config->getNested('Webhook.'.$type);
         $embed = [
-            'title' => ($type === 'REMOVE') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
+            'title' => ($type === 'alert-deny') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
             'fields' => [
                 [
                     'inline' => true,
@@ -287,15 +308,20 @@ class Mavoric {
                     'value' => $cheat
                 ]
                 ],
-            'color' => ($type === 'REMOVE') ? 0xFF0000 : 0x33ffa7,
+            'color' => ($type === 'alert-deny') ? 0xFF0000 : 0x33ffa7,
             'footer' => [
                 'text' => 'Issued',
                 'icon_url' => 'https://cdn.discordapp.com/attachments/602697368718147587/625249121057636383/Mavoric.png'
             ]
         ];
         if (!$token) return;
-        $post = new DiscordPost($token, $embed, $sender->getName());
+        return $this->postWebhook($token, json_encode(["embeds" => [$embed]]), $sender->getName());
+    }
+
+    public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {
+        $post = new DiscordPost($url, $content, $replyTo);
         $task = $this->getServer()->getAsyncPool()->submitTask($post);
+        return;
     }
     
     public function getPlugin() {
@@ -305,6 +331,4 @@ class Mavoric {
     private function getServer() {
         return $this->plugin->getServer();
     }
-
-
 }
