@@ -4,76 +4,101 @@ namespace Bavfalcon9\Mavoric\Cheats;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-
+use Bavfalcon9\Mavoric\misc\PlayerCalculate;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
-
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
-
 use pocketmine\event\player\PlayerMoveEvent;
-
-use pocketmine\{
-    Player,
-    Server
-};
-
-/* API CHANGE (Player) */
+use pocketmine\Player;
 
 class Flight implements Listener {
     private $mavoric;
     private $plugin;
+    private $checks = [];
 
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->plugin = $plugin;
         $this->mavoric = $mavoric;
     }
-/*
-    public function onMove(PlayerMoveEvent $event) {
-        $isFlying = $this->checkFlight($event);
-        $player = $event->getPlayer();
-        if ($isFlying === true) {
-           // $this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$player->getName().'§7 is using: §bFlight.');
-           $this->mavoric->messageStaff('detection', $player, 'Flight');
-        }
-    }
 
-	public function checkFlight($event) {
-		$player = $event->getPlayer();
-		$oldPos = $event->getFrom();
-        $newPos = $event->getTo();
-        if ($this->isFalling($player, $event)) {
-            return false;
-        } else {
-            return true;
-        }
-        if (!$this->isFalling($player, $event)) {
-            if(!$player->isCreative() && !$player->isSpectator() && !$player->getAllowFlight()) {
-                // They are flying up
-               // if ($oldPos->getY() >= $newPos->getY()){
-                if($player->GetInAirTicks() > 40 && $player->getPing() <= 350) {
-                    $maxY = $player->getLevel()->getHighestBlockAt(floor($newPos->getX()), floor($newPos->getZ()));
-                    if($newPos->getY() - 3 > $maxY){
-                        return true;
+    public function onMove(PlayerMoveEvent $event) : void {
+        $player = $event->getPlayer();
+        $surroundings = PlayerCalculate::Surroundings($player);
+        $this->purgeOld(); // clear old data.
+        if ($this->mavoric->tpsCheck->isLow()) return;
+        if (!PlayerCalculate::isOnGround($player) || PlayerCalculate::isAllAir($surroundings)) {
+            // They're in the air, start doing checks.
+            if ($player->getAllowFlight() === true) return;
+            if ($player->getGamemode() === 3) return;
+            if (!isset($this->checks[$player->getName()])) {
+                // They weren't previously detected..
+                $this->checks[$player->getName()] = [
+                    'position' => $player->getPosition(),
+                    'time' => time()
+                ];
+                return;
+            } else {
+                $data = $this->checks[$player->getName()];
+
+                if ($data['time'] + 0.5 <= time()) {
+                    $this->checks[$player->getName()]['time'] = time();
+                    // A half second has passed, do more checks
+                    if (PlayerCalculate::isFallingNormal($data['position'], $player->getPosition(), time() - $data['time'])) {
+                        /**
+                         * TO DO: CHECK RANGE, MAKE SURE THAT POSITION TRAVELED ISNT THE SAME EVERY CHECK. THIS INDICATES HACKING.
+                         */
+                        if ($player->getInAirTicks() > PlayerCalculate::estimateTime($data['position'])) {
+                            if (PlayerCalculate::isLagging($data['position'], $player->getPosition())) {
+                            if (isset($data['lag-ticks']) && $data['lag-time'] >= 10) {
+                                unset($this->checks[$player->getName()]);
+                                    $this->mavoric->kick($player, 'High Ping.');
+                                    $this->mavoric->messageStaff('custom', null, "{$player->getName()} was kicked because they were in air too long.");
+                                    return;
+                                }
+                                if (!isset($data['lag-ticks'])) {
+                                    $this->checks['lag-time'] = 1;
+                                    return;
+                                } else {
+                                    $this->checks['lag-time']++;
+                                    return;
+                                }
+                            }
+                            // Probably flying, add a violation
+                            $this->mavoric->getFlag($player)->addViolation(Mavoric::Flight, 0.5);
+                            $this->mavoric->messageStaff('detection', $player, 'Flight', ' In air for: ' . $player->getInAirTicks()/20 . ' seconds.');
+                            return;
+                        }
+
+                        unset($this->checks[$player->getName()]);
+                        return;
                     }
+
+                    // Assume they might be cheating, do more checks
+                    if (!isset($data['ETA-Ground'])) {
+                        $this->checks[$player->getName()]['ETA-Ground'] = PlayerCalculate::estimateTime($player);
+                    }
+                    if (PlayerCalculate::isLagging($data['position'], $player->getPosition())) {
+                        if (isset($data['lag-ticks']) && $data['lag-time'] >= 10) {
+                            unset($this->checks[$player->getName()]);
+                            $this->mavoric->kick($player, 'High Ping.');
+                            $this->mavoric->messageStaff('custom', null, "{$player->getName()} was kicked because they were in air too long.");
+                            return;
+                        }
+                        if (!isset($data['lag-ticks'])) {
+                            $this->checks['lag-time'] = 1;
+                            return;
+                        } else {
+                            $this->checks['lag-time']++;
+                            return;
+                        }
+                    }
+                    // Almost positive they're cheating....
+                    $this->mavoric->getFlag($player)->addViolation(Mavoric::Flight, 0.5);
+                    $this->mavoric->messageStaff('detection', $player, 'Flight', ' In air for: ' . $player->getInAirTicks()/20 . ' seconds.');
+                    return;
                 } else {
-                    return false;
+
                 }
-                //}
             }
         }
-        return false;
     }
-
-    public function isFalling(Player $player, $event) {
-        // TODO: check if the player is falling at 3.5 blocks a tick
-        $to = $event->getTo();
-        $from = $event->getFrom();
-
-        // Simple check for if the player is falling
-        if ($to->getY() >= $from->getY()) return false;
-        else return true;
-
-    }*/
 }
