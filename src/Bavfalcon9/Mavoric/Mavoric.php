@@ -37,8 +37,9 @@ use pocketmine\math\Vector3;
 
 class Mavoric {
     public const AutoClicker = 0; // AutoClicker
-    public const KillAura = 1; // Kill Arua
-    public const Speed = 2; // Fast movement
+    public const KillAura = 1; // Kill Aura
+    public const MultiAura = 2;
+    public const Speed = 3; // Fast movement
     public const NoClip = 4; // going through blocks
     public const AntiKb = 5; // No knockback
     public const Flight = 6; // Flight
@@ -324,6 +325,10 @@ class Mavoric {
     
     public function getPlugin() {
         return $this->plugin;
+    }
+
+    public function getTpsCheck() {
+        return $this->tpsCheck;
     }
     
     private function getServer() {

@@ -4,7 +4,7 @@ namespace Bavfalcon9\Mavoric\Cheats;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\misc\PlayerCalculate;
+use Bavfalcon9\Mavoric\misc\Classes\PlayerCalculate;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\player\PlayerMoveEvent;
@@ -22,13 +22,14 @@ class Flight implements Listener {
 
     public function onMove(PlayerMoveEvent $event) : void {
         $player = $event->getPlayer();
-        $surroundings = PlayerCalculate::Surroundings($player);
+        $surroundings = PlayerCalculate::getSurroundings($player);
         $this->purgeOld(); // clear old data.
-        if ($this->mavoric->tpsCheck->isLow()) return;
+        if ($this->mavoric->getTpsCheck()->isLow()) return;
         if (!PlayerCalculate::isOnGround($player) || PlayerCalculate::isAllAir($surroundings)) {
             // They're in the air, start doing checks.
             if ($player->getAllowFlight() === true) return;
             if ($player->getGamemode() === 3) return;
+            if ($player->getGamemode() === 1) return;
             if (!isset($this->checks[$player->getName()])) {
                 // They weren't previously detected..
                 $this->checks[$player->getName()] = [
@@ -46,7 +47,7 @@ class Flight implements Listener {
                         /**
                          * TO DO: CHECK RANGE, MAKE SURE THAT POSITION TRAVELED ISNT THE SAME EVERY CHECK. THIS INDICATES HACKING.
                          */
-                        if ($player->getInAirTicks() > PlayerCalculate::estimateTime($data['position'])) {
+                        if ($player->getInAirTicks() > PlayerCalculate::estimateTime($player->getY())) {
                             if (PlayerCalculate::isLagging($data['position'], $player->getPosition())) {
                             if (isset($data['lag-ticks']) && $data['lag-time'] >= 10) {
                                 unset($this->checks[$player->getName()]);
@@ -74,7 +75,7 @@ class Flight implements Listener {
 
                     // Assume they might be cheating, do more checks
                     if (!isset($data['ETA-Ground'])) {
-                        $this->checks[$player->getName()]['ETA-Ground'] = PlayerCalculate::estimateTime($player);
+                        $this->checks[$player->getName()]['ETA-Ground'] = PlayerCalculate::estimateTime($player->getY());
                     }
                     if (PlayerCalculate::isLagging($data['position'], $player->getPosition())) {
                         if (isset($data['lag-ticks']) && $data['lag-time'] >= 10) {
@@ -96,9 +97,16 @@ class Flight implements Listener {
                     $this->mavoric->messageStaff('detection', $player, 'Flight', ' In air for: ' . $player->getInAirTicks()/20 . ' seconds.');
                     return;
                 } else {
-
+                    return;
                 }
             }
         }
+    }
+
+    public function purgeOld() : void {
+        foreach ($this->checks as $key=>$val) {
+            if ($val['time'] + 30 <= time()) unset($this->checks[$key]);
+        }
+        return;
     }
 }
