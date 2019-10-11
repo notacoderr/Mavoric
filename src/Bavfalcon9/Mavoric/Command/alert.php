@@ -15,7 +15,7 @@ class alert extends Command {
         parent::__construct("alert");
         $this->pl = $pl;
         $this->description = "[]";
-        $this->usageMessage = "/alert <confirm/deny/ignore/unignore> <player>";
+        $this->usageMessage = "/alert <confirm/deny/ignore/unignore/info> <player>";
         $this->setAliases(["mban", "mav"]);
         $this->setPermission("mavoric.alerts");
     }
@@ -83,6 +83,20 @@ class alert extends Command {
                 $sender->sendMessage('§aPlayer is no longer ignored.');
                 return true;
             }
+        }
+        if ($type === 'info' || $type === 'history') {
+            $flag = $this->pl->mavoric->getFlag($player);
+            $data = $flag->getFlagsByNameAndCount();
+            if (empty($data)) {
+                $sender->sendMessage('§cNo violations detected for this user.');
+                return true;
+            }
+            $pretty = [];
+            foreach ($data as $cheat=>$amount) {
+                array_push($pretty, "§f- §c{$cheat} : §7{$amount}");
+            }
+            $sender->sendMessage("§c=== [ALERT HISTORY FOR: §7{$player->getName()}§c] ===\n".implode("\n", $pretty));
+            return true;
         }
 
         $sender->sendMessage($this->usageMessage);

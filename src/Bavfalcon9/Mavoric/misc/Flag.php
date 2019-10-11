@@ -71,4 +71,16 @@ class Flag {
     public function clearViolations() {
         $this->flags = [];
     }
+
+    public function getFlagsByNameAndCount() {
+        $newArr = [];
+        foreach ($this->flags as $cheat=>$count) {
+            $newArr[Mavoric::getCheatName($cheat)] = $count;
+        }
+        return $newArr;
+    }
+
+    public function getRaw() {
+        return $this->flags;
+    }
 } 

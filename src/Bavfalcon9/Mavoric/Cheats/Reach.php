@@ -21,8 +21,8 @@ class Reach implements Listener {
     private $mavoric;
     private $plugin;
     private $ender_pearls;
-    private $teleported;
-
+    private $teleported = [];
+    private $teleportQueue = [];
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->plugin = $plugin;
         $this->mavoric = $mavoric;
@@ -42,6 +42,8 @@ class Reach implements Listener {
         if ($this->checkReach($damager, $entity) !== false) {
             if ($this->pearledAway($entity) === true) return;
             if ($this->pearledAway($damager) === true) return;
+            if ($this->hasTeleported($entity) === true) return;
+            if ($this->hasTeleported($damager) === true) return;
             if (!$damager->isCreative()) {
                     $total_reach = $this->checkReach($damager, $entity);
                     $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
@@ -55,6 +57,12 @@ class Reach implements Listener {
 
         if (!$player instanceof Player) return;
         // Causes? Assume enderpearl thrown. Time to test :)
+        // Purge old.
+        foreach ($this->teleportQueue as $p=>$t) {
+            if ($t + 3 >= time()) unset($this->teleportQueue[$p]);
+        }
+
+        if (!isset($this->teleportQueue[$player->getName()])) $this->teleportQueue[$player->getName()] = microtime(true);
         if (!isset($this->ender_pearls[$player->getName()])) return; // No Enderpearl.
         else {
             $this->teleported[$player->getName()] = [
@@ -107,6 +115,23 @@ class Reach implements Listener {
             else {
                 return true;
             }
+        } else {
+            return true;
+        }
+    }
+
+    private function hasTeleported($p) {
+        $p = $p->getName();
+        // Purge cache
+        foreach ($this->teleportQueue as $p=>$t) {
+            if ($t + 2 >= time()) unset($this->teleportQueue[$p]);
+        }
+        if (empty($this->teleportQueue)) return false;
+        if (!isset($this->teleportQueue[$p])) return false; // wtf lol
+        if (microtime(true) - $this->teleportQueue[$p] >= 2) {
+            $cache = $this->teleportQueue[$p];
+            unset($this->teleportQueue[$p]);
+            return false;
         } else {
             return true;
         }

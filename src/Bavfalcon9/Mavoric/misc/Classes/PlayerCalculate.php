@@ -78,21 +78,29 @@ class PlayerCalculate {
         return true;
     }
 
-    public static function isFallingNormal(Position $pos1, Position $pos2, float $actual) : ?Bool {
-        if (floor($pos1->getY()) <= floor($pos2->getY()) && $actual > 2) return false;
+    public static function isFallingNormal(Position $pos1, Position $pos2, float $ground=0, float $actual=1) : ?Bool {
+        if (floor($pos1->getY()) <= floor($pos2->getY()) && $actual > 1) return false;
+        $amountFell = $pos1->y - $pos2->y;
+        /* JET PACK DETECTION? */
+        if ($amountFell > (12.5 * $actual)) return false;
+        if ($amountFell > 14) return false;
+        if ($amountFell < 1.5 && $amountFell > 0) return true;
+        if ($amountFell < 1 && $amountFell > 0) return false;
+        if ($amountFell < 5 && (floor($pos2->y) > $ground)) return false;
 
-        $expected = self::estimateTime($pos2->getY()) / 20;
+        $expected = self::estimateTime($pos2->getY());
+        var_dump($expected);
 
         if (floor($expected) - floor($actual) > 1) return false;
-        else return true;
+        return true;
     }
 
     /**
      * Estimate falling time
      */
     public static function estimateTime(float $y) {
-        $falling_time = 0.2;
-        return $y * $falling_time * 20;
+        $falling_time = 0.5;
+        return $y * $falling_time;
     }
 
     public static function isLagging(Position $pos1, Position $pos2) {

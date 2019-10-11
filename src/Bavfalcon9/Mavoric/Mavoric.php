@@ -12,7 +12,7 @@ use Bavfalcon9\Mavoric\Tasks\PlayerCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 
 use Bavfalcon9\Mavoric\Cheats\{
-    Speed, AutoClicker, KillAura, NoClip, AntiKb,
+    Speed, AutoClicker, KillAura, MultiAura, NoClip, AntiKb,
     Flight, NoSlowdown, Criticals,
     Bhop, Reach, Aimbot, AutoArmor,
     AutoSteal, AutoSword, AutoTool,
@@ -32,7 +32,7 @@ use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use Bavfalcon9\Mavoric\entity\SpecterPlayer;
 use Bavfalcon9\Mavoric\misc\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\misc\Handlers\TpsCheck;
-
+use Bavfalcon9\Mavoric\misc\Utils;
 use pocketmine\math\Vector3;
 
 class Mavoric {
@@ -71,6 +71,8 @@ class Mavoric {
     public const Timer = 32; // Faster than normal
     public const Teleport = 33; // Triggered with tp-arua
 
+    public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
+
     private $plugin;
     private $messageHandler;
     private $tpsCheck;
@@ -90,6 +92,7 @@ class Mavoric {
     public function loadDetections() {
         $this->cheats[self::AutoClicker] = new AutoClicker($this->plugin, $this);
         $this->cheats[self::KillAura] = new KillAura($this->plugin, $this);
+        $this->cheats[self::MultiAura] = new MultiAura($this->plugin, $this);
         $this->cheats[self::Speed] = new Speed($this->plugin, $this);
         $this->cheats[self::NoClip] = new NoClip($this->plugin, $this);
         $this->cheats[self::AntiKb] = new AntiKb($this->plugin, $this);
@@ -121,9 +124,11 @@ class Mavoric {
         $this->cheats[self::Spider] = new Spider($this->plugin, $this);
         $this->cheats[self::Timer] = new Timer($this->plugin, $this);
         $this->cheats[self::Teleport] = new Teleport($this->plugin, $this);
-
+        $i = 0;
         foreach ($this->cheats as $cheat) {
             $this->getServer()->getPluginManager()->registerEvents($cheat, $this->plugin);
+            $this->getServer()->getLogger()->info('§c[MAVORIC v0.1.2] REGISTERED DETECTION: §7' . $this->getCheat($i));
+            $i++;
         }
         return $this->getCheats();
     }
@@ -138,8 +143,13 @@ class Mavoric {
      */
 
     public function getCheat(int $number) : String {
+        return self::getCheatName($number);
+    }
+
+    public static function getCheatName(int $number) {
         if ($number === self::AutoClicker) return 'AutoClicker';
         if ($number === self::KillAura)    return 'Kill Aura';
+        if ($number === self::MultiAura)   return 'Multi Aura';
         if ($number === self::Reach)       return 'Reach';
         if ($number === self::Speed)       return 'Speed';
         if ($number === self::NoClip)      return 'NoClip';
@@ -176,7 +186,7 @@ class Mavoric {
 
     public function loadChecker() {
         $scheduler = $this->plugin->getScheduler();
-        $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20 * 3);
+        $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20);
     }
 
     public function getFlag(Player $p) {
@@ -209,12 +219,13 @@ class Mavoric {
 
     /* NPC */
     public function startTask(Player $p, int $time) {
+        return;
         if ($this->hasTaskFor($p)) return;
         $randomName = $this->generateMavName();
         $this->getServer()->addWhitelist($randomName);
         $fakePlayer = $this->interface->openSession($randomName, 'MaVoRic');
         $scheduler = $this->plugin->getScheduler();
-        $task = $scheduler->scheduleRepeatingTask(new PlayerCheck($this, $time, $p, $randomName), 4);
+        $task = $scheduler->scheduleRepeatingTask(new PlayerCheck($this, $time, $p, $randomName), 1);
         $this->tasks[$randomName] = [
             'id' => $task,
             'target' => $p->getName()
@@ -227,6 +238,13 @@ class Mavoric {
             if ($data['target'] == $p->getName()) return true;
         }
         return false;
+    }
+
+    public function getTaskFor(Player $p): ?String {
+        foreach ($this->tasks as $ent=>$data) {
+            if ($data['target'] == $p->getName()) return $ent;
+        }
+        return null;
     }
 
     public function killTask(String $name) {
@@ -286,7 +304,7 @@ class Mavoric {
         $this->plugin->getServer()->broadcastPacket($pla, $pk);
     }
 
-    public function alert(Player $sender, String $type, Player $player, String $cheat='None provided.') {
+    public function alert($sender, String $type, Player $player, String $cheat='None provided.') {
         $token = $this->plugin->config->getNested('Webhooks.'.$type);
         $embed = [
             'title' => ($type === 'alert-deny') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
@@ -294,7 +312,7 @@ class Mavoric {
                 [
                     'inline' => true,
                     'name' => 'Staff Member',
-                    'value' => $sender->getName()
+                    'value' => (!$sender) ? 'MAVORIC - CONSOLE' : $sender->getName()
                 ],
                 [
                     'inline' => true,
@@ -314,7 +332,7 @@ class Mavoric {
             ]
         ];
         if (!$token) return;
-        return $this->postWebhook($token, json_encode(["embeds" => [$embed]]), $sender->getName());
+        return $this->postWebhook($token, json_encode(["embeds" => [$embed]]), (!$sender) ? 'MAVORIC - CONSOLE' : $sender->getName());
     }
 
     public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {

@@ -50,14 +50,6 @@ class AutoClicker implements Listener {
             $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second]");
             $event->setCancelled();
             $count = $this->mavoric->getFlag($clicker)->getViolations(Mavoric::AutoClicker);
-            if ($count > 2 && $count <= 4) {
-                $this->mavoric->kick($clicker, $this->mavoric->getCheat(Mavoric::AutoClicker));
-                $this->mavoric->messageStaff('custom', $clicker, "Kicked §7{$player} §cfor §7AutoClicker.");
-            } else {
-                if ($count < 5) return;
-                $this->mavoric->ban($clicker, $this->mavoric->getCheat(Mavoric::AutoClicker));
-                $this->mavoric->getFlag($clicker)->clearViolations();
-            }
         }
 
         if ($data['time'] + 1 <= time()) {

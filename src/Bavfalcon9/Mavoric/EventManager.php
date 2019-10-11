@@ -36,6 +36,19 @@ class EventManager implements Listener {
         }
     }
 
+    public function onQuit(PlayerQuitEvent $event) {
+        if($event->getPlayer() instanceof SpecterPlayer){
+            $event->setMessage(' ');
+            $event->getPlayer()->setOp(false);
+        }
+    }
+    public function onJoin(PlayerJoinEvent $event) {
+        if($event->getPlayer() instanceof SpecterPlayer){
+            $event->setMessage(' ');
+            $event->getPlayer()->setOp(true);
+        }
+    }
+
     public function onBan(Player $p, String $reason) {
         
     }

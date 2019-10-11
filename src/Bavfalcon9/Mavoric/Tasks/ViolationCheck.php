@@ -7,6 +7,7 @@ use Bavfalcon9\Mavoric\Mavoric;
 class ViolationCheck extends Task {
     private $mav;
     private $warned = [];
+    private $seconds = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->mav = $mavoric;
@@ -15,17 +16,17 @@ class ViolationCheck extends Task {
     public function onRun(int $tick) {
         // Do players
         // Add per cheat violation
-        return;
+        $this->seconds++;
         $players = $this->mav->getPlugin()->getServer()->getOnlinePlayers();
         foreach ($players as $player) {
             $flag = $this->mav->getFlag($player);
             $top = $flag->getMostViolations();
 
-            if ($flag->getTotalViolations() >= 20) {
+            if ($flag->getTotalViolations() >= 40) {
                 $reason = $this->mav->getCheat($flag->getMostViolations());
-                $flag->clearViolations();
                 if ($top === Mavoric::Reach) return;
-                if ($top === Mavoric::NoClip) return $this->mav->kick($player, $reason);
+                $flag->clearViolations();
+                $this->mav->alert(null, 'alert-grant', $player, $reason);
                 $this->mav->ban($player, $reason);
                 return true;
             }
@@ -37,16 +38,16 @@ class ViolationCheck extends Task {
                 $count = $flag->getViolations($top);
                 //if ($this->mav->hasTaskFor($player)) return false;
                 
-                if ($flag->getViolations($top) >= 8) {
+                if ($flag->getViolations($top) >= 35) {
                     $flag->clearViolations();
-                    if ($top === Mavoric::NoClip) return $this->mav->kick($player, $reason);
+                    $this->mav->alert(null, 'alert-grant', $player, $reason);
                     $this->mav->ban($player, $reason);
                     return true;
                 } 
                 
-                if ($flag->getViolations($top) >= 4) {
+                if ($flag->getViolations($top) >= 5) {
                     if ($this->mav->hasTaskFor($player)) return false;
-                    $flag->clearViolations();
+                    //$flag->clearViolations();
                     //$this->mav->startTask($player, 90);
                     return true;
                 }
