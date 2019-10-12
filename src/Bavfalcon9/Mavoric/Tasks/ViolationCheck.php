@@ -22,17 +22,19 @@ class ViolationCheck extends Task {
             $flag = $this->mav->getFlag($player);
             $top = $flag->getMostViolations();
 
-            if ($flag->getTotalViolations() >= 40) {
+            if ($top === Mavoric::Reach) {
+                if ($flag->getViolations($top) < 5) $this->mav->getFlag($player)->removeViolation(Mavoric::Reach, $flag->getViolations($top));
+            }
+            if ($flag->getTotalViolations() >= 45) {
                 $reason = $this->mav->getCheat($flag->getMostViolations());
-                if ($top === Mavoric::Reach) return;
                 $flag->clearViolations();
                 $this->mav->alert(null, 'alert-grant', $player, $reason);
                 $this->mav->ban($player, $reason);
-                return true;
+                continue;
             }
 
             if ($top !== -1) {
-                if ($top === Mavoric::Reach) return;
+                // if ($top === Mavoric::Reach) return;
                 
                 $reason = $this->mav->getCheat($flag->getMostViolations());
                 $count = $flag->getViolations($top);
@@ -42,15 +44,15 @@ class ViolationCheck extends Task {
                     $flag->clearViolations();
                     $this->mav->alert(null, 'alert-grant', $player, $reason);
                     $this->mav->ban($player, $reason);
-                    return true;
+                    continue;
                 } 
-                
+                /*
                 if ($flag->getViolations($top) >= 5) {
-                    if ($this->mav->hasTaskFor($player)) return false;
+                    if ($this->mav->hasTaskFor($player)) continue;
                     //$flag->clearViolations();
                     //$this->mav->startTask($player, 90);
-                    return true;
-                }
+                    continue;
+                }*/
             }
 
         }

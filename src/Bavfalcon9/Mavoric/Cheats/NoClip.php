@@ -28,7 +28,7 @@ class NoClip implements Listener {
     private $teleported = [];
     private $teleportQueue = [];
     private $ender_pearls = [];
-    private $slabs = [182, 181, 126, 157, 44, 43, 106, 209, 208, 175, 176, 177, 167, 144, 127, 105, 96, 94, 78, 101, 90, 85];
+    private $slabs = [182,181,126,157,44,43,139,109,67,114,108,180,128,106,209,208,175,176,177,167,144,127,105,96,94,78,101,90,85];
 
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->plugin = $plugin;
@@ -47,7 +47,7 @@ class NoClip implements Listener {
         if ($blockAtA->isSolid() || $blockAtB->isSolid()) {
             $cache = $this->pearledAway($player);
             $cache2 = $this->hasTeleported($player);
-            if ($blockAtA->isTransparent() && $blockAtB->isTransparent()) return false;
+            if ($blockAtA->isTransparent() || $blockAtB->isTransparent()) return false;
             if ($cache !== false) {
                 $player->teleport($cache['pos']);
                 $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
@@ -58,11 +58,12 @@ class NoClip implements Listener {
                 $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
                 return false;
             }
+
             if (in_array($blockAtA->getId(), $this->slabs)) return false;
             if (in_array($blockAtB->getId(), $this->slabs)) return false;
-            //$this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 0.5);
-            //$this->mavoric->messageStaff('detection', $player, 'NoClip');
-            //$player->teleport($event->getFrom());
+            $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
+            $this->mavoric->messageStaff('detection', $player, 'NoClip');
+            $player->teleport($event->getFrom());
         }
     }
 

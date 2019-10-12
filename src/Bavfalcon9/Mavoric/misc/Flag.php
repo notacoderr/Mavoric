@@ -63,7 +63,7 @@ class Flag {
     public function removeViolation($cheat, $count=1) {
         if (!isset($this->flags[$cheat])) return false;
         $this->flags[$cheat]--;
-        if ($this->flags[$cheat] >= 0) unset($this->flags[$cheat]);
+        if ($this->flags[$cheat] <= 0) unset($this->flags[$cheat]);
         
         return true;
     }

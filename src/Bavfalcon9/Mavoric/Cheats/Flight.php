@@ -21,6 +21,7 @@ class Flight implements Listener {
     }
 
     public function onMove(PlayerMoveEvent $event) : void {
+        return;
         $player = $event->getPlayer();
         $surroundings = PlayerCalculate::getSurroundings($player);
         $this->purgeOld(); // clear old data.
@@ -29,7 +30,7 @@ class Flight implements Listener {
         if ($player->getGamemode() === 3) return;
         if ($player->getGamemode() === 1) return;
         if (!PlayerCalculate::isOnGround($player) || PlayerCalculate::isAllAir($surroundings)) {
-            if ($player->getInAirTicks() > 20 * 20) {
+            if ($player->getInAirTicks() > 20 * 3) {
                 $player->teleport($event->getFrom());
                 $this->mavoric->getFlag($player)->addViolation(Mavoric::Flight, 1);
                 $this->mavoric->messageStaff('detection', $player, 'Flight');

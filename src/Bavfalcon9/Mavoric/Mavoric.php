@@ -28,6 +28,8 @@ use pocketmine\network\mcpe\protocol\InteractPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\RespawnPacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
+use pocketmine\utils\MainLogger;
+use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use Bavfalcon9\Mavoric\entity\SpecterPlayer;
 use Bavfalcon9\Mavoric\misc\Handlers\MessageHandler;
@@ -73,6 +75,7 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
+    private $version = '0.1.3';
     private $plugin;
     private $messageHandler;
     private $tpsCheck;
@@ -127,7 +130,7 @@ class Mavoric {
         $i = 0;
         foreach ($this->cheats as $cheat) {
             $this->getServer()->getPluginManager()->registerEvents($cheat, $this->plugin);
-            $this->getServer()->getLogger()->info('§c[MAVORIC v0.1.2] REGISTERED DETECTION: §7' . $this->getCheat($i));
+            $this->getServer()->getLogger()->info('§c[MAVORIC v'.$this->version.'] REGISTERED DETECTION: §7' . $this->getCheat($i));
             $i++;
         }
         return $this->getCheats();
@@ -266,7 +269,9 @@ class Mavoric {
         if ($type === 'detection') {
             if (in_array($player->getName(), $this->ignoredPlayers)) return;
             $m = $message;
+            $cheatPercentile = CheatPercentile::getPercentile($this->getFlag($player));
             $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
+            $appendance .= " Cheating: §4{$cheatPercentile}%";
             $webhook = $this->plugin->config->getNested('Webhooks.alerts');
             if ($webhook !== null && $webhook !== false) {
                 $embed = [
@@ -304,7 +309,7 @@ class Mavoric {
         $this->plugin->getServer()->broadcastPacket($pla, $pk);
     }
 
-    public function alert($sender, String $type, Player $player, String $cheat='None provided.') {
+    public function alert($sender=null, String $type, Player $player, String $cheat='None provided.') {
         $token = $this->plugin->config->getNested('Webhooks.'.$type);
         $embed = [
             'title' => ($type === 'alert-deny') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
@@ -339,6 +344,24 @@ class Mavoric {
         $post = new DiscordPost($url, $content, $replyTo);
         $task = $this->getServer()->getAsyncPool()->submitTask($post);
         return;
+    }
+
+    public function checkVersion($config) {
+        if (!$config) {
+            MainLogger::getLogger()->critical('Config could not be found, forcefully disabled.');
+            $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
+            return;
+        }
+        if (!$config->get('Version') || $config->get('Version') !== $this->version) {
+            MainLogger::getLogger()->critical('Mavoric config version does not match plugin version.');
+            $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
+            return;
+        }
+        MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
+    }
+
+    public function getVersion(): ?String {
+        return $this->version;
     }
     
     public function getPlugin() {
