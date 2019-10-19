@@ -1,7 +1,18 @@
 <?php
-/**
- * @author Bavfalcon9 
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
  */
+
 
 namespace Bavfalcon9\Mavoric;
 use Bavfalcon9\Mavoric\misc\Flag;
@@ -75,7 +86,7 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
-    private $version = '0.1.3';
+    private $version = '0.1.4';
     private $plugin;
     private $messageHandler;
     private $tpsCheck;
@@ -185,6 +196,44 @@ class Mavoric {
         if ($number === self::Timer)       return 'Timer';
         if ($number === self::Teleport)    return 'Teleport';
         return 'Cheating';
+    }
+
+    public static function getCheatFromString(String $name): ?float {
+        if ($name === 'AutoClicker')    return self::AutoClicker;
+        if ($name === 'KillAura')       return self::KillAura;
+        if ($name === 'MultiAura')      return self::MultiAura;
+        if ($name === 'Reach')          return self::Reach;
+        if ($name === 'Speed')          return self::Speed;
+        if ($name === 'NoClip')         return self::NoClip;
+        if ($name === 'AntiKb')         return self::AntiKb;
+        if ($name === 'Flight')         return self::Flight;
+        if ($name === 'NoSlowdown')     return self::NoSlowdown;
+        if ($name === 'Criticals')      return self::Criticals;
+        if ($name === 'Bhop')           return self::Bhop;
+        if ($name === 'Aimbot')         return self::Aimbot;
+        if ($name === 'AutoArmor')      return self::AutoArmor;
+        if ($name === 'AutoSteal')      return self::AutoSteal;
+        if ($name === 'AutoSword')      return self::AutoSword;
+        if ($name === 'AutoTool')       return self::AutoTool;
+        if ($name === 'AntiFire')       return self::AntiFire;
+        if ($name === 'AntiSlip')       return self::AntiSlip;
+        if ($name === 'NoDamage')       return self::NoDamage;
+        if ($name === 'BackStep')       return self::BackStep;
+        if ($name === 'FastPlace')      return self::FastPlace;
+        if ($name === 'FastBreak')      return self::FastBreak;
+        if ($name === 'Follow')         return self::Follow;
+        if ($name === 'FreeCam')        return self::FreeCam;
+        if ($name === 'FastEat')        return self::FastEat;
+        if ($name === 'FastLadder')     return self::FastLadder;
+        if ($name === 'GhostReach')     return self::GhostReach;
+        if ($name === 'HighJump')       return self::HighJump;
+        if ($name === 'JetPack')        return self::JetPack;
+        if ($name === 'NoEffects')      return self::NoEffects;
+        if ($name === 'MenuWalk')       return self::MenuWalk;
+        if ($name === 'Spider')         return self::Spider;
+        if ($name === 'Timer')          return self::Timer;
+        if ($name === 'Teleport')       return self::Teleport;
+        return null;
     }
 
     public function loadChecker() {
@@ -352,8 +401,12 @@ class Mavoric {
             $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
             return;
         }
-        if (!$config->get('Version') || $config->get('Version') !== $this->version) {
-            MainLogger::getLogger()->critical('Mavoric config version does not match plugin version.');
+        if (!$config->get('Version')) {
+            $this->getPlugin()->saveResource('config.yml');
+            MainLogger::getLogger()->critical('Config version does not match version: ' . $this->version . ' all data erased and replaced.');
+        }
+        if ($config->get('Version') !== $this->version) {
+            MainLogger::getLogger()->critical('Mavoric config version does not match plugin version. Should match version: ' . $this->version);
             $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
             return;
         }

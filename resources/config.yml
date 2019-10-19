@@ -12,3 +12,15 @@ Alerts:
   tps: 17 # At 15 tps warn online staff members.
   tps-low: 10 # Below 10 tps warn online staff members.
 Reports: true
+Suppression: true # This applies to all cheats, should mavoric disable hits
+
+# These are settings for each cheat, some of these are not configured
+Cheats:
+  KillAura:
+    enabled: false
+    Suppression: true
+  Speed:
+    enabled: true
+    Suppression: true
+    tickInt:
+  

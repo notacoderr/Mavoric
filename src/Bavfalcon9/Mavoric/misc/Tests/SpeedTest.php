@@ -1,6 +1,4 @@
 <?php
-
-namespace Bavfalcon9\Mavoric\misc\Tests;
 /***
  *      __  __                       _      
  *     |  \/  |                     (_)     
@@ -14,6 +12,9 @@ namespace Bavfalcon9\Mavoric\misc\Tests;
  *   @copyright Everything is copyrighted to their respective owners.
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
+
+namespace Bavfalcon9\Mavoric\misc\Tests;
+
 use pocketmine\Player;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\Listener;

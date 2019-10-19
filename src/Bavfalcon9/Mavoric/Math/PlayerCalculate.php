@@ -13,7 +13,7 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\misc\Classes;
+namespace Bavfalcon9\Mavoric\Math;
 
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
