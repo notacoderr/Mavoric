@@ -1,7 +1,18 @@
 <?php
-/**
- * @author Bavfalcon9 
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
  */
+
 
 namespace Bavfalcon9\Mavoric;
 use Bavfalcon9\Mavoric\misc\Flag;
@@ -12,7 +23,7 @@ use Bavfalcon9\Mavoric\Tasks\PlayerCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 
 use Bavfalcon9\Mavoric\Cheats\{
-    Speed, AutoClicker, KillAura, NoClip, AntiKb,
+    Speed, AutoClicker, KillAura, MultiAura, NoClip, AntiKb,
     Flight, NoSlowdown, Criticals,
     Bhop, Reach, Aimbot, AutoArmor,
     AutoSteal, AutoSword, AutoTool,
@@ -28,17 +39,20 @@ use pocketmine\network\mcpe\protocol\InteractPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\RespawnPacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
+use pocketmine\utils\MainLogger;
+use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use Bavfalcon9\Mavoric\entity\SpecterPlayer;
 use Bavfalcon9\Mavoric\misc\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\misc\Handlers\TpsCheck;
-
+use Bavfalcon9\Mavoric\misc\Utils;
 use pocketmine\math\Vector3;
 
 class Mavoric {
     public const AutoClicker = 0; // AutoClicker
-    public const KillAura = 1; // Kill Arua
-    public const Speed = 2; // Fast movement
+    public const KillAura = 1; // Kill Aura
+    public const MultiAura = 2;
+    public const Speed = 3; // Fast movement
     public const NoClip = 4; // going through blocks
     public const AntiKb = 5; // No knockback
     public const Flight = 6; // Flight
@@ -70,6 +84,9 @@ class Mavoric {
     public const Timer = 32; // Faster than normal
     public const Teleport = 33; // Triggered with tp-arua
 
+    public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
+
+    private $version = '0.1.4';
     private $plugin;
     private $messageHandler;
     private $tpsCheck;
@@ -89,6 +106,7 @@ class Mavoric {
     public function loadDetections() {
         $this->cheats[self::AutoClicker] = new AutoClicker($this->plugin, $this);
         $this->cheats[self::KillAura] = new KillAura($this->plugin, $this);
+        $this->cheats[self::MultiAura] = new MultiAura($this->plugin, $this);
         $this->cheats[self::Speed] = new Speed($this->plugin, $this);
         $this->cheats[self::NoClip] = new NoClip($this->plugin, $this);
         $this->cheats[self::AntiKb] = new AntiKb($this->plugin, $this);
@@ -120,9 +138,11 @@ class Mavoric {
         $this->cheats[self::Spider] = new Spider($this->plugin, $this);
         $this->cheats[self::Timer] = new Timer($this->plugin, $this);
         $this->cheats[self::Teleport] = new Teleport($this->plugin, $this);
-
+        $i = 0;
         foreach ($this->cheats as $cheat) {
             $this->getServer()->getPluginManager()->registerEvents($cheat, $this->plugin);
+            $this->getServer()->getLogger()->info('§c[MAVORIC v'.$this->version.'] REGISTERED DETECTION: §7' . $this->getCheat($i));
+            $i++;
         }
         return $this->getCheats();
     }
@@ -137,8 +157,13 @@ class Mavoric {
      */
 
     public function getCheat(int $number) : String {
+        return self::getCheatName($number);
+    }
+
+    public static function getCheatName(int $number) {
         if ($number === self::AutoClicker) return 'AutoClicker';
         if ($number === self::KillAura)    return 'Kill Aura';
+        if ($number === self::MultiAura)   return 'Multi Aura';
         if ($number === self::Reach)       return 'Reach';
         if ($number === self::Speed)       return 'Speed';
         if ($number === self::NoClip)      return 'NoClip';
@@ -173,9 +198,47 @@ class Mavoric {
         return 'Cheating';
     }
 
+    public static function getCheatFromString(String $name): ?float {
+        if ($name === 'AutoClicker')    return self::AutoClicker;
+        if ($name === 'KillAura')       return self::KillAura;
+        if ($name === 'MultiAura')      return self::MultiAura;
+        if ($name === 'Reach')          return self::Reach;
+        if ($name === 'Speed')          return self::Speed;
+        if ($name === 'NoClip')         return self::NoClip;
+        if ($name === 'AntiKb')         return self::AntiKb;
+        if ($name === 'Flight')         return self::Flight;
+        if ($name === 'NoSlowdown')     return self::NoSlowdown;
+        if ($name === 'Criticals')      return self::Criticals;
+        if ($name === 'Bhop')           return self::Bhop;
+        if ($name === 'Aimbot')         return self::Aimbot;
+        if ($name === 'AutoArmor')      return self::AutoArmor;
+        if ($name === 'AutoSteal')      return self::AutoSteal;
+        if ($name === 'AutoSword')      return self::AutoSword;
+        if ($name === 'AutoTool')       return self::AutoTool;
+        if ($name === 'AntiFire')       return self::AntiFire;
+        if ($name === 'AntiSlip')       return self::AntiSlip;
+        if ($name === 'NoDamage')       return self::NoDamage;
+        if ($name === 'BackStep')       return self::BackStep;
+        if ($name === 'FastPlace')      return self::FastPlace;
+        if ($name === 'FastBreak')      return self::FastBreak;
+        if ($name === 'Follow')         return self::Follow;
+        if ($name === 'FreeCam')        return self::FreeCam;
+        if ($name === 'FastEat')        return self::FastEat;
+        if ($name === 'FastLadder')     return self::FastLadder;
+        if ($name === 'GhostReach')     return self::GhostReach;
+        if ($name === 'HighJump')       return self::HighJump;
+        if ($name === 'JetPack')        return self::JetPack;
+        if ($name === 'NoEffects')      return self::NoEffects;
+        if ($name === 'MenuWalk')       return self::MenuWalk;
+        if ($name === 'Spider')         return self::Spider;
+        if ($name === 'Timer')          return self::Timer;
+        if ($name === 'Teleport')       return self::Teleport;
+        return null;
+    }
+
     public function loadChecker() {
         $scheduler = $this->plugin->getScheduler();
-        $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20 * 3);
+        $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20);
     }
 
     public function getFlag(Player $p) {
@@ -208,12 +271,13 @@ class Mavoric {
 
     /* NPC */
     public function startTask(Player $p, int $time) {
+        return;
         if ($this->hasTaskFor($p)) return;
         $randomName = $this->generateMavName();
         $this->getServer()->addWhitelist($randomName);
         $fakePlayer = $this->interface->openSession($randomName, 'MaVoRic');
         $scheduler = $this->plugin->getScheduler();
-        $task = $scheduler->scheduleRepeatingTask(new PlayerCheck($this, $time, $p, $randomName), 4);
+        $task = $scheduler->scheduleRepeatingTask(new PlayerCheck($this, $time, $p, $randomName), 1);
         $this->tasks[$randomName] = [
             'id' => $task,
             'target' => $p->getName()
@@ -226,6 +290,13 @@ class Mavoric {
             if ($data['target'] == $p->getName()) return true;
         }
         return false;
+    }
+
+    public function getTaskFor(Player $p): ?String {
+        foreach ($this->tasks as $ent=>$data) {
+            if ($data['target'] == $p->getName()) return $ent;
+        }
+        return null;
     }
 
     public function killTask(String $name) {
@@ -247,7 +318,9 @@ class Mavoric {
         if ($type === 'detection') {
             if (in_array($player->getName(), $this->ignoredPlayers)) return;
             $m = $message;
+            $cheatPercentile = CheatPercentile::getPercentile($this->getFlag($player));
             $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
+            $appendance .= " Cheating: §4{$cheatPercentile}%";
             $webhook = $this->plugin->config->getNested('Webhooks.alerts');
             if ($webhook !== null && $webhook !== false) {
                 $embed = [
@@ -285,7 +358,7 @@ class Mavoric {
         $this->plugin->getServer()->broadcastPacket($pla, $pk);
     }
 
-    public function alert(Player $sender, String $type, Player $player, String $cheat='None provided.') {
+    public function alert($sender=null, String $type, Player $player, String $cheat='None provided.') {
         $token = $this->plugin->config->getNested('Webhooks.'.$type);
         $embed = [
             'title' => ($type === 'alert-deny') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
@@ -293,7 +366,7 @@ class Mavoric {
                 [
                     'inline' => true,
                     'name' => 'Staff Member',
-                    'value' => $sender->getName()
+                    'value' => (!$sender) ? 'MAVORIC - CONSOLE' : $sender->getName()
                 ],
                 [
                     'inline' => true,
@@ -313,7 +386,7 @@ class Mavoric {
             ]
         ];
         if (!$token) return;
-        return $this->postWebhook($token, json_encode(["embeds" => [$embed]]), $sender->getName());
+        return $this->postWebhook($token, json_encode(["embeds" => [$embed]]), (!$sender) ? 'MAVORIC - CONSOLE' : $sender->getName());
     }
 
     public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {
@@ -321,9 +394,35 @@ class Mavoric {
         $task = $this->getServer()->getAsyncPool()->submitTask($post);
         return;
     }
+
+    public function checkVersion($config) {
+        if (!$config) {
+            MainLogger::getLogger()->critical('Config could not be found, forcefully disabled.');
+            $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
+            return;
+        }
+        if (!$config->get('Version')) {
+            $this->getPlugin()->saveResource('config.yml');
+            MainLogger::getLogger()->critical('Config version does not match version: ' . $this->version . ' all data erased and replaced.');
+        }
+        if ($config->get('Version') !== $this->version) {
+            MainLogger::getLogger()->critical('Mavoric config version does not match plugin version. Should match version: ' . $this->version);
+            $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
+            return;
+        }
+        MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
+    }
+
+    public function getVersion(): ?String {
+        return $this->version;
+    }
     
     public function getPlugin() {
         return $this->plugin;
+    }
+
+    public function getTpsCheck() {
+        return $this->tpsCheck;
     }
     
     private function getServer() {

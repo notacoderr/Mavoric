@@ -1,33 +1,33 @@
 <?php
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
+ */
 
 namespace Bavfalcon9\Mavoric;
 
-/* Commands */
 use pocketmine\plugin\PluginBase;
-use pocketmine\command\{
-    Command,
-    CommandSender
-};
+use pocketmine\command\Command;
+use pocketmine\command\CommandSender;
 use pocketmine\permission\Permission;
 use pocketmine\entity\Entity;
-
-/* Misc */
-use pocketmine\{
-    Player,
-    Server
-};
+use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
-
-/* Commands */
 use Bavfalcon9\Mavoric\Command\{
     alert
 };
 use pocketmine\utils\Config;
-
-/* Events */
 use Bavfalcon9\Mavoric\EventManager;
-use Bavfalcon9\Mavoric\misc\Tests\SpeedTest;
-//use Bavfalcon9\Mavoric\misc\Lightning;
 
 class Main extends PluginBase {
     public $EventManager;
@@ -36,15 +36,17 @@ class Main extends PluginBase {
         $this->saveResource('config.yml');
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
-        $this->SpeedTest = new SpeedTest($this);
+        //$this->SpeedTest = new SpeedTest($this);
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
-        $this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
+        //$this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
         $this->loadCommands();
         //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
+        $this->config = new Config($this->getDataFolder().'config.yml');
+        // Update current config
+        $this->updateConfigs();
+        $this->mavoric->checkVersion($this->config);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();
-        $this->config = new Config($this->getDataFolder().'config.yml');
-        var_dump($this->config);
     }
 
     public function banAnimation(Player $p, String $reason = 'Cheating') {
@@ -80,6 +82,11 @@ class Main extends PluginBase {
     protected function addPerms(array $permissions) {
         foreach ($permissions as $permission) {
             $this->getServer()->getPluginManager()->addPermission($permission);
+        }
+    }
+    private function updateConfigs() {
+        if (!$this->config->get('Version')) {
+            $this->config->set('Version', $this->mavoric->getVersion());
         }
     }
 

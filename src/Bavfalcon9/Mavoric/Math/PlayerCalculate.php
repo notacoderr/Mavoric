@@ -13,10 +13,12 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\misc;
+namespace Bavfalcon9\Mavoric\Math;
 
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
+use pocketmine\Player;
+use pocketmine\level\Position;
 
 class PlayerCalculate {
     /* DEFAULTS */
@@ -25,13 +27,13 @@ class PlayerCalculate {
     public const Gravity = [
         'min' => 0.0834,
         'max' => 0.0624,
-        'diff' => self::Gravity['max'] - self::Gravity['min']
+        'diff' => 0.0834 - 0.0624
     ];
     public const Friction_Lava = 0.535;
     public const Friction_Air = 0.98;
     public const Friction_Water = 0.89;
     public const WALK_SPEED = 0.221;
-    public const RUN_SPEED = Dynamic;
+    public const RUN_SPEED = 90;
 
     public static function calculateSpeed(int $type) {
 
@@ -41,11 +43,12 @@ class PlayerCalculate {
 
     }
 
-    public static function Surroundings(Player $player) : Array {
+    public static function getSurroundings(Player $player) : Array {
         $x = $player->getX();
         $y = $player->getY();
         $z = $player->getZ();
         $surroundings = [];
+        $level = $player->getLevel();
         // Check 3 blocks in every direction
         for ($xidx = $x-1; $xidx <= $x+1; $xidx = $xidx + 1) {
             for ($zidx = $z-1; $zidx <= $z+1; $zidx = $zidx + 1) {
@@ -63,7 +66,7 @@ class PlayerCalculate {
         $x = $player->getX();
         $y = $player->getY();
         $z = $player->getZ();
-        $pos = new Vector3($x, $y, $z);
+        $pos = new Vector3($x, $y - 1, $z);
         return ($player->getLevel()->getBlock($pos)->getId() !== Block::AIR);
     }
 
@@ -75,8 +78,39 @@ class PlayerCalculate {
         return true;
     }
 
-    public static function getFlight() {
+    public static function isFallingNormal(Position $pos1, Position $pos2, float $ground=0, float $actual=1) : ?Bool {
+        if (floor($pos1->getY()) <= floor($pos2->getY()) && $actual > 1) return false;
+        $amountFell = $pos1->y - $pos2->y;
+        /* JET PACK DETECTION? */
+        if ($amountFell > (12.5 * $actual)) return false;
+        if ($amountFell > 14) return false;
+        if ($amountFell < 1.5 && $amountFell > 0) return true;
+        if ($amountFell < 1 && $amountFell > 0) return false;
+        if ($amountFell < 5 && (floor($pos2->y) > $ground)) return false;
 
+        $expected = self::estimateTime($pos2->getY());
+        var_dump($expected);
+
+        if (floor($expected) - floor($actual) > 1) return false;
+        return true;
+    }
+
+    /**
+     * Estimate falling time
+     */
+    public static function estimateTime(float $y) {
+        $falling_time = 0.5;
+        return $y * $falling_time;
+    }
+
+    public static function isLagging(Position $pos1, Position $pos2) {
+        $xyz = [floor($pos1->getX()), floor($pos1->getY()), floor($pos1->getZ())];
+        $xyz2 = [floor($pos2->getX()), floor($pos2->getY()), floor($pos2->getZ())];
+        return $xyz === $xyz2;
+    }
+
+    public static function getFlight() {
+        return;
     }
 
     public static function getSpeedForEffect(int $time) {
@@ -87,5 +121,6 @@ class PlayerCalculate {
         $level_10 = 17.69;
         $level_11 = 18.3;
         $level_12 = 19.63;
+        return;
     }
 }

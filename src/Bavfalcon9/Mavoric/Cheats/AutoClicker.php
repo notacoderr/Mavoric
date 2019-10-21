@@ -1,4 +1,17 @@
 <?php
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
+ */
 
 namespace Bavfalcon9\Mavoric\Cheats;
 
@@ -27,6 +40,7 @@ class AutoClicker implements Listener {
 
         $cause = $event->getCause();
         $clicker = $event->getDamager();
+        $amount = 24;//$this->mavoric->getCheatConfig()->getCpsLimit();
 
         if ($cause !== 1) return;
         if (!$clicker instanceof Player) return;
@@ -45,19 +59,10 @@ class AutoClicker implements Listener {
             return;
         }
         // AntiCheat checks
-        if ($data['clicks'] >= 26) {
+        if ($data['clicks'] >= $amount) {
             $this->mavoric->getFlag($clicker)->addViolation(Mavoric::AutoClicker, 1);
             $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second]");
             $event->setCancelled();
-            $count = $this->mavoric->getFlag($clicker)->getViolations(Mavoric::AutoClicker);
-            if ($count > 2 && $count <= 4) {
-                $this->mavoric->kick($clicker, $this->mavoric->getCheat(Mavoric::AutoClicker));
-                $this->mavoric->messageStaff('custom', $clicker, "Kicked §7{$player} §cfor §7AutoClicker.");
-            } else {
-                if ($count < 5) return;
-                $this->mavoric->ban($clicker, $this->mavoric->getCheat(Mavoric::AutoClicker));
-                $this->mavoric->getFlag($clicker)->clearViolations();
-            }
         }
 
         if ($data['time'] + 1 <= time()) {

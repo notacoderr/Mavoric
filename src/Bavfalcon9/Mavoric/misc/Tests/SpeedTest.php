@@ -1,6 +1,4 @@
 <?php
-
-namespace Bavfalcon9\Mavoric\misc\Tests;
 /***
  *      __  __                       _      
  *     |  \/  |                     (_)     
@@ -14,6 +12,9 @@ namespace Bavfalcon9\Mavoric\misc\Tests;
  *   @copyright Everything is copyrighted to their respective owners.
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
+
+namespace Bavfalcon9\Mavoric\misc\Tests;
+
 use pocketmine\Player;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\Listener;
@@ -57,6 +58,7 @@ class SpeedTest implements Listener {
 
             return;
         } else {
+            if ($block_below === SELF::VOID) return;
             if ($block_below->getId() === $start[0] && $block_below->getDamage() === $start[1]) {
                 $this->timings[$player->getName()] = [
                     'blocks' => 0,
@@ -70,6 +72,7 @@ class SpeedTest implements Listener {
     }
 
     private function checkBlock(Player $p) {
+        if ($p->y < 0) return SELF::VOID;
         if ($p->getY() - 1 < 0) return self::VOID;
         return $p->getLevel()->getBlockAt($p->getX(), $p->getY()-1, $p->getZ());
     }

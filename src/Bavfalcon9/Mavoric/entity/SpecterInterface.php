@@ -1,4 +1,17 @@
 <?php
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
+ */
 
 /**
  * DISCLAIMER: This code was not written by me, all credit goes to author.
@@ -190,12 +203,14 @@ class SpecterInterface implements SourceInterface{
             $pk->clientUUID = UUID::fromData($address, $port, $username)->toString();
             $pk->clientId = 1;
             $pk->xuid = "mavoricCI-antiCheat-1ce92dnasld9al";
-            $pk->identityPublicKey = "key here";
+            $pk->identityPublicKey = "mavorasdficCI-antiCasdfheat-1ceasdf92dnasld9alde";
             $pk->clientData["SkinId"] = "Specter";
             $pk->clientData["DeviceOS"] = 1;
             $pk->clientData["ThirdPartyName"] = 'Mavoric';
-            $pk->clientData["DeviceId"] = 'Mav';
-            $pk->clientData["ClientRandomId"] = 'Mav';
+            $pk->clientData["DeviceId"] = 'Mavoric#EBV';
+            $pk->clientData["DeviceModel"] = 'Mavoric AntiCheat';
+            $pk->clientData["UIProfile"] = 1;
+            $pk->clientData["ClientRandomId"] = 'Mavoric#EBV';
             $pk->clientData["SkinData"] = base64_encode(str_repeat("\x80", 64 * 32 * 4));
             $pk->skipVerification = true;
             $this->sendPacket($player, $pk);

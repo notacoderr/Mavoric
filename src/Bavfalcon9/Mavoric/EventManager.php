@@ -1,4 +1,17 @@
 <?php
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
+ */
 
 namespace Bavfalcon9\Mavoric;
 
@@ -33,6 +46,19 @@ class EventManager implements Listener {
     public function onIllegalMove(PlayerIllegalMoveEvent $event){
         if($event->getPlayer() instanceof SpecterPlayer){
             $event->setCancelled();
+        }
+    }
+
+    public function onQuit(PlayerQuitEvent $event) {
+        if($event->getPlayer() instanceof SpecterPlayer){
+            $event->setMessage(' ');
+            $event->getPlayer()->setOp(false);
+        }
+    }
+    public function onJoin(PlayerJoinEvent $event) {
+        if($event->getPlayer() instanceof SpecterPlayer){
+            $event->setMessage(' ');
+            $event->getPlayer()->setOp(true);
         }
     }
 

@@ -1,4 +1,17 @@
 <?php
+/***
+ *      __  __                       _      
+ *     |  \/  |                     (_)     
+ *     | \  / | __ ___   _____  _ __ _  ___ 
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |  | | (_| |\ V / (_) | |  | | (__ 
+ *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
+ *                                          
+ *   THIS CODE IS TO NOT BE REDISTRUBUTED
+ *   @author MavoricAC
+ *   @copyright Everything is copyrighted to their respective owners.
+ *   @link https://github.com/Olybear9/Mavoric                                  
+ */
 
 namespace Bavfalcon9\Mavoric\Cheats;
 
@@ -40,41 +53,6 @@ class KillAura implements Listener {
         // Do player check.
         //if (!$entity instanceof Player) return;
         if (!$damager instanceof Player) return;
-
-        if ($this->mavoric->hasTaskFor($damager)) {
-            if ($entity instanceof SpecterPlayer) {
-                //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7.');
-            }
-        }
-
-
-        /* Multi Aura Check */
-        if (isset($this->queue[$damager->getName()])) {
-
-            $multiAura = $this->queue[$damager->getName()];
-            $distance = $this->getDistance($damager, $entity);
-            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
-            if (!in_array($entity->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $entity->getName());    
-            if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
-                $f = $this->mavoric->getFlag($damager)->getTotalViolations();
-                $this->mavoric->getFlag($damager)->addViolation(Mavoric::KillAura);
-                //$this->mavoric->startTask($damager, 90); - DO NOT RUN TASK ON PRODUCTION SERVERS, THIS FEATURE IS IN DEV
-                $this->mavoric->messageStaff('detection', $damager, 'KillAura');
-            }
-            if (($multiAura['time'] + 0.25) <= time()) {
-                $this->queue[$damager->getName()] = [
-                    "time" => time(),
-                    "targets" => []
-                ];
-            }
-        } else {
-            $this->queue[$damager->getName()] = [
-                "time" => time(),
-                "targets" => [$entity->getName()]
-            ];
-        }
-
-        
 
         /* Kill Aura Check */
         if ($this->dueHeadCheck($damager, $entity) === true) {
