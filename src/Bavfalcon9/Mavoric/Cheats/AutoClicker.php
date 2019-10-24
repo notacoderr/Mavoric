@@ -62,7 +62,7 @@ class AutoClicker implements Listener {
         if ($data['clicks'] >= $amount) {
             $this->mavoric->getFlag($clicker)->addViolation(Mavoric::AutoClicker, 1);
             $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second]");
-            $event->setCancelled();
+            if ($this->mavoric->isSuppressed(Mavoric::AutoClicker)) $event->setCancelled();
         }
 
         if ($data['time'] + 1 <= time()) {

@@ -27,6 +27,11 @@ class MessageHandler {
         $this->mavoric = $mavoric;
     }
 
+    public function isQueued(String $message) {
+        $this->purgeOldCache();
+        return isset($this->sent[$message]);
+    }
+
     public function queueMessage(String $message, String $append='') {
         $this->purgeOldCache();
         if (in_array($message, $this->ignored)) return;
@@ -64,7 +69,7 @@ class MessageHandler {
 
     public function purgeOldCache() {
         foreach ($this->sent as $key=>$val) {
-            if ($val['time'] + 10 <= time()) unset($this->sent[$key]);
+            if ($val['time'] + 4 <= time()) unset($this->sent[$key]);
         }
     }
 }

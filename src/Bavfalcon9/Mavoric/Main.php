@@ -24,7 +24,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use Bavfalcon9\Mavoric\Command\{
-    alert
+    alert, mban
 };
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\EventManager;
@@ -53,9 +53,9 @@ class Main extends PluginBase {
         //$this->playsound('mob.enderdragon.growl', $p);
         //$nbt = Entity::createBaseNBT($p->getPosition(), null, lcg_value() * 360, 0);
         //Entity::createEntity('Lightning', $p->getLevel(), $nbt);
-        $this->getServer()->broadcastMessage("§c[MAVORIC]: {$p->getName()} was detected for {$reason} and was banned.");
+        $this->getServer()->broadcastMessage("§c[MAVORIC]: {$p->getName()} was detected for §7Cheating§c and was banned.");
         $this->EventManager->onBan($p, $reason);
-        $p->close('', '§c[MAVORIC] You were banned: '.$reason);
+        $p->close('', '§c[MAVORIC] You were banned: Cheating');
         $this->mavBan($p, $reason);
     }
 
@@ -67,7 +67,8 @@ class Main extends PluginBase {
     private function loadCommands() {
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->registerAll('mavoric', [
-            new alert($this)
+            new alert($this),
+            new mban($this)
         ]);
         $this->addPerms([
             new Permission('mavoric.command', 'No', Permission::DEFAULT_OP),

@@ -16,6 +16,8 @@
 namespace Bavfalcon9\Mavoric\Tasks;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
+use Bavfalcon9\Mavoric\Bavfalcon9\Mavoric\Bans\BanHandler;
 
 class ViolationCheck extends Task {
     private $mav;
@@ -39,7 +41,9 @@ class ViolationCheck extends Task {
                 if ($flag->getViolations($top) < 5) $this->mav->getFlag($player)->removeViolation(Mavoric::Reach, $flag->getViolations($top));
             }
             if ($flag->getTotalViolations() >= 45) {
+                if (!$this->mav->canAutoBan($flag->getMostViolations())) continue;
                 $reason = $this->mav->getCheat($flag->getMostViolations());
+                $this->mav->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mav->getFlag($player)), 'MAVORIC', $reason);
                 $flag->clearViolations();
                 $this->mav->alert(null, 'alert-grant', $player, $reason);
                 $this->mav->ban($player, $reason);
@@ -47,25 +51,17 @@ class ViolationCheck extends Task {
             }
 
             if ($top !== -1) {
-                // if ($top === Mavoric::Reach) return;
-                
                 $reason = $this->mav->getCheat($flag->getMostViolations());
                 $count = $flag->getViolations($top);
-                //if ($this->mav->hasTaskFor($player)) return false;
                 
                 if ($flag->getViolations($top) >= 35) {
+                    if (!$this->mav->canAutoBan($flag->getMostViolations())) continue;
                     $flag->clearViolations();
+                    $this->mav->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mav->getFlag($player)), 'MAVORIC', $reason);
                     $this->mav->alert(null, 'alert-grant', $player, $reason);
                     $this->mav->ban($player, $reason);
                     continue;
                 } 
-                /*
-                if ($flag->getViolations($top) >= 5) {
-                    if ($this->mav->hasTaskFor($player)) continue;
-                    //$flag->clearViolations();
-                    //$this->mav->startTask($player, 90);
-                    continue;
-                }*/
             }
 
         }

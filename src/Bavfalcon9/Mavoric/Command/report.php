@@ -30,6 +30,7 @@ class mreport extends Command {
         $this->description = "Report a player for violating a rule.";
         $this->usageMessage = "/mreport <player> <violation>";
         $this->setPermission("mavoric.report");
+        $this->setAliases(["mavreport", "mavr", "report-mav"]);
     }
     
     public function execute(CommandSender $sender, string $commandLabel, array $args) : bool {
@@ -37,5 +38,7 @@ class mreport extends Command {
             $sender->sendMessage(TF::RED . "You do not have permission to use this command.");
             return false;
         }
+        $sender->sendMessage(TF::RED . "This is not a premium version of Mavoric.");
+        return true;
     }
 }

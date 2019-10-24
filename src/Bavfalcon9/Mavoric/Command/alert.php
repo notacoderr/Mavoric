@@ -29,7 +29,6 @@ class alert extends Command {
         $this->pl = $pl;
         $this->description = "[]";
         $this->usageMessage = "/alert <confirm/deny/ignore/unignore/info> <player>";
-        $this->setAliases(["mban", "mav"]);
         $this->setPermission("mavoric.alerts");
     }
     
@@ -39,15 +38,20 @@ class alert extends Command {
             return true;
         }
 
-        if (!isset($args[0]) || !isset($args[1])) {
-            $sender->sendMessage('§cMissing type <confirm/deny/ignore/unignore> or <player>');
+        if (!isset($args[0])) {
+            $sender->sendMessage('§cInclude <confirm/deny/info/ignore/unignore>');
+            return true;
+        }
+
+        if (!isset($args[0])) {
+            $sender->sendMessage('§cInclude a player');
             return true;
         }
 
         $type = strtolower($args[0]);
         $player = $this->pl->getServer()->getPlayer(implode(' ', array_slice($args, 1)));
 
-        if ($player === null || $player->isClosed()) return false;
+        if ($player === null || $player->isClosed()) return $sender->sendMessage('§cPlayer invalid');
         if ($type === 'confirm') {
             $flag = $this->pl->mavoric->getFlag($player);
             $top = $flag->getMostViolations();
@@ -56,6 +60,7 @@ class alert extends Command {
                 return true;
             } else {
                 $cheat = $this->pl->mavoric->getCheat($flag->getMostViolations());
+                $this->mav->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->getFlag($player)), 'MAVORIC', $cheat);
                 $this->pl->mavoric->alert($sender, 'alert-grant', $player, $cheat);
                 $this->pl->mavoric->ban($player, $cheat);
                 $sender->sendMessage('§aIssued ban.');

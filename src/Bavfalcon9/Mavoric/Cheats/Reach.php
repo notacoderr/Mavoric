@@ -61,6 +61,7 @@ class Reach implements Listener {
                     $total_reach = $this->checkReach($damager, $entity);
                     $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
                     $this->mavoric->messageStaff('detection', $damager, 'Reach', " [{$total_reach} blocks]");
+                    if ($this->mavoric->isSuppressed(Mavoric::Reach)) $event->setCancelled();
             }
         }
     }
