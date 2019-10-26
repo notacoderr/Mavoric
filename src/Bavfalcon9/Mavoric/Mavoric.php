@@ -88,7 +88,7 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
-    private $version = '0.1.5';
+    private $version = '0.1.6';
     private $plugin;
     private $banHandler;
     private $messageHandler;
@@ -246,7 +246,6 @@ class Mavoric {
     }
 
     public function loadChecker(): ?Bool {
-        if ($this->plugin->config->getNested('Autoban.disabled') === true) return true;
         $scheduler = $this->plugin->getScheduler();
         $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20);
         return false;
@@ -268,6 +267,7 @@ class Mavoric {
         if ($bans->isBanned($p)) return false;
         $this->getFlag($p)->clearViolations();
         $this->killTask($p->getName());
+        if ($this->plugin->config->getNested('Autoban.vague-reasoning') === true) $reason = 'Cheating';
         return $this->plugin->banAnimation($p, $reason);
     }
 

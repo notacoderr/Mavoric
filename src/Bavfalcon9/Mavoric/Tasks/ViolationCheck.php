@@ -32,18 +32,25 @@ class ViolationCheck extends Task {
         // Do players
         // Add per cheat violation
         $this->seconds++;
+        $this->mav->getPlugin()->reportHandler->checkReports();
+        
+        if ($this->mav->getPlugin()->config->getNested('Autoban.disabled') === true) return true;
         $players = $this->mav->getPlugin()->getServer()->getOnlinePlayers();
         foreach ($players as $player) {
             $flag = $this->mav->getFlag($player);
             $top = $flag->getMostViolations();
 
             if ($top === Mavoric::Reach) {
-                if ($flag->getViolations($top) < 5) $this->mav->getFlag($player)->removeViolation(Mavoric::Reach, $flag->getViolations($top));
+                if ($flag->getViolations($top) < 5) {
+                    if (!$this->mav->getPlugin()->reportHandler->isReported($player->getName())) {
+                        $this->mav->getFlag($player)->removeViolation(Mavoric::Reach, $flag->getViolations($top));
+                    }
+                }
             }
             if ($flag->getTotalViolations() >= 45) {
                 if (!$this->mav->canAutoBan($flag->getMostViolations())) continue;
                 $reason = $this->mav->getCheat($flag->getMostViolations());
-                $this->mav->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mav->getFlag($player)), 'MAVORIC', $reason);
+                $this->mav->banManager->saveBan($player->getName(), $flag->clone()->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mav->getFlag($player)), 'MAVORIC', $reason);
                 $flag->clearViolations();
                 $this->mav->alert(null, 'alert-grant', $player, $reason);
                 $this->mav->ban($player, $reason);
@@ -57,7 +64,7 @@ class ViolationCheck extends Task {
                 if ($flag->getViolations($top) >= 35) {
                     if (!$this->mav->canAutoBan($flag->getMostViolations())) continue;
                     $flag->clearViolations();
-                    $this->mav->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mav->getFlag($player)), 'MAVORIC', $reason);
+                    $this->mav->banManager->saveBan($player->getName(), $flag->clone()->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mav->getFlag($player)), 'MAVORIC', $reason);
                     $this->mav->alert(null, 'alert-grant', $player, $reason);
                     $this->mav->ban($player, $reason);
                     continue;

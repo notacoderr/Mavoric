@@ -87,4 +87,8 @@ class Flag {
     public function getRaw() {
         return $this->flags;
     }
+
+    public function clone() {
+        return $this;
+    }
 } 

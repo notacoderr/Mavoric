@@ -20,6 +20,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
+use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
 
 class alert extends Command {
     private $pl;
@@ -51,7 +52,10 @@ class alert extends Command {
         $type = strtolower($args[0]);
         $player = $this->pl->getServer()->getPlayer(implode(' ', array_slice($args, 1)));
 
-        if ($player === null || $player->isClosed()) return $sender->sendMessage('§cPlayer invalid');
+        if ($player === null || $player->isClosed()) {
+            $sender->sendMessage('§cPlayer invalid');
+            return true;
+        }
         if ($type === 'confirm') {
             $flag = $this->pl->mavoric->getFlag($player);
             $top = $flag->getMostViolations();
@@ -60,7 +64,7 @@ class alert extends Command {
                 return true;
             } else {
                 $cheat = $this->pl->mavoric->getCheat($flag->getMostViolations());
-                $this->mav->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->getFlag($player)), 'MAVORIC', $cheat);
+                $this->pl->mavoric->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->pl->mavoric->getFlag($player)), $sender->getName(), $cheat);
                 $this->pl->mavoric->alert($sender, 'alert-grant', $player, $cheat);
                 $this->pl->mavoric->ban($player, $cheat);
                 $sender->sendMessage('§aIssued ban.');

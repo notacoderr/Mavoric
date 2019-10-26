@@ -40,7 +40,16 @@ class BanHandler {
         }
         return $allBans;
     }
-
+    public function getAllBans(): ?Float {
+        $dirs = scandir($banDir);
+        $bansTotal = 0;
+        foreach ($dirs as $dir) {
+            if ($dir === '.' || $dir === '..') continue;
+            $banPer = scandir($this->getBanDir($dir));
+            $bansTotal += sizeOf($banPer) - 2 ;
+        }
+        return $bansTotal;
+    }
     public function getTotalBans(): ?Float {
         return $this->total;
     }

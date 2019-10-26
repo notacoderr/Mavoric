@@ -1,4 +1,4 @@
-Version: 0.1.5 # DO NOT CHANGE THIS!
+Version: 0.1.6 # DO NOT CHANGE THIS!
 Webhooks:
   alert-deny: false # Discord URL to enable
   alert-grant: false # Discord URL to enable
@@ -8,6 +8,7 @@ Autoban:
   violation-count: 20 # Autoban after x violations of a specific cheat
   max-violation: 30 # Autoban if x or more violations
   disabled: false # set this to true for no auto bans.
+  vague-reasoning: true # set this to false if you want mavoric to put "PLAYER WAS BANNED FOR {CHEAT}" instead of "PLAYER WAS BANNED FOR CHEATING"
 Alerts:
   tps: 17 # At 15 tps warn online staff members.
   tps-low: 10 # Below 10 tps warn online staff members.

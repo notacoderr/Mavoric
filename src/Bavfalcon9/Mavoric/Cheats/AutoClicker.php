@@ -40,7 +40,8 @@ class AutoClicker implements Listener {
 
         $cause = $event->getCause();
         $clicker = $event->getDamager();
-        $amount = 24;//$this->mavoric->getCheatConfig()->getCpsLimit();
+        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 24 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
+        if (!is_numeric($amount)) $amount = 24;
 
         if ($cause !== 1) return;
         if (!$clicker instanceof Player) return;
