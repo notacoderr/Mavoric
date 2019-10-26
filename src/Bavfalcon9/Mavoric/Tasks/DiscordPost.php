@@ -37,6 +37,7 @@ class DiscordPost extends AsyncTask {
 
     public function onCompletion(Server $server) {
         $p = $server->getPlayer($this->replyTo);
+        echo $this->getResult();
         if ($p === null || $p->isClosed()) return;
         else {
             if ($this->getResult() !== '') $p->sendMessage('§c[ALERT]: Failed to post ban on discord.');

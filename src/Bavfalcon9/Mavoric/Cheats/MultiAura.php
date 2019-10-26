@@ -57,6 +57,7 @@ class MultiAura implements Listener {
         if ($this->mavoric->hasTaskFor($damager)) {
             if ($entity instanceof SpecterPlayer) {
                 if (!$this->mavoric->getTaskFor($damager) === $entity->getName()) return;
+                if ($this->mavoric->isSuppressed(Mavoric::MultiAura)) $event->setCancelled();
                 $this->mavoric->getFlag($damager)->addViolation(Mavoric::MultiAura);
                 $this->mavoric->messageStaff('detection', $damager, 'MultiAura');
                 //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7.');
@@ -71,9 +72,10 @@ class MultiAura implements Listener {
             if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
             if (!in_array($entity->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $entity->getName());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
+                if ($this->mavoric->isSuppressed(Mavoric::MultiAura)) $event->setCancelled();
                 $f = $this->mavoric->getFlag($damager)->getTotalViolations();
                 $this->mavoric->getFlag($damager)->addViolation(Mavoric::MultiAura);
-                $this->mavoric->startTask($damager, 3); # - DO NOT RUN TASK ON PRODUCTION SERVERS, THIS FEATURE IS IN DEV
+                $this->mavoric->startTask($damager, 4);
                 $this->mavoric->messageStaff('detection', $damager, 'MultiAura');
             }
             if (($multiAura['time'] + 0.25) <= time()) {

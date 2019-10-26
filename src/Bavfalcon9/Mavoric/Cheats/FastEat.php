@@ -66,8 +66,10 @@ class FastEat implements Listener {
             $food = sizeof($consumed['consumed']);
 
             if ($food <= 1) return;
-            $event->setCancelled();
-            $player->setFood(0);
+            if ($this->mavoric->isSuppressed(Mavoric::FastEat)) {
+                $event->setCancelled();
+                $player->setFood(0);
+            }
             $this->mavoric->getFlag($player)->addViolation(Mavoric::FastEat, 20);
             $this->mavoric->messageStaff('detection', $player, 'FastEat');
             return;

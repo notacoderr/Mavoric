@@ -76,7 +76,8 @@ class NoClip implements Listener {
             if (in_array($blockAtB->getId(), $this->slabs)) return false;
             $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
             $this->mavoric->messageStaff('detection', $player, 'NoClip');
-            $player->teleport($event->getFrom());
+
+            if ($this->mavoric->isSuppressed(Mavoric::NoClip)) return $player->teleport($event->getFrom());
         }
     }
 

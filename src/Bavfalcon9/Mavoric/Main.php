@@ -24,18 +24,22 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use Bavfalcon9\Mavoric\Command\{
-    alert
+    alert, mban, mreport
 };
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\EventManager;
+use Bavfalcon9\Mavoric\misc\Handlers\ReportHandler;
 
 class Main extends PluginBase {
     public $EventManager;
     public $config;
+    public $reportHandler;
+
     public function onEnable() {
         $this->saveResource('config.yml');
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
+        $this->reportHandler = new ReportHandler($this->mavoric, $this);
         //$this->SpeedTest = new SpeedTest($this);
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
         //$this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
@@ -55,7 +59,7 @@ class Main extends PluginBase {
         //Entity::createEntity('Lightning', $p->getLevel(), $nbt);
         $this->getServer()->broadcastMessage("§c[MAVORIC]: {$p->getName()} was detected for {$reason} and was banned.");
         $this->EventManager->onBan($p, $reason);
-        $p->close('', '§c[MAVORIC] You were banned: '.$reason);
+        $p->close('', '§c[MAVORIC] You were banned: ' . $reason);
         $this->mavBan($p, $reason);
     }
 
@@ -67,11 +71,14 @@ class Main extends PluginBase {
     private function loadCommands() {
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->registerAll('mavoric', [
-            new alert($this)
+            new alert($this),
+            new mban($this),
+            new mreport($this)
         ]);
         $this->addPerms([
             new Permission('mavoric.command', 'No', Permission::DEFAULT_OP),
-            new Permission('mavoric.alerts', 'View and use mavoric alerts.', Permission::DEFAULT_OP)
+            new Permission('mavoric.alerts', 'View and use mavoric alerts.', Permission::DEFAULT_OP),
+            new Permission('mavoric.report', 'Report Players', Permission::DEFAULT_OP)
         ]);
     }
 

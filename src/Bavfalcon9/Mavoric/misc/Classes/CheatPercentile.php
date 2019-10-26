@@ -26,7 +26,7 @@ class CheatPercentile {
      */
     public static function getEstimatedPercentile(Flag $flag): ?float {
         $most = $flag->getViolations($flag->getMostViolations());
-        $percentage = ($flag->getTotalViolations() / self::PERCENTILE_FLAG_TOTAL) * 100; // 20 being, probably cheating
+        $percentage = ($flag->getTotalViolations() / self::PERCENTILE_FLAG_TOTAL) * 100;
 
         if ($most >= 35) return 100;
         return (floor($percentage) >= 100) ? 100 : floor($percentage);
@@ -39,7 +39,6 @@ class CheatPercentile {
             $temp_perc = ($count / self::PERCENTILE_FLAG_INDIV) * 100;
             $percentage += $temp_perc;
         }
-        var_dump($percentage);
         return (floor($percentage) >= 100) ? 100 : floor($percentage);
     }
 }

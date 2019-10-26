@@ -80,7 +80,15 @@ class Flag {
         return $newArr;
     }
 
+    public function getViolationsByValue() {
+        return (empty($this->flags)) ? [] : array_keys($this->flags);
+    }
+
     public function getRaw() {
         return $this->flags;
+    }
+
+    public function clone() {
+        return $this;
     }
 } 

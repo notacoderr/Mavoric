@@ -40,6 +40,8 @@ use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\RespawnPacket;
 use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\utils\MainLogger;
+use pocketmine\utils\Config;
+use Bavfalcon9\Mavoric\Bans\BanHandler;
 use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use Bavfalcon9\Mavoric\entity\SpecterPlayer;
@@ -86,8 +88,9 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
-    private $version = '0.1.4';
+    private $version = '0.1.6';
     private $plugin;
+    private $banHandler;
     private $messageHandler;
     private $tpsCheck;
     private $cheats = [];
@@ -101,6 +104,7 @@ class Mavoric {
         $this->interface = new SpecterInterface($plugin);
         $this->messageHandler = new MessageHandler($plugin, $this);
         $this->tpsCheck = new TpsCheck($plugin, $this);
+        $this->banManager = new BanHandler($this->plugin->getDataFolder() . 'ban_data');
     }
 
     public function loadDetections() {
@@ -139,11 +143,16 @@ class Mavoric {
         $this->cheats[self::Timer] = new Timer($this->plugin, $this);
         $this->cheats[self::Teleport] = new Teleport($this->plugin, $this);
         $i = 0;
-        foreach ($this->cheats as $cheat) {
-            $this->getServer()->getPluginManager()->registerEvents($cheat, $this->plugin);
-            $this->getServer()->getLogger()->info('§c[MAVORIC v'.$this->version.'] REGISTERED DETECTION: §7' . $this->getCheat($i));
-            $i++;
+        foreach ($this->cheats as $identity=>$cheat) {
+            if (!$this->isEnabled($identity)) {
+                $this->getServer()->getLogger()->info('§c[MAVORIC v'.$this->version.'] DISABLED DETECTION: '.$this->getCheat($identity));
+            } else {
+                $this->getServer()->getPluginManager()->registerEvents($cheat, $this->plugin);
+                $this->getServer()->getLogger()->info('§a[MAVORIC v'.$this->version.'] ENABLED DETECTION: ' . $this->getCheat($identity));
+                $i++;
+            }
         }
+        $this->getServer()->getLogger()->info('§a[MAVORIC v'.$this->version.'] '.$i.' ENABLED DETECTIONS | §c'.(sizeof($this->cheats) - $i).' DISABLED DETECTIONS.');
         return $this->getCheats();
     }
 
@@ -162,8 +171,8 @@ class Mavoric {
 
     public static function getCheatName(int $number) {
         if ($number === self::AutoClicker) return 'AutoClicker';
-        if ($number === self::KillAura)    return 'Kill Aura';
-        if ($number === self::MultiAura)   return 'Multi Aura';
+        if ($number === self::KillAura)    return 'KillAura';
+        if ($number === self::MultiAura)   return 'MultiAura';
         if ($number === self::Reach)       return 'Reach';
         if ($number === self::Speed)       return 'Speed';
         if ($number === self::NoClip)      return 'NoClip';
@@ -185,8 +194,8 @@ class Mavoric {
         if ($number === self::FastBreak)   return 'Fast Break';
         if ($number === self::Follow)      return 'Follow';
         if ($number === self::FreeCam)     return 'FreeCam';
-        if ($number === self::FastEat)     return 'Fast Eat';
-        if ($number === self::FastLadder)  return 'Fast Ladder';
+        if ($number === self::FastEat)     return 'FastEat';
+        if ($number === self::FastLadder)  return 'FastLadder';
         if ($number === self::GhostReach)  return 'GhostReach';
         if ($number === self::HighJump)    return 'HighJump';
         if ($number === self::JetPack)     return 'JetPack';
@@ -236,9 +245,10 @@ class Mavoric {
         return null;
     }
 
-    public function loadChecker() {
+    public function loadChecker(): ?Bool {
         $scheduler = $this->plugin->getScheduler();
         $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20);
+        return false;
     }
 
     public function getFlag(Player $p) {
@@ -257,6 +267,7 @@ class Mavoric {
         if ($bans->isBanned($p)) return false;
         $this->getFlag($p)->clearViolations();
         $this->killTask($p->getName());
+        if ($this->plugin->config->getNested('Autoban.vague-reasoning') === true) $reason = 'Cheating';
         return $this->plugin->banAnimation($p, $reason);
     }
 
@@ -271,7 +282,8 @@ class Mavoric {
 
     /* NPC */
     public function startTask(Player $p, int $time) {
-        return;
+        $allowed = $this->plugin->config->get('AllowNPC');
+        if (!$allowed) return;
         if ($this->hasTaskFor($p)) return;
         $randomName = $this->generateMavName();
         $this->getServer()->addWhitelist($randomName);
@@ -326,9 +338,9 @@ class Mavoric {
                 $embed = [
                     'color' => 0xFF0000,
                     'title' => 'Mavoric Detection',
-                    'description' => "**Player:** {$player->getName()}\n**Violation:** {$m}\n**Violation-Info:** {$appendance}"
+                    'description' => "**Player:** {$player->getName()}\n**Violation:** {$m}\n**Violation-Info:** {$this->cleanColor($appendance)}"
                 ];
-                $this->postWebhook($webhook, json_encode(["embeds" => $embed]));
+                if (!$this->messageHandler->isQueued($message)) $this->postWebhook($webhook, json_encode(["embeds" => [$embed]]));
             }
         } else {
             $message = "§c[MAVORIC]: $message";
@@ -337,9 +349,9 @@ class Mavoric {
                 $embed = [
                     'color' => 0xFF0000,
                     'title' => 'Mavoric Alert',
-                    'description' => "{$message}"
+                    'description' => "{$this->cleanColor($message)}"
                 ];
-                $this->postWebhook($webhook, json_encode(["embeds" => $embed]));
+                if (!$this->messageHandler->isQueued($message)) $this->postWebhook($webhook, json_encode(["embeds" => [$embed]]));
             }
         }
         $this->messageHandler->queueMessage($message, $appendance);
@@ -406,11 +418,44 @@ class Mavoric {
             MainLogger::getLogger()->critical('Config version does not match version: ' . $this->version . ' all data erased and replaced.');
         }
         if ($config->get('Version') !== $this->version) {
-            MainLogger::getLogger()->critical('Mavoric config version does not match plugin version. Should match version: ' . $this->version);
-            $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
-            return;
+            MainLogger::getLogger()->info('Mavoric config version does not match plugin version. Should match version: ' . $this->version.', fixing...');
+            $this->plugin->saveResource('config.yml', true);
+            $new = new Config($this->plugin->getDataFolder().'config.yml');
+            $old = $config->getAll();
+            foreach ($old as $key=>$val) {
+                $new->set($key, $val);
+            }
+            $new->set('Version', $this->version);
+            $new->save();
+            MainLogger::getLogger()->info('Mavoric config updated to v' . $this->version.'.');
         }
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
+    }
+
+    public function cleanColor(String $str) {
+        $str = str_replace('§0', '', $str);
+        $str = str_replace('§1', '', $str);
+        $str = str_replace('§2', '', $str);
+        $str = str_replace('§3', '', $str);
+        $str = str_replace('§4', '', $str);
+        $str = str_replace('§5', '', $str);
+        $str = str_replace('§6', '', $str);
+        $str = str_replace('§7', '', $str);
+        $str = str_replace('§8', '', $str);
+        $str = str_replace('§9', '', $str);
+        $str = str_replace('§a', '', $str);
+        $str = str_replace('§b', '', $str);
+        $str = str_replace('§c', '', $str);
+        $str = str_replace('§d', '', $str);
+        $str = str_replace('§e', '', $str);
+        $str = str_replace('§f', '', $str);
+        $str = str_replace('§i', '', $str);
+        $str = str_replace('§k', '', $str);
+        $str = str_replace('§l', '', $str);
+        $str = str_replace('§m', '', $str);
+        $str = str_replace('§o', '', $str);
+        $str = str_replace('§r', '', $str);
+        return $str;
     }
 
     public function getVersion(): ?String {
@@ -427,5 +472,29 @@ class Mavoric {
     
     private function getServer() {
         return $this->plugin->getServer();
+    }
+
+    public function isSuppressed(Float $cheat): ?Bool {
+        if (!$this->getCheatName($cheat)) return $this->plugin->config->get('Suppression');
+        $mascular = $this->plugin->config->get('Suppression');
+        $singular = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.suppression"); 
+        if ($singular === true) return true;
+        if ($singular === null) return $mascular;
+        else return $singular;
+    }
+
+    public function canAutoBan(Float $cheat): ?Bool {
+        if (!$this->getCheatName($cheat)) return !$this->plugin->config->getNested('Autoban.disabled');
+        $mascular = !$this->plugin->config->getNested('Autoban.disabled');
+        $singular = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.autoban"); 
+        if ($singular === null) return $mascular;
+        return $singular;
+    }
+
+    public function isEnabled(Float $cheat): ?Bool {
+        if (!$this->getCheatName($cheat)) return null;
+
+        $cheat = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.enabled");
+        return ($cheat === null) ? true : $cheat;
     }
 }
