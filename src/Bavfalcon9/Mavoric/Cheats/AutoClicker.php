@@ -61,8 +61,12 @@ class AutoClicker implements Listener {
         }
         // AntiCheat checks
         if ($data['clicks'] >= $amount) {
-            $this->mavoric->getFlag($clicker)->addViolation(Mavoric::AutoClicker, 1);
-            $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second]");
+            if ($clicker->getPing() >= 700) {
+                $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second] but is lagging.");
+            } else {
+                $this->mavoric->getFlag($clicker)->addViolation(Mavoric::AutoClicker, 1);
+                $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second]");
+            }
             if ($this->mavoric->isSuppressed(Mavoric::AutoClicker)) $event->setCancelled();
         }
 

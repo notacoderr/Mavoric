@@ -60,6 +60,7 @@ class MultiAura implements Listener {
                 if ($this->mavoric->isSuppressed(Mavoric::MultiAura)) $event->setCancelled();
                 $this->mavoric->getFlag($damager)->addViolation(Mavoric::MultiAura);
                 $this->mavoric->messageStaff('detection', $damager, 'MultiAura');
+                
                 //$this->mavoric->messageStaff('§4§lMavoric §f> §r§b'.$damager->getName().'§7 detected for §bKill Aura§7.');
             }
         }

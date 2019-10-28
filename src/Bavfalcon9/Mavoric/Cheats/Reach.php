@@ -58,10 +58,10 @@ class Reach implements Listener {
             if ($this->hasTeleported($entity) === true) return;
             if ($this->hasTeleported($damager) === true) return;
             if (!$damager->isCreative()) {
+                    if ($this->mavoric->isSuppressed(Mavoric::Reach)) $event->setCancelled();
                     $total_reach = $this->checkReach($damager, $entity);
                     $this->mavoric->getFlag($damager)->addViolation(Mavoric::Reach);
                     $this->mavoric->messageStaff('detection', $damager, 'Reach', " [{$total_reach} blocks]");
-                    if ($this->mavoric->isSuppressed(Mavoric::Reach)) $event->setCancelled();
             }
         }
     }
@@ -112,7 +112,7 @@ class Reach implements Listener {
         $distanceZ = sqrt(pow(($pz - $dz), 2) + pow(($py - $dy), 2));
 
         if ($dam->isCreative()) return false;
-        if (abs($distanceX) >= 6.23 || abs($distanceZ >= 6.23)) return (abs($distanceX) > abs($distanceZ)) ? abs($distanceX) : abs($distanceZ);
+        if (abs($distanceX) >= 6 || abs($distanceZ >= 6)) return (abs($distanceX) > abs($distanceZ)) ? abs($distanceX) : abs($distanceZ);
         return false;
     }
 
