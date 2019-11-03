@@ -26,7 +26,7 @@ class CheatTranslation {
             if (!$cheat) continue;
             else array_push($completed, $cheat);
         }
-        return (!empty($completed)) ? $completed : null;
+        return (sizeOf($completed) > 0) ? $completed : null;
     }
 
     public static function TranslateCheat(String $cheat): ?float {

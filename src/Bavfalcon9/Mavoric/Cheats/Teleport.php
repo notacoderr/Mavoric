@@ -17,26 +17,41 @@ namespace Bavfalcon9\Mavoric\Cheats;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-
 use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat as TF;
-
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
+use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\{
     Player,
     Server
 };
 
-/* API CHANGE (Player) */
-
 class Teleport implements Listener {
     private $mavoric;
     private $plugin;
+    private $disabled = true;
 
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->plugin = $plugin;
         $this->mavoric = $mavoric;
+    }
+    
+
+    public function onMove(PlayerMoveEvent $event) {
+        if ($this->disabled) return;
+        $player = $event->getPlayer();
+        $to = $event->getTo();
+        $from = $event->getFrom();
+        $distance = abs($to->distance($from));
+        if ($distance >= 5) {
+            if ($player->getPing() >= 300) {
+                if ($this->mavoric->isSuppressed(Mavoric::Teleport)) $event->setCancelled();
+                $this->mavoric->messageStaff('detection', $player, 'Teleport', " [Traveled {$distance} blocks in one move but is lagging]");
+                return;
+            } else {
+                if ($this->mavoric->isSuppressed(Mavoric::Teleport)) $event->setCancelled();
+                $this->mavoric->getFlag($player)->addViolation(Mavoric::Teleport);
+                $this->mavoric->messageStaff('detection', $player, 'Teleport', " [Traveled {$distance} blocks in one move]");
+                return;
+            }
+        }
     }
 }

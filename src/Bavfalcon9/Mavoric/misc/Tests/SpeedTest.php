@@ -72,8 +72,8 @@ class SpeedTest implements Listener {
     }
 
     private function checkBlock(Player $p) {
-        if ($p->y < 0) return SELF::VOID;
-        if ($p->getY() - 1 < 0) return self::VOID;
+        if ($p->y < 0) return self::VOID;
+        if ($p->y - 1 < 0) return self::VOID;
         return $p->getLevel()->getBlockAt($p->getX(), $p->getY()-1, $p->getZ());
     }
 

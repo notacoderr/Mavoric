@@ -39,6 +39,7 @@ Cheats:
   Speed:
     enabled: true
     suppression: true
+    type: event
   AutoClicker:
     enabled: true
     suppression: true

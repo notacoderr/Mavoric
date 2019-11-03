@@ -88,7 +88,7 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
-    private $version = '0.1.7';
+    private $version = '0.1.8';
     private $plugin;
     private $banHandler;
     private $messageHandler;
@@ -251,7 +251,7 @@ class Mavoric {
         return false;
     }
 
-    public function getFlag(Player $p) {
+    public function getFlag($p) {
         if ($p === null) return new Flag('Invalid');
         if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return new Flag('TPS CHECK');
         if (!isset($this->flags[$p->getName()])) {
