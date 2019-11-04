@@ -56,6 +56,7 @@ class Speed implements Listener {
     
 
     public function onMove(PlayerMoveEvent $event) {
+        // I took this from my SpeedTest and I'm going to make it more movement based
         $player = $event->getPlayer();
         $block_below = $this->checkBlock($player);
         if (isset($this->timings[$player->getName()])) {
