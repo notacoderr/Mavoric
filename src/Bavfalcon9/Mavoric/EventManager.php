@@ -42,7 +42,6 @@ class EventManager implements Listener {
         $this->plugin = $pl;
     }
 
-    /* NPC */
     public function onIllegalMove(PlayerIllegalMoveEvent $event){
         if($event->getPlayer() instanceof SpecterPlayer){
             $event->setCancelled();
@@ -65,23 +64,4 @@ class EventManager implements Listener {
     public function onBan(Player $p, String $reason) {
         
     }
-/*
-    public function onJoin(PlayerPreLoginEvent $event) {
-        $player = $event->getPlayer();
-        $bans = $this->plugin->getServer()->getNameBans();
-        if ($bans->isBanned($player->getName())) {
-            $entry = $bans->getEntry($player->getName());
-            if ($entry->getSource() !== 'Mavoric') {
-                $player->close('', '§f§l> §r§cModerator: §b'.$entry->getSource()."\n§r§f§l> §r§cReason: §b".$entry->getReason()."\n §f§l>§r§cAppeal: §blink here");
-                $event->setCancelled(true);
-                return;
-            } else {
-                
-                $reason = str_replace('§4§lMavoric§r §f§l> §r§b', '', $entry->getReason());
-                $player->close('', "§c Mavoric - Cheat Violation\n"."§f§l> §r§cViolation(s): §b".$reason);
-                $event->setCancelled(true);
-            }
-        }
-        return;
-    }*/
 }
