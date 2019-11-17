@@ -1,5 +1,7 @@
-# Mavoric - v DEV
-# This version is no longer being worked on.
+=======
+# Mavoric - v Stable 0.1.7
+# This version has been tested and is stable to use
+
 ## The best AntiCheat for Pocketmine
 
 ### Introduction
