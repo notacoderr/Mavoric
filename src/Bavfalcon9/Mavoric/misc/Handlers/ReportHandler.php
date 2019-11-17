@@ -33,7 +33,6 @@ class Reporthandler {
     public function submitReport($player, Array $cheats, String $reporter) : ?Bool {
         if (!$player) return null;
         if ($player instanceof Player) $player = $player->getName();
-
         if (!isset($this->reports[$player])) {
             $this->reports[$player] = [
                 'total' => 1,
@@ -42,7 +41,7 @@ class Reporthandler {
             ];
             return true;
         } else {
-            if (in_array($player, $this->reports[$player]['reporters'])) return false;
+            if (in_array($reporter, $this->reports[$player]['reporters'])) return false;
             $this->reports[$player]['total']++;
             array_push($this->reports[$player]['cheats'], $cheats);
             array_push($this->reports[$player]['reporters'], $reporter);
@@ -92,7 +91,9 @@ class Reporthandler {
     public function shouldBan($player): Bool {
         $online = sizeof($this->plugin->getServer()->getOnlinePlayers());
         if (!isset($this->reports[$player])) return false;
-            $flag = $this->mavoric->getFlag($this->plugin->getServer()->getPlayer($player));
+        $player = $this->plugin->getServer()->getPlayer($player);
+        if (!$player) return false;
+        $flag = $this->mavoric->getFlag($player);
         if ($flag->getTotalViolations() >= 20) return true;
         else return false;
     }

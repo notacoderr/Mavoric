@@ -88,7 +88,7 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
-    private $version = '0.1.6';
+    private $version = '0.1.8';
     private $plugin;
     private $banHandler;
     private $messageHandler;
@@ -251,7 +251,7 @@ class Mavoric {
         return false;
     }
 
-    public function getFlag(Player $p) {
+    public function getFlag($p) {
         if ($p === null) return new Flag('Invalid');
         if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return new Flag('TPS CHECK');
         if (!isset($this->flags[$p->getName()])) {
@@ -285,6 +285,7 @@ class Mavoric {
         $allowed = $this->plugin->config->get('AllowNPC');
         if (!$allowed) return;
         if ($this->hasTaskFor($p)) return;
+        $this->messageStaff('debug', null, "NPC check for player: §7{$p->getName()} §cadministered for §7{$time}§c seconds.");
         $randomName = $this->generateMavName();
         $this->getServer()->addWhitelist($randomName);
         $fakePlayer = $this->interface->openSession($randomName, 'MaVoRic');
@@ -313,6 +314,7 @@ class Mavoric {
 
     public function killTask(String $name) {
         if (!isset($this->tasks[$name])) return false;
+        $this->messageStaff('debug', null, "NPC check for player: §7{$this->tasks[$name]['target']} §ckilled.");
         $id = $this->tasks[$name]['id']->getTaskId();
         unset($this->tasks[$name]);
         $scheduler = $this->plugin->getScheduler();
@@ -342,6 +344,12 @@ class Mavoric {
                 ];
                 if (!$this->messageHandler->isQueued($message)) $this->postWebhook($webhook, json_encode(["embeds" => [$embed]]));
             }
+        } else if ($type === 'debug') {
+            if (!$this->plugin->config->get('Debugging')) return;
+            echo 'called';
+            $message = "§c[MAVORIC]: §4[DEBUG]§r§c $message ".$appendance;
+            $this->messageHandler->sendMessage($message, '');
+            return;
         } else {
             $message = "§c[MAVORIC]: $message";
             $webhook = $this->plugin->config->getNested('Webhooks.alerts');

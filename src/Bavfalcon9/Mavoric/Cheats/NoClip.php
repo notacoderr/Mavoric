@@ -27,6 +27,7 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use pocketmine\event\entity\EntityTeleportEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\block\BlockIds;
 
 use pocketmine\{
     Player,
@@ -72,8 +73,28 @@ class NoClip implements Listener {
                 return false;
             }
 
-            if (in_array($blockAtA->getId(), $this->slabs)) return false;
-            if (in_array($blockAtB->getId(), $this->slabs)) return false;
+            if (in_array($blockAtA->getId(), $this->slabs) || in_array($blockAtB->getId(), $this->slabs)) return false;
+            if ($blockAtA->getId() === BlockIds::SAND || $blockAtB->getId() === BlockIds::SAND) {
+                $y = $player->getLevel()->getHighestBlockAt($player->x, $player->z) + 1;
+                $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
+                $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
+                $this->mavoric->messageStaff('detection', $player, 'NoClip', ' [IN SAND BUT TELEPORTED]');
+                return;
+            }
+            if ($blockAtA->getId() === BlockIds::GRAVEL || $blockAtB->getId() === BlockIds::GRAVEL) {
+                $y = $player->getLevel()->getHighestBlockAt($player->x, $player->z) + 1;
+                $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
+                $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
+                $this->mavoric->messageStaff('detection', $player, 'NoClip', ' [IN GRAVEL BUT TELEPORTED]');
+                return;
+            }
+            if ($blockAtA->getId() === BlockIds::ANVIL || $blockAtB->getId() === BlockIds::ANVIL) {
+                $y = $player->getLevel()->getHighestBlockAt($player->x, $player->z) + 1;
+                $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
+                $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
+                $this->mavoric->messageStaff('detection', $player, 'NoClip', ' [IN ANVIL BUT TELEPORTED]');
+                return;
+            }
             $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
             $this->mavoric->messageStaff('detection', $player, 'NoClip');
 

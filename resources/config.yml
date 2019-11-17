@@ -1,4 +1,4 @@
-Version: 0.1.6 # DO NOT CHANGE THIS!
+Version: 0.1.7 # DO NOT CHANGE THIS!
 Webhooks:
   alert-deny: false # Discord URL to enable
   alert-grant: false # Discord URL to enable
@@ -16,7 +16,7 @@ Reports: true
 Suppression: true # This applies to all cheats, should mavoric cancel events if cheating
 AllowNPC: true # Self explainitory
 ShareData: true # This is recommended to help improve future mavoric versions.
-
+Debugging: false # Debug messages. (really spammy.)
 
 # These are settings for each cheat, some of these are not configured
 Cheats:
@@ -39,6 +39,7 @@ Cheats:
   Speed:
     enabled: true
     suppression: true
+    type: event
   AutoClicker:
     enabled: true
     suppression: true
