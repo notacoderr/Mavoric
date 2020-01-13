@@ -19,7 +19,6 @@ use Bavfalcon9\Mavoric\misc\Flag;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
-use Bavfalcon9\Mavoric\Tasks\PlayerCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 
 use Bavfalcon9\Mavoric\Cheats\{
@@ -88,72 +87,27 @@ class Mavoric {
 
     public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
 
-    private $version = '0.1.8';
+    private $version = '1.0.0';
     private $plugin;
     private $banHandler;
     private $messageHandler;
     private $tpsCheck;
     private $cheats = [];
     private $flags = [];
-    private $interface;
-    private $tasks = [];
+    private $NPC;
+
     public $ignoredPlayers = [];
 
     public function __construct(Main $plugin) {
         $this->plugin = $plugin;
-        $this->interface = new SpecterInterface($plugin);
         $this->messageHandler = new MessageHandler($plugin, $this);
         $this->tpsCheck = new TpsCheck($plugin, $this);
         $this->banManager = new BanHandler($this->plugin->getDataFolder() . 'ban_data');
+        $this->NPC = new NPC($plugin, $this, new SpecterInterface($plugin));
     }
 
     public function loadDetections() {
-        $this->cheats[self::AutoClicker] = new AutoClicker($this->plugin, $this);
-        $this->cheats[self::KillAura] = new KillAura($this->plugin, $this);
-        $this->cheats[self::MultiAura] = new MultiAura($this->plugin, $this);
-        $this->cheats[self::Speed] = new Speed($this->plugin, $this);
-        $this->cheats[self::NoClip] = new NoClip($this->plugin, $this);
-        $this->cheats[self::AntiKb] = new AntiKb($this->plugin, $this);
-        $this->cheats[self::Flight] = new Flight($this->plugin, $this);
-        $this->cheats[self::NoSlowdown] = new NoSlowdown($this->plugin, $this);
-        $this->cheats[self::Criticals] = new Criticals($this->plugin, $this);
-        $this->cheats[self::Bhop] = new Bhop($this->plugin, $this);
-        $this->cheats[self::Reach] = new Reach($this->plugin, $this);
-        $this->cheats[self::Aimbot] = new Aimbot($this->plugin, $this);
-        $this->cheats[self::AutoArmor] = new AutoArmor($this->plugin, $this);
-        $this->cheats[self::AutoSteal] = new AutoSteal($this->plugin, $this);
-        $this->cheats[self::AutoSword] = new AutoSword($this->plugin, $this);
-        $this->cheats[self::AutoTool] = new AutoTool($this->plugin, $this);
-        $this->cheats[self::AntiFire] = new AntiFire($this->plugin, $this);
-        $this->cheats[self::AntiSlip] = new AntiSlip($this->plugin, $this);
-        $this->cheats[self::NoDamage] = new NoDamage($this->plugin, $this);
-        $this->cheats[self::BackStep] = new BackStep($this->plugin, $this);
-        $this->cheats[self::FastPlace] = new FastPlace($this->plugin, $this);
-        $this->cheats[self::FastBreak] = new FastBreak($this->plugin, $this);
-        $this->cheats[self::Follow] = new Follow($this->plugin, $this);
-        $this->cheats[self::FreeCam] = new FreeCam($this->plugin, $this);
-        $this->cheats[self::FastEat] = new FastEat($this->plugin, $this);
-        $this->cheats[self::FastLadder] = new FastLadder($this->plugin, $this);
-        $this->cheats[self::GhostReach] = new GhostReach($this->plugin, $this);
-        $this->cheats[self::HighJump] = new HighJump($this->plugin, $this);
-        $this->cheats[self::JetPack] = new JetPack($this->plugin, $this);
-        $this->cheats[self::NoEffects] = new NoEffects($this->plugin, $this);
-        $this->cheats[self::MenuWalk] = new MenuWalk($this->plugin, $this);
-        $this->cheats[self::Spider] = new Spider($this->plugin, $this);
-        $this->cheats[self::Timer] = new Timer($this->plugin, $this);
-        $this->cheats[self::Teleport] = new Teleport($this->plugin, $this);
-        $i = 0;
-        foreach ($this->cheats as $identity=>$cheat) {
-            if (!$this->isEnabled($identity)) {
-                $this->getServer()->getLogger()->info('§c[MAVORIC v'.$this->version.'] DISABLED DETECTION: '.$this->getCheat($identity));
-            } else {
-                $this->getServer()->getPluginManager()->registerEvents($cheat, $this->plugin);
-                $this->getServer()->getLogger()->info('§a[MAVORIC v'.$this->version.'] ENABLED DETECTION: ' . $this->getCheat($identity));
-                $i++;
-            }
-        }
-        $this->getServer()->getLogger()->info('§a[MAVORIC v'.$this->version.'] '.$i.' ENABLED DETECTIONS | §c'.(sizeof($this->cheats) - $i).' DISABLED DETECTIONS.');
-        return $this->getCheats();
+
     }
 
     public function getCheats() : Array {
@@ -163,6 +117,7 @@ class Mavoric {
     /**
      * @var int $number - AntiCheat identification Code
      * @return String
+     * @deprecated
      */
 
     public function getCheat(int $number) : String {
@@ -170,79 +125,14 @@ class Mavoric {
     }
 
     public static function getCheatName(int $number) {
-        if ($number === self::AutoClicker) return 'AutoClicker';
-        if ($number === self::KillAura)    return 'KillAura';
-        if ($number === self::MultiAura)   return 'MultiAura';
-        if ($number === self::Reach)       return 'Reach';
-        if ($number === self::Speed)       return 'Speed';
-        if ($number === self::NoClip)      return 'NoClip';
-        if ($number === self::AntiKb)      return 'Anti-Knockback';
-        if ($number === self::Flight)      return 'Flight';
-        if ($number === self::NoSlowdown)  return 'No Slowdown';
-        if ($number === self::Criticals)   return 'Criticals';
-        if ($number === self::Bhop)        return 'Bunny Hop';
-        if ($number === self::Aimbot)      return 'Aimbot';
-        if ($number === self::AutoArmor)   return 'Auto Armor';
-        if ($number === self::AutoSteal)   return 'Auto Steal';
-        if ($number === self::AutoSword)   return 'Auto Sword';
-        if ($number === self::AutoTool)    return 'Auto Tool';
-        if ($number === self::AntiFire)    return 'AntiFire';
-        if ($number === self::AntiSlip)    return 'AntiSlip';
-        if ($number === self::NoDamage)    return 'NoDamage';
-        if ($number === self::BackStep)    return 'Back Step';
-        if ($number === self::FastPlace)   return 'Fast Place';
-        if ($number === self::FastBreak)   return 'Fast Break';
-        if ($number === self::Follow)      return 'Follow';
-        if ($number === self::FreeCam)     return 'FreeCam';
-        if ($number === self::FastEat)     return 'FastEat';
-        if ($number === self::FastLadder)  return 'FastLadder';
-        if ($number === self::GhostReach)  return 'GhostReach';
-        if ($number === self::HighJump)    return 'HighJump';
-        if ($number === self::JetPack)     return 'JetPack';
-        if ($number === self::NoEffects)   return 'No Effects';
-        if ($number === self::MenuWalk)    return 'Menu Walk';
-        if ($number === self::Spider)      return 'Spider';
-        if ($number === self::Timer)       return 'Timer';
-        if ($number === self::Teleport)    return 'Teleport';
-        return 'Cheating';
+
     }
 
+    /**
+     * @deprecated
+     */
     public static function getCheatFromString(String $name): ?float {
-        if ($name === 'AutoClicker')    return self::AutoClicker;
-        if ($name === 'KillAura')       return self::KillAura;
-        if ($name === 'MultiAura')      return self::MultiAura;
-        if ($name === 'Reach')          return self::Reach;
-        if ($name === 'Speed')          return self::Speed;
-        if ($name === 'NoClip')         return self::NoClip;
-        if ($name === 'AntiKb')         return self::AntiKb;
-        if ($name === 'Flight')         return self::Flight;
-        if ($name === 'NoSlowdown')     return self::NoSlowdown;
-        if ($name === 'Criticals')      return self::Criticals;
-        if ($name === 'Bhop')           return self::Bhop;
-        if ($name === 'Aimbot')         return self::Aimbot;
-        if ($name === 'AutoArmor')      return self::AutoArmor;
-        if ($name === 'AutoSteal')      return self::AutoSteal;
-        if ($name === 'AutoSword')      return self::AutoSword;
-        if ($name === 'AutoTool')       return self::AutoTool;
-        if ($name === 'AntiFire')       return self::AntiFire;
-        if ($name === 'AntiSlip')       return self::AntiSlip;
-        if ($name === 'NoDamage')       return self::NoDamage;
-        if ($name === 'BackStep')       return self::BackStep;
-        if ($name === 'FastPlace')      return self::FastPlace;
-        if ($name === 'FastBreak')      return self::FastBreak;
-        if ($name === 'Follow')         return self::Follow;
-        if ($name === 'FreeCam')        return self::FreeCam;
-        if ($name === 'FastEat')        return self::FastEat;
-        if ($name === 'FastLadder')     return self::FastLadder;
-        if ($name === 'GhostReach')     return self::GhostReach;
-        if ($name === 'HighJump')       return self::HighJump;
-        if ($name === 'JetPack')        return self::JetPack;
-        if ($name === 'NoEffects')      return self::NoEffects;
-        if ($name === 'MenuWalk')       return self::MenuWalk;
-        if ($name === 'Spider')         return self::Spider;
-        if ($name === 'Timer')          return self::Timer;
-        if ($name === 'Teleport')       return self::Teleport;
-        return null;
+
     }
 
     public function loadChecker(): ?Bool {
@@ -253,7 +143,6 @@ class Mavoric {
 
     public function getFlag($p) {
         if ($p === null) return new Flag('Invalid');
-        if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return new Flag('TPS CHECK');
         if (!isset($this->flags[$p->getName()])) {
             $this->flags[$p->getName()] = new Flag($p->getName());
         }
@@ -266,7 +155,6 @@ class Mavoric {
         $bans = $this->getServer()->getNameBans();
         if ($bans->isBanned($p)) return false;
         $this->getFlag($p)->clearViolations();
-        $this->killTask($p->getName());
         if ($this->plugin->config->getNested('Autoban.vague-reasoning') === true) $reason = 'Cheating';
         return $this->plugin->banAnimation($p, $reason);
     }
@@ -275,58 +163,11 @@ class Mavoric {
         if ($p === null) return;
         $name = $p->getName();
         $p->kill();
-        $this->killTask($p->getName());
         return $p->close('', '§c[MAVORIC]: §7Kicked for: §c'.$reason);
     }
 
 
-    /* NPC */
-    public function startTask(Player $p, int $time) {
-        $allowed = $this->plugin->config->get('AllowNPC');
-        if (!$allowed) return;
-        if ($this->hasTaskFor($p)) return;
-        $this->messageStaff('debug', null, "NPC check for player: §7{$p->getName()} §cadministered for §7{$time}§c seconds.");
-        $randomName = $this->generateMavName();
-        $this->getServer()->addWhitelist($randomName);
-        $fakePlayer = $this->interface->openSession($randomName, 'MaVoRic');
-        $scheduler = $this->plugin->getScheduler();
-        $task = $scheduler->scheduleRepeatingTask(new PlayerCheck($this, $time, $p, $randomName), 1);
-        $this->tasks[$randomName] = [
-            'id' => $task,
-            'target' => $p->getName()
-        ];
-        return $task;
-    }
-
-    public function hasTaskFor(Player $p) {
-        foreach ($this->tasks as $ent=>$data) {
-            if ($data['target'] == $p->getName()) return true;
-        }
-        return false;
-    }
-
-    public function getTaskFor(Player $p): ?String {
-        foreach ($this->tasks as $ent=>$data) {
-            if ($data['target'] == $p->getName()) return $ent;
-        }
-        return null;
-    }
-
-    public function killTask(String $name) {
-        if (!isset($this->tasks[$name])) return false;
-        $this->messageStaff('debug', null, "NPC check for player: §7{$this->tasks[$name]['target']} §ckilled.");
-        $id = $this->tasks[$name]['id']->getTaskId();
-        unset($this->tasks[$name]);
-        $scheduler = $this->plugin->getScheduler();
-        $scheduler->cancelTask($id);
-        $this->getServer()->removeWhitelist($name);
-        return true;
-    }
-
-    private function generateMavName() {
-        return 'Mavoric' . rand(0, 9000);
-    }
-
+  
     public function messageStaff(String $type, $player=null, String $message='', String $appendance='') {
         if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return;
         if ($type === 'detection') {
@@ -363,19 +204,6 @@ class Mavoric {
             }
         }
         $this->messageHandler->queueMessage($message, $appendance);
-    }
-
-    public function updateMotion(Player $p, Vector3 $newPosition, $target=null) {
-        $yaw = (!$target) ? $p->getYaw()+10 : $target->getYaw();
-        $pitch = (!$target) ? 0 : $target->getPitch();
-        $pk = new MovePlayerPacket();
-        $pk->position = $newPosition;
-        $pk->yaw = $yaw;
-        $pk->pitch = $pitch;
-        $pk->entityRuntimeId = $p->getId();
-        $pla = $this->plugin->getServer()->getOnlinePlayers();
-        $this->interface->queueReply($pk, $p->getName());
-        $this->plugin->getServer()->broadcastPacket($pla, $pk);
     }
 
     public function alert($sender=null, String $type, Player $player, String $cheat='None provided.') {
@@ -438,32 +266,6 @@ class Mavoric {
             MainLogger::getLogger()->info('Mavoric config updated to v' . $this->version.'.');
         }
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
-    }
-
-    public function cleanColor(String $str) {
-        $str = str_replace('§0', '', $str);
-        $str = str_replace('§1', '', $str);
-        $str = str_replace('§2', '', $str);
-        $str = str_replace('§3', '', $str);
-        $str = str_replace('§4', '', $str);
-        $str = str_replace('§5', '', $str);
-        $str = str_replace('§6', '', $str);
-        $str = str_replace('§7', '', $str);
-        $str = str_replace('§8', '', $str);
-        $str = str_replace('§9', '', $str);
-        $str = str_replace('§a', '', $str);
-        $str = str_replace('§b', '', $str);
-        $str = str_replace('§c', '', $str);
-        $str = str_replace('§d', '', $str);
-        $str = str_replace('§e', '', $str);
-        $str = str_replace('§f', '', $str);
-        $str = str_replace('§i', '', $str);
-        $str = str_replace('§k', '', $str);
-        $str = str_replace('§l', '', $str);
-        $str = str_replace('§m', '', $str);
-        $str = str_replace('§o', '', $str);
-        $str = str_replace('§r', '', $str);
-        return $str;
     }
 
     public function getVersion(): ?String {

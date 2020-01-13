@@ -24,7 +24,7 @@ class DiscordPost extends AsyncTask {
     private $content;
     private $replyTo;
 
-    public function __construct(String $url, String $content, $replyTo='Notch') {
+    public function __construct(String $url, String $content, $replyTo='*_') {
         $this->url = $url;
         $this->content = $content;
         $this->replyTo = $replyTo;

@@ -53,21 +53,6 @@ class Main extends PluginBase {
         $this->mavoric->loadChecker();
     }
 
-    public function banAnimation(Player $p, String $reason = 'Cheating') {
-        //$this->playsound('mob.enderdragon.growl', $p);
-        //$nbt = Entity::createBaseNBT($p->getPosition(), null, lcg_value() * 360, 0);
-        //Entity::createEntity('Lightning', $p->getLevel(), $nbt);
-        $this->getServer()->broadcastMessage("§c[MAVORIC]: {$p->getName()} was detected for {$reason} and was banned.");
-        $this->EventManager->onBan($p, $reason);
-        $p->close('', '§c[MAVORIC] You were banned: ' . $reason);
-        $this->mavBan($p, $reason);
-    }
-
-    private function mavBan(Player $p, String $reason) {
-        $this->getServer()->getNameBans()->addBan($p->getName(), "$reason", null, "Mavoric");
-        return;
-    }
-
     private function loadCommands() {
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->registerAll('mavoric', [
@@ -95,24 +80,6 @@ class Main extends PluginBase {
         if (!$this->config->get('Version')) {
             $this->config->set('Version', $this->mavoric->getVersion());
         }
-    }
-
-    public function playsound(String $sound, $player=null) {
-        if ($player === null) $player = $this->getServer()->getOnlinePlayers()[0];
-        $x = $player->getX();
-        $y = $player->getY();
-        $z = $player->getZ();
-        $volume = 500;
-        $pitch = 1;
-
-        $pk = new PlaySoundPacket();
-        $pk->soundName = $sound;
-        $pk->x = $x;
-        $pk->y = $y;
-        $pk->z = $z;
-        $pk->volume = $volume;
-        $pk->pitch = $pitch;
-        $this->getServer()->broadcastPacket($this->getServer()->getOnlinePlayers(), $pk);
     }
 
 }
