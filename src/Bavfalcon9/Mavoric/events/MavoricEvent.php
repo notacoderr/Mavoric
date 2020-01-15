@@ -20,26 +20,20 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\misc\Flag;
 
 class MavoricEvent {
-    public const PLAYER_ATTACK = 1;
-    public const PLAYER_BREAK_BLOCK = 2;
-    public const PLAYER_MOVE = 3;
-    public const PLAYER_TELEPORT = 4;
-    public const PLAYER_USE_ITEM = 5;
-    public const PLAYRE_INTERACTION = 6;
-    public const PLAYER_CONSUME = 7;
-
     private $mavoric;
     private $type;
-    private $eventData;
+    private $eventData = null;
     private $player;
     private $isCancelled = false;
     private $isCheating = false;
 
-    public function __construct(Mavoric $mavoric, int $eventType, Player $player, $event) {
+    public function __construct(Mavoric $mavoric, Player $target) {
         $this->mavoric = $mavoric;
-        $this->type = $eventType;
+        $this->player = $target;
+    }
+
+    public function setPMEvent($event) {
         $this->eventData = $event;
-        $this->player = $player;
     }
 
     public function cancel(Bool $val=true): Bool {
@@ -48,16 +42,12 @@ class MavoricEvent {
         return $val;
     }
 
-    public function getType(): int {
-        return $this->type;
+    public function getPlayer(): Player {
+        return $this->player;
     }
 
     public function getPMEvent() {
         return $this->eventData;
-    }
-
-    public function getPlayer(): ?Player {
-        return $this->player;
     }
 
     public function setCheating(Bool $val): Bool {
@@ -69,11 +59,9 @@ class MavoricEvent {
         return $this->isCheating;
     }
 
-    public function issueViolation(int $cheat): Flag {
+    public function issueViolation(int $cheat, int $count = 1): Flag {
         $flag = $this->mavoric->getFlag($this->player);
-        $flag->addViolation($cheat, 1);
+        $flag->addViolation($cheat, $count);
         return $flag;
     }
-
-    
 }

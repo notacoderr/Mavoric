@@ -17,16 +17,10 @@ namespace Bavfalcon9\Mavoric\Cheats;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-
+use Bavfalcon9\Mavoric\events\MavoricEvent;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Level\Position;
-
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageByChildEntityEvent;
-use pocketmine\event\entity\EntityTeleportEvent;
-use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\block\BlockIds;
 
 use pocketmine\{
@@ -36,7 +30,7 @@ use pocketmine\{
 
 /* API CHANGE (Player) */
 
-class NoClip implements Listener {
+class NoClip implements Detection {
     private $mavoric;
     private $plugin;
     private $teleported = [];
@@ -47,6 +41,14 @@ class NoClip implements Listener {
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->plugin = $plugin;
         $this->mavoric = $mavoric;
+    }
+
+    public function onEvent(MavoricEvent $event): void {
+        return;
+    }
+
+    public function isEnabled(): Bool {
+        return false;
     }
 
     public function onMove(PlayerMoveEvent $event) {

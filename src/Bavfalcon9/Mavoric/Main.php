@@ -40,13 +40,9 @@ class Main extends PluginBase {
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
         $this->reportHandler = new ReportHandler($this->mavoric, $this);
-        //$this->SpeedTest = new SpeedTest($this);
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
-        //$this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
         $this->loadCommands();
-        //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
         $this->config = new Config($this->getDataFolder().'config.yml');
-        // Update current config
         $this->updateConfigs();
         $this->mavoric->checkVersion($this->config);
         $this->mavoric->loadDetections();

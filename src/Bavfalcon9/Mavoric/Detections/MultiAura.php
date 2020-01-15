@@ -20,18 +20,8 @@ use Bavfalcon9\Mavoric\Mavoric;
 
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
-
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
-use pocketmine\{
-    Player,
-    Server
-};
-use Bavfalcon9\Mavoric\entity\SpecterPlayer;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
-
-/* API CHANGE (Player) */
+use Bavfalcon9\Mavoric\events\player\PlayerAttack;
 
 class MultiAura implements Detection {
     private $mavoric;
@@ -44,18 +34,16 @@ class MultiAura implements Detection {
     }
 
     public function onEvent(MavoricEvent $event) {
-        if ($event->getType() !== MavoricEvent::PLAYER_ATTACK) return;
+        if (!$event instanceof PlayerAttack) return;
 
-        $entity = $event->getPMEvent()->getEntity();
+        $victim = $event->getVictim();
         $damager = $event->getPlayer();
-
-        if (!$damager instanceof Player) return;
 
         if (isset($this->queue[$damager->getName()])) {
             $multiAura = $this->queue[$damager->getName()];
-            $distance = $damager->getPosition()->distance($entity->getPosition());
+            $distance = $damager->getPosition()->distance($victim->getPosition());
             if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
-            if (!in_array($entity->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $entity->getName());    
+            if (!in_array($victim->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $victim->getName());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
                 $event->issueViolation(Mavoric::MultiAura);
             }
@@ -68,8 +56,12 @@ class MultiAura implements Detection {
         } else {
             $this->queue[$damager->getName()] = [
                 "time" => time(),
-                "targets" => [$entity->getName()]
+                "targets" => [$victim->getName()]
             ];
         }
+    }
+
+    public function isEnabled(): Bool {
+        return true;
     }
 }

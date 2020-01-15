@@ -18,17 +18,12 @@ namespace Bavfalcon9\Mavoric\Cheats;
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\player\PlayerAttack;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
-
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\math\Vector3;
-
-use Bavfalcon9\Mavoric\entity\SpecterPlayer;
 
 
 /* API CHANGE (Player) */
@@ -41,12 +36,10 @@ class KillAura implements Detection {
     }
 
     public function onEvent(MavoricEvent $event) {
-        if ($event->getType() !== MavoricEvent::PLAYER_ATTACK) {
-            return;
-        }
+        if (!$event instanceof PlayerAttack) return;
 
-        $victim = $event->getPMEvent()->getEntity();
-        $damager = $event->getPlayer();
+        $victim = $event->getVictim();
+        $damager = $event->getAttacker();
 
         $AABB = $victim->getBoundingBox();
         $eyes = new Vector3();

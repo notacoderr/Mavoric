@@ -26,25 +26,24 @@ use pocketmine\Server;
 
 /* API CHANGE (Player) */
 
-class AutoClicker implements Listener {
+class AutoClicker implements Detection {
     private $mavoric;
     private $plugin;
     private $counters = [];
 
-    public function __construct(Main $plugin, Mavoric $mavoric) {
-        $this->plugin = $plugin;
+    public function __construct(Mavoric $mavoric) {
+        $this->plugin = $mavoric->getPlugin();
         $this->mavoric = $mavoric;
     }
 
-    public function onDamage(EntityDamageByEntityEvent $event) {
+    public function onEvent(MavoricEvent $event) {
+        if (!$event instanceof PlayerClickEvent) return;
 
-        $cause = $event->getCause();
-        $clicker = $event->getDamager();
+        $clicker = $event->getPlayer();
+
         $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 24 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
-        if (!is_numeric($amount)) $amount = 24;
+        if (!is_numeric($amount)) $amount = 22;
 
-        if ($cause !== 1) return;
-        if (!$clicker instanceof Player) return;
         $player = $clicker->getName();
         if (!isset($this->counters[$player])) {
             $this->counters[$player] = [
@@ -61,13 +60,8 @@ class AutoClicker implements Listener {
         }
         // AntiCheat checks
         if ($data['clicks'] >= $amount) {
-            if ($clicker->getPing() >= 700) {
-                $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second] but is lagging.");
-            } else {
-                $this->mavoric->getFlag($clicker)->addViolation(Mavoric::AutoClicker, 1);
-                $this->mavoric->messageStaff('detection', $clicker, "AutoClicker", " [Clicked {$data['clicks']} times in a second]");
-            }
-            if ($this->mavoric->isSuppressed(Mavoric::AutoClicker)) $event->setCancelled();
+            $event->issueViolation(Mavoric::AutoClicker);
+            $event->issueMessage($clicker, 'AutoClicker', 'Clicked faster than usual [' . $data['clicks'] . ']');
         }
 
         if ($data['time'] + 1 <= time()) {
@@ -77,5 +71,9 @@ class AutoClicker implements Listener {
             $this->counters[$player]['clicks']++;
         }
 
+    }
+
+    public function isEnabled(): Bool {
+        return true;
     }
 }
