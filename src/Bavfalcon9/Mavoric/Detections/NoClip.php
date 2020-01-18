@@ -18,6 +18,9 @@ namespace Bavfalcon9\Mavoric\Cheats;
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\player\PlayerClick;
+use Bavfalcon9\Mavoric\events\player\PlayerMove;
+use Bavfalcon9\Mavoric\events\player\PlayerTeleport;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Level\Position;
@@ -44,100 +47,95 @@ class NoClip implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        return;
-    }
+        /**
+         * @var PlayerMove event
+         */
+        if (!$event instanceof PlayerMove) {
+            if (!$event->isMoved()) return;
+            $blockA = $event->getBlocks()[1];
+            $blockB = $event->getBLocks()[0];
 
-    public function isEnabled(): Bool {
-        return false;
-    }
+            if ($blockA->isSolid() || $blockB->isSolid()) {
+                if ($event->isTeleport()) {
+                    return;
+                }
+                if ($this->pearledAway($event->getPlayer())) {
+                    $player->teleport($this->pearledAway($event->getPlayer())['pos']);
+                    $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
+                    return;
+                }
 
-    public function onMove(PlayerMoveEvent $event) {
-        $player = $event->getPlayer();
-        $into = $player->getPosition();
-        $intoA = [$into->getX(), $into->getY()+1, $into->getZ()];
-        $intoB = [$into->getX(), $into->getY(), $into->getZ()];
-        $level = $player->getLevel();
-        $blockAtA = $level->getBlock(new Position($intoA[0], $intoA[1], $intoA[2], $level), false);
-        $blockAtB = $level->getBlock(new Position($intoB[0], $intoB[1], $intoB[2], $level), false);
-        if ($player->isSpectator()) return false;
-        if ($blockAtA->isSolid() || $blockAtB->isSolid()) {
-            $cache = $this->pearledAway($player);
-            $cache2 = $this->hasTeleported($player);
-            if ($blockAtA->isTransparent() || $blockAtB->isTransparent()) return false;
-            if ($cache !== false) {
-                $player->teleport($cache['pos']);
-                $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
-                return false;
+                if (in_array($blockA->getId(), $this->slabs) || in_array($blockB->getId(), $this->slabs)) {
+                    return;
+                }
+
+                if ($blockA->getId() === BlockIds::SAND || $blockB->getId() === BlockIds::SAND) {
+                    $y = $event->getNextAirBlock()->y;
+                    $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
+                    return;
+                }
+                if ($blockA->getId() === BlockIds::GRAVEL || $blockB->getId() === BlockIds::GRAVEL) {
+                    $y = $event->getNextAirBlock()->y;
+                    $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
+                    return;
+                }
+                if ($blockA->getId() === BlockIds::ANVIL || $blockB->getId() === BlockIds::ANVIL) {
+                    $y = $event->getNextAirBlock()->y;
+                    $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
+                    return;
+                }
+                
+                $event->issueViolation(Mavorics::CHEATS['NoClip']);
+                $event->sendAlert(Mavoric::CHEATS['NoClip'], 'Illegal movement, player moved whlist in block');
             }
-            if ($cache2 !== false) {
-                $player->teleport($cache2['pos']);
-                $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
-                return false;
-            }
-
-            if (in_array($blockAtA->getId(), $this->slabs) || in_array($blockAtB->getId(), $this->slabs)) return false;
-            if ($blockAtA->getId() === BlockIds::SAND || $blockAtB->getId() === BlockIds::SAND) {
-                $y = $player->getLevel()->getHighestBlockAt($player->x, $player->z) + 1;
-                $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
-                $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
-                $this->mavoric->messageStaff('detection', $player, 'NoClip', ' [IN SAND BUT TELEPORTED]');
-                return;
-            }
-            if ($blockAtA->getId() === BlockIds::GRAVEL || $blockAtB->getId() === BlockIds::GRAVEL) {
-                $y = $player->getLevel()->getHighestBlockAt($player->x, $player->z) + 1;
-                $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
-                $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
-                $this->mavoric->messageStaff('detection', $player, 'NoClip', ' [IN GRAVEL BUT TELEPORTED]');
-                return;
-            }
-            if ($blockAtA->getId() === BlockIds::ANVIL || $blockAtB->getId() === BlockIds::ANVIL) {
-                $y = $player->getLevel()->getHighestBlockAt($player->x, $player->z) + 1;
-                $player->teleport(new Position($player->x, $y, $player->z, $player->getLevel()));
-                $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
-                $this->mavoric->messageStaff('detection', $player, 'NoClip', ' [IN ANVIL BUT TELEPORTED]');
-                return;
-            }
-            $this->mavoric->getFlag($player)->addViolation(Mavoric::NoClip, 2);
-            $this->mavoric->messageStaff('detection', $player, 'NoClip');
-
-            if ($this->mavoric->isSuppressed(Mavoric::NoClip)) return $player->teleport($event->getFrom());
-        }
-    }
-
-    public function onTeleport(EntityTeleportEvent $event) {
-        $player = $event->getEntity();
-
-        if (!$player instanceof Player) return;
-        foreach ($this->teleportQueue as $p=>$t) {
-            if ($t['time'] + 3 >= time()) unset($this->teleportQueue[$p]);
         }
 
-        if (!isset($this->teleportQueue[$player->getName()])) $this->teleportQueue[$player->getName()] = [
-                'time' => microtime(true),
-                'pos' => $event->getFrom()
-            ];
-        if (!isset($this->ender_pearls[$player->getName()])) return; // No Enderpearl.
-        else {
-            $this->teleported[$player->getName()] = [
-                'thrownAt' => $this->ender_pearls[$player->getName()],
-                'elapsed' => microtime(true) - $this->ender_pearls[$player->getName()],
-                'pos' => $event->getFrom()
-            ]; // Possible add stuff?
-            unset($this->ender_pearls[$player->getName()]);
+        /**
+         * @var PlayerTeleport event
+         */
+        if ($event instanceof PlayerTeleport) {
+            $player = $event->getPlayer();
 
+            foreach ($this->teleportQueue as $p=>$t) {
+                if ($t['time'] + 3 >= time()) unset($this->teleportQueue[$p]);
+            }
+
+            if (!isset($this->teleportQueue[$player->getName()])) $this->teleportQueue[$player->getName()] = [
+                    'time' => microtime(true),
+                    'pos' => $event->getFrom()
+                ];
+            if (!isset($this->ender_pearls[$player->getName()])) {
+                return;
+            } else {
+                $this->teleported[$player->getName()] = [
+                    'thrownAt' => $this->ender_pearls[$player->getName()],
+                    'elapsed' => microtime(true) - $this->ender_pearls[$player->getName()],
+                    'pos' => $event->getFrom()
+                ];
+
+                unset($this->ender_pearls[$player->getName()]);
+                return;
+            }
+        }
+
+        /**
+         * @var PlayerClick event
+         */
+        if ($event instanceof PlayerClick) {
+            $player = $event->getPlayer();
+
+            if ($event->threwEnderPearl()) {
+                $this->ender_pearls[$player->getName()] = microtime(true);   
+            }
             return;
         }
     }
 
-    public function onInteract(PlayerInteractEvent $event) {
-        $player = $event->getPlayer();
-        $item = $event->getItem();
-        $action = $event->getAction(); //check this
-        if ($item->getId() !== 368) return;
-        if ($event->isCancelled()) return;
-        // Expect an enderpearl throw
-        $this->ender_pearls[$player->getName()] = microtime(true);
-        return;
+    /** 
+     * @return Bool
+     */
+    public function isEnabled(): Bool {
+        return true;
     }
 
     private function pearledAway($p) {

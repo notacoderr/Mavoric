@@ -23,7 +23,7 @@ use pocketmine\level\Position;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
-class PlayerMove extends MavoricEvent {
+class PlayerTeleport extends MavoricEvent {
     /** @var Player */
     private $player;
     /** @var Position */
@@ -75,12 +75,5 @@ class PlayerMove extends MavoricEvent {
         }
 
         return $pos;
-    }
-
-    public function getBlocks(): Array {
-        return [
-            $this->player->getLevel()->getBlockAt($player->x, $player->y, $player->z),
-            $this->player->getLevel()->getBlockAt($player->x, $player->y + 1, $player->z)
-        ];
     }
 }

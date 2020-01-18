@@ -33,7 +33,6 @@ use Bavfalcon9\Mavoric\Cheats\{
     MenuWalk, Spider, Timer, Teleport
 };
 
-/* NPC DETECTION */
 use pocketmine\network\mcpe\protocol\InteractPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\RespawnPacket;
@@ -50,49 +49,51 @@ use Bavfalcon9\Mavoric\misc\Utils;
 use pocketmine\math\Vector3;
 
 class Mavoric {
-    public const AutoClicker = 0; // AutoClicker
-    public const KillAura = 1; // Kill Aura
-    public const MultiAura = 2;
-    public const Speed = 3; // Fast movement
-    public const NoClip = 4; // going through blocks
-    public const AntiKb = 5; // No knockback
-    public const Flight = 6; // Flight
-    public const NoSlowdown = 7; // Walking and eating? Etc
-    public const Criticals = 8; // Is the player dealing extra damage?
-    public const Bhop = 9; 
-    public const Reach = 10; // Reaching further than allowed reach.
-    public const Aimbot = 11; // Auto Aiming at entity
-    public const AutoArmor = 12; // Auto equiping best armor
-    public const AutoSteal = 13; // Check if the player is fast taking items out of chest
-    public const AutoSword = 14; // Is the player Auto going to their best weapon
-    public const AutoTool = 15; // Hard to detect & removed.
-    public const AntiFire = 16; // Preventing fire damage.
-    public const AntiSlip = 17; // No slipping on ice, or fast movement through webs
-    public const NoDamage = 18; // No fall, no cactus, etc
-    public const BackStep = 19; // Same speed going backwards
-    public const FastPlace = 20;
-    public const FastBreak = 21;
-    public const Follow = 22; // Can false trigger
-    public const FreeCam = 23;
-    public const FastEat = 24;
-    public const FastLadder = 25;
-    public const GhostReach = 26; // Hit through blocks.
-    public const HighJump = 27; // 
-    public const JetPack = 28; // Similar to flight
-    public const NoEffects = 29; // Take away effects? (NOT MANDATORY ON PMMP)
-    public const MenuWalk = 30; // Walk with open inventory
-    public const Spider = 31; // Climb walls
-    public const Timer = 32; // Faster than normal
-    public const Teleport = 33; // Triggered with tp-arua
-
-    public const EPEARL_LOCATION_BAD = '§cNo epearl glitching.';
+    public const CHEATS = [
+        'AutoClicker' => 0,
+        'KillAura' => 1,
+        'MultiAura' => 2,
+        'Speed' => 3,
+        'NoClip' => 4,
+        'AntiKb' => 5,
+        'Flight' => 6,
+        'NoSlowdown' => 7,
+        'Criticals' => 8,
+        'Bhop' => 9,
+        'Reach' => 10,
+        'Aimbot' => 11,
+        'AutoArmor' => 12,
+        'AutoSteal' => 13,
+        'AutoSword' => 14,
+        'AutoTool' => 15,
+        'AntiFire' => 16,
+        'AntiSlip' => 17,
+        'NoDamage' => 18,
+        'BackStep' => 19,
+        'FastPlace' => 20,
+        'FastBreak' => 21,
+        'Follow' => 22,
+        'FreeCam' => 23,
+        'FastEat' => 24,
+        'FastLadder' => 25,
+        'GhostReach' => 26,
+        'HighJump' => 27,
+        'JetPack' => 28,
+        'NoEffects' => 29,
+        'MenuWalk' => 30,
+        'Spider' => 31,
+        'Timer' => 32,
+        'Teleport' => 33
+    ];
+    public const EPEARL_LOCATION_BAD = self::COLOR . 'No epearl glitching.';
+    public const COLOR = '§';
+    public const ARROW = '→';
 
     private $version = '1.0.0';
     private $plugin;
     private $banHandler;
     private $messageHandler;
     private $tpsCheck;
-    private $cheats = [];
     private $flags = [];
     private $NPC;
 
@@ -106,7 +107,7 @@ class Mavoric {
         $this->NPC = new NPC($plugin, $this, new SpecterInterface($plugin));
     }
 
-    public function loadDetections() {
+    public function loadDetections(): void {
 
     }
 
@@ -124,24 +125,41 @@ class Mavoric {
         return self::getCheatName($number);
     }
 
-    public static function getCheatName(int $number) {
+    /**
+     * @var int $number - AntiCheat identification Code
+     * @return String
+     * @deprecated
+     */
 
+    public static function getCheatName(int $number): String {
+        foreach (self::CHEATS as $cheat=>$code) {
+            if ($number === $code) return $cheat;
+        }
+        return 'Unknown';
     }
 
     /**
      * @deprecated
+     * @return int
      */
-    public static function getCheatFromString(String $name): ?float {
-
+    public static function getCheatFromString(String $name): ?int {
+        return $self::CHEATS[$name];
     }
 
+    /**
+     * @return Boolean?
+     */
     public function loadChecker(): ?Bool {
         $scheduler = $this->plugin->getScheduler();
         $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20);
         return false;
     }
 
-    public function getFlag($p) {
+    /**
+     * @param Player $p - Player
+     * @return Flag
+     */
+    public function getFlag($p): Flag {
         if ($p === null) return new Flag('Invalid');
         if (!isset($this->flags[$p->getName()])) {
             $this->flags[$p->getName()] = new Flag($p->getName());
@@ -149,92 +167,30 @@ class Mavoric {
         return $this->flags[$p->getName()];
     }
 
+    /**
+     * Bans a player as mavoric.
+     * @param Player $p
+     * @param String $Cheat
+     */
     public function ban(Player $p, String $reason="Cheating") {
-        if ($p === null) return;
-        $name = $p->getName();
-        $bans = $this->getServer()->getNameBans();
-        if ($bans->isBanned($p)) return false;
-        $this->getFlag($p)->clearViolations();
-        if ($this->plugin->config->getNested('Autoban.vague-reasoning') === true) $reason = 'Cheating';
-        return $this->plugin->banAnimation($p, $reason);
+
     }
 
+    /**
+     * Kicks a player as mavoric.
+     * @param Player $p
+     * @param String $Cheat
+     */
     public function kick(Player $p, String $reason="Cheating") {
-        if ($p === null) return;
-        $name = $p->getName();
-        $p->kill();
-        return $p->close('', '§c[MAVORIC]: §7Kicked for: §c'.$reason);
+
     }
 
-
-  
-    public function messageStaff(String $type, $player=null, String $message='', String $appendance='') {
-        if ($this->tpsCheck->isHalted() || $this->tpsCheck->isLow()) return;
-        if ($type === 'detection') {
-            if (in_array($player->getName(), $this->ignoredPlayers)) return;
-            $m = $message;
-            $cheatPercentile = CheatPercentile::getPercentile($this->getFlag($player));
-            $message = "§c[MAVORIC]: §7{$player->getName()} §cwas detected for §7{$message}§c.";
-            $appendance .= " Cheating: §4{$cheatPercentile}%";
-            $webhook = $this->plugin->config->getNested('Webhooks.alerts');
-            if ($webhook !== null && $webhook !== false) {
-                $embed = [
-                    'color' => 0xFF0000,
-                    'title' => 'Mavoric Detection',
-                    'description' => "**Player:** {$player->getName()}\n**Violation:** {$m}\n**Violation-Info:** {$this->cleanColor($appendance)}"
-                ];
-                if (!$this->messageHandler->isQueued($message)) $this->postWebhook($webhook, json_encode(["embeds" => [$embed]]));
-            }
-        } else if ($type === 'debug') {
-            if (!$this->plugin->config->get('Debugging')) return;
-            echo 'called';
-            $message = "§c[MAVORIC]: §4[DEBUG]§r§c $message ".$appendance;
-            $this->messageHandler->sendMessage($message, '');
-            return;
-        } else {
-            $message = "§c[MAVORIC]: $message";
-            $webhook = $this->plugin->config->getNested('Webhooks.alerts');
-            if ($webhook !== null && $webhook !== false) {
-                $embed = [
-                    'color' => 0xFF0000,
-                    'title' => 'Mavoric Alert',
-                    'description' => "{$this->cleanColor($message)}"
-                ];
-                if (!$this->messageHandler->isQueued($message)) $this->postWebhook($webhook, json_encode(["embeds" => [$embed]]));
-            }
-        }
+    public function alertStaff(Player $player, int $cheat, String $details='Unknown'): void {
+        if ($player === null) return;
+        $count = $this->getFlag($player)->getViolations($cheat);
+        $message = self::ARROW . '§c [MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c ' . self::getCheatName($cheat) . '§8: ';
+        $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
         $this->messageHandler->queueMessage($message, $appendance);
-    }
-
-    public function alert($sender=null, String $type, Player $player, String $cheat='None provided.') {
-        $token = $this->plugin->config->getNested('Webhooks.'.$type);
-        $embed = [
-            'title' => ($type === 'alert-deny') ? 'Staff Denied Violation' : 'Staff Accepted Violation (banned)',
-            'fields' => [
-                [
-                    'inline' => true,
-                    'name' => 'Staff Member',
-                    'value' => (!$sender) ? 'MAVORIC - CONSOLE' : $sender->getName()
-                ],
-                [
-                    'inline' => true,
-                    'name' => 'Player',
-                    'value' => $player->getName()
-                ],
-                [
-                    'inline' => true,
-                    'name' => 'Violation',
-                    'value' => $cheat
-                ]
-                ],
-            'color' => ($type === 'alert-deny') ? 0xFF0000 : 0x33ffa7,
-            'footer' => [
-                'text' => 'Issued',
-                'icon_url' => 'https://cdn.discordapp.com/attachments/602697368718147587/625249121057636383/Mavoric.png'
-            ]
-        ];
-        if (!$token) return;
-        return $this->postWebhook($token, json_encode(["embeds" => [$embed]]), (!$sender) ? 'MAVORIC - CONSOLE' : $sender->getName());
     }
 
     public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {
@@ -243,7 +199,10 @@ class Mavoric {
         return;
     }
 
-    public function checkVersion($config) {
+    /**
+     * Checks the version of mavoric
+     */
+    public function checkVersion($config): void {
         if (!$config) {
             MainLogger::getLogger()->critical('Config could not be found, forcefully disabled.');
             $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
@@ -268,22 +227,11 @@ class Mavoric {
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
     }
 
-    public function getVersion(): ?String {
-        return $this->version;
-    }
-    
-    public function getPlugin() {
-        return $this->plugin;
-    }
 
-    public function getTpsCheck() {
-        return $this->tpsCheck;
-    }
-    
-    private function getServer() {
-        return $this->plugin->getServer();
-    }
-
+    /**
+     * @param Float $cheat 
+     * @return Bool
+     */
     public function isSuppressed(Float $cheat): ?Bool {
         if (!$this->getCheatName($cheat)) return $this->plugin->config->get('Suppression');
         $mascular = $this->plugin->config->get('Suppression');
@@ -293,6 +241,10 @@ class Mavoric {
         else return $singular;
     }
 
+    /**
+     * @param Flaot $cheat
+     * @return Bool
+     */
     public function canAutoBan(Float $cheat): ?Bool {
         if (!$this->getCheatName($cheat)) return !$this->plugin->config->getNested('Autoban.disabled');
         $mascular = !$this->plugin->config->getNested('Autoban.disabled');
@@ -301,10 +253,42 @@ class Mavoric {
         return $singular;
     }
 
+    /**
+     * @param Float $cheat
+     * @return Bool
+     */
     public function isEnabled(Float $cheat): ?Bool {
         if (!$this->getCheatName($cheat)) return null;
 
         $cheat = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.enabled");
         return ($cheat === null) ? true : $cheat;
+    }
+
+    /**
+     * Get the version of mavoric.
+     */
+    public function getVersion(): ?String {
+        return $this->version;
+    }
+    
+    /**
+     * Get the plugin.
+     */
+    public function getPlugin() {
+        return $this->plugin;
+    }
+
+    /**
+     * Get tps check.
+     */
+    public function getTpsCheck() {
+        return $this->tpsCheck;
+    }
+    
+    /**
+     * Get the server
+     */
+    private function getServer() {
+        return $this->plugin->getServer();
     }
 }

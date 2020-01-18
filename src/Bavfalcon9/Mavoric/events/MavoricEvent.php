@@ -64,4 +64,9 @@ class MavoricEvent {
         $flag->addViolation($cheat, $count);
         return $flag;
     }
+
+    public function sendAlert(String $cheat, String $details): Bool {
+        $this->mavoric($this->player, $cheat, $details);
+        return true;
+    }
 }
