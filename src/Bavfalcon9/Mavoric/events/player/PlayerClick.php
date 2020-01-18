@@ -22,6 +22,10 @@ use pocketmine\math\Vector3;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
+/**
+ * Called when a player Clicks/Taps something.
+ * @deprecated Deprecated until api interaction is fixed.
+ */
 class Event extends MavoricEvent {
     /** @var Player */
     private $player;

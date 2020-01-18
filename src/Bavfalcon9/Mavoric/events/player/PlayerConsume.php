@@ -20,6 +20,9 @@ use pocketmine\item\Item;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
+/**
+ * Called when a player consumes an item.
+ */
 class PlayerConsume extends MavoricEvent {
     /** @var Player */
     private $player;

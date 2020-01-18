@@ -22,6 +22,9 @@ use pocketmine\block\Block;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
+/**
+ * Called when a player breaks a block
+ */
 class PlayerBreakBlock extends MavoricEvent {
     /** @var Player */
     private $player;

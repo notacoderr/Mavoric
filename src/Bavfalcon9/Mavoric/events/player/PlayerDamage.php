@@ -22,24 +22,24 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
 /**
- * Called when a player hits an entity.
+ * Called when a player recieves damage from an entity.
  */
-class PlayerAttack extends MavoricEvent {
-    /** @var Player */
-    private $attacker;
+class PlayerDamage extends MavoricEvent {
     /** @var Entity */
+    private $attacker;
+    /** @var Player */
     private $victim;
     /** @var Bool */
     private $projectile;
 
-    public function __construct(Mavoric $mavoric, Player $attacker, Entity $victim, Bool $projectile) {
+    public function __construct(Mavoric $mavoric, Entity $attacker, Player $victim, Bool $projectile) {
         parent::__construct($mavoric, $attacker);
         $this->attacker = $attacker;
         $this->victim = $victim;
         $this->projectile = $projectile;
     }
 
-    public function getAttacker(): ?Player {
+    public function getAttacker(): ?Entity {
         return $this->attacker;
     }
 
@@ -54,7 +54,7 @@ class PlayerAttack extends MavoricEvent {
     }
 
     public function isPlayerToPlayer(): Bool {
-        return $this->victim instanceof Player;
+        return ($this->attacker instanceof Player);
     }
 
     public function isProjectile(): Bool {
