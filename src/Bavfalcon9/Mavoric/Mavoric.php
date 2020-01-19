@@ -20,24 +20,21 @@ use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
-use Bavfalcon9\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\EventHandler;
 use Bavfalcon9\Mavoric\Detections\{
     Aimbot, AutoArmor, AutoClicker, AutoSword,
     AutoTool, Bhop, FastBreak, FastEat, Flight,
     KillAura, MultiAura, NoClip, NoDamage, NoSlowdown,
-    Reach, Speed, Teleport, Timer
+    Reach, Speed, Teleport, Timer, Jesus
 };
 
-use pocketmine\network\mcpe\protocol\InteractPacket;
-use pocketmine\network\mcpe\protocol\MovePlayerPacket;
-use pocketmine\network\mcpe\protocol\RespawnPacket;
-use pocketmine\network\mcpe\protocol\TextPacket;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Bans\BanHandler;
-use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
+use Bavfalcon9\Mavoric\misc\Banwaves\Handler as WaveHandler;
+use Bavfalcon9\Mavoric\misc\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
-use Bavfalcon9\Mavoric\entity\SpecterPlayer;
 use Bavfalcon9\Mavoric\misc\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\misc\Handlers\TpsCheck;
 use Bavfalcon9\Mavoric\misc\Utils;
@@ -102,43 +99,75 @@ class Mavoric {
     private $NPC;
     /** @var Array[String] */
     public $ignoredPlayers = [];
+    /** @var EventHandler */
+    private $eventHandler;
+    /** @var WaveHandler */
+    private $waveHandler;
     /** @var Array[Detection] */
     private $loadedCheats = [];
 
     public function __construct(Main $plugin) {
+        /** Plugin Cache */
         $this->plugin = $plugin;
+        /** Handle alert messages (so they dont spam staff) */
         $this->messageHandler = new MessageHandler($plugin, $this);
+        /** Ticks per second check (TODO: Transfer to another thread checking server.) */
         $this->tpsCheck = new TpsCheck($plugin, $this);
+        /** @deprecated Handles bans */
         $this->banManager = new BanHandler($this->plugin->getDataFolder() . 'ban_data');
-        $this->NPC = new NPC($plugin, $this, new SpecterInterface($plugin));
+        /** @deprecated Handles NPC checks. */
+        $this->NPC = new NPC($plugin, new SpecterInterface($plugin));
+        /** Handles events that are broadcasted and translated to detections */
+        $this->eventHandler = new EventHandler($this);
+        /** Handles ban waves. */
+        $this->waveHandler = new WaveHandler($this->plugin->getDataFolder() . 'waves');
     }
 
     /** 
      * @return void
      */
     public function loadDetections(): void {
-        $this->loadedCheats = [
-            new Aimbot($this),
-            new AutoArmor($this),
+        $allDetections = [
+            //new Aimbot($this),
+            //new AutoArmor($this),
             new AutoClicker($this),
-            new AutoSword($this),
-            new AutoTool($this),
+            //new AutoSword($this),
+            //new AutoTool($this),
             new FastEat($this),
             new Flight($this),
             new Jesus($this),
             new NoClip($this),
-            new NoDamage($this),
-            new NoSlowdown($this),
-            new Reach($this),
-            new Speed($this),
-            new Teleport($this)
+            //new NoDamage($this),
+            //new NoSlowdown($this),
+            //new Reach($this),
+            //new Speed($this),
+            //new Teleport($this)
         ];
-        $this->plugin->getLogger()->info('Enabled every single cheat with mavoric lololololololol');
+
+        foreach ($allDetections as $cheat) {
+            $name = str_replace('Bavfalcon9\Mavoric\Detections\\', '', get_class($cheat));
+            
+            if (!$cheat->isEnabled()) {
+                $this->plugin->getLogger()->notice('[CORE] Disabled detection: ' . $name);
+                continue;
+            }
+            if ($this->isEnabled($name)) {
+                $this->plugin->getLogger()->notice('Enabled detection: ' . $name);
+                array_push($this->loadedCheats, $cheat);
+            } else {
+                $this->plugin->getLogger()->notice('Disabled detection: ' . $name);
+                continue;
+            }
+        }
     }
 
     public function broadcastEvent(MavoricEvent $event) {
         foreach ($this->loadedCheats as $cheat) {
-            $cheat->onEvent($event);
+            try {
+                $cheat->onEvent($event);
+            } catch (Throwable $e) {
+                $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($cheat) . '!' . "\n$e");
+            }
         }
     }
 
@@ -210,7 +239,7 @@ class Mavoric {
     public function alertStaff(Player $player, int $cheat, String $details='Unknown'): void {
         if ($player === null) return;
         $count = $this->getFlag($player)->getViolations($cheat);
-        $message = self::ARROW . '§c [MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c ' . self::getCheatName($cheat) . '§8: ';
+        $message = self::ARROW . ' ' . '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . self::getCheatName($cheat) . '§8: ';
         $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
         $this->messageHandler->queueMessage($message, $appendance);
     }
@@ -252,6 +281,20 @@ class Mavoric {
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
     }
 
+    public function issueWaveBan(BanWave $wave) {
+        $wave->setIssued(true);
+        $wave->save();
+        $players = $wave->getPlayers();
+
+        foreach ($players as $player=>$banData) {
+            $banList = $this->getServer()->getNameBans();
+            $banList->addBan($player, '§4'.$banData['reason'] . ' | Wave ' . $wave->getNumber(), null, 'Mavoric');
+            if ($this->getServer()->getPlayer($player)) {
+                $player->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
+            }
+            $this->getServer()->broadcastMessage('§4[MAVORIC] ' . $player . ' banned in: ' . 'Wave ' . $wave->getNumber());
+        }
+    }
 
     /**
      * @param Float $cheat 
@@ -279,13 +322,13 @@ class Mavoric {
     }
 
     /**
-     * @param Float $cheat
+     * @param String $cheat
      * @return Bool
      */
-    public function isEnabled(Float $cheat): ?Bool {
-        if (!$this->getCheatName($cheat)) return null;
-
-        $cheat = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.enabled");
+    public function isEnabled(String $cheat): ?Bool {
+        if (!isset(self::CHEATS[$cheat])) return null;
+        
+        $cheat = $this->plugin->config->getNested("Cheats.$cheat.enabled");
         return ($cheat === null) ? true : $cheat;
     }
 
@@ -309,11 +352,15 @@ class Mavoric {
     public function getTpsCheck() {
         return $this->tpsCheck;
     }
+
+    public function getWaveHandler(): WaveHandler {
+        return $this->waveHandler;
+    }
     
     /**
      * Get the server
      */
-    private function getServer() {
+    public function getServer() {
         return $this->plugin->getServer();
     }
 }

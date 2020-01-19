@@ -13,10 +13,12 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Cheats;
+namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\player\PlayerClick;
 
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
@@ -36,41 +38,43 @@ class AutoClicker implements Detection {
         $this->mavoric = $mavoric;
     }
 
-    public function onEvent(MavoricEvent $event) {
-        if (!$event instanceof PlayerClickEvent) return;
+    public function onEvent(MavoricEvent $event): void {
+        if (!$event instanceof PlayerClick) return;
 
+        if ($event->isRightClick()) return;
+        
         $clicker = $event->getPlayer();
-
-        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 24 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
+        
+        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 22 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
         if (!is_numeric($amount)) $amount = 22;
 
         $player = $clicker->getName();
+        $time = microtime(true);
+
         if (!isset($this->counters[$player])) {
-            $this->counters[$player] = [
-                'clicks' => 1,
-                'time' => time()
-            ];
+            $this->counters[$player] = [];
         }
 
-        $data = $this->counters[$player];
-        // Data checks.
-        if ($data['time'] + 10 <= time()) {
-            unset($this->counters[$player]);
-            return;
+        array_unshift($this->counters[$player], $time);
+        
+        /*
+        if (count($this->counters[$player]) >= 50) {
+            $event->issueViolation(Mavoric::CHEATS['AutoClicker']);
+            $event->sendAlert('AutoClicker', 'Interacted to quickly with over' . count($this->counters[$player]) . ' clicks per second');
+            array_pop($this->counters[$player]);
+        }*/
+
+        if (!empty($this->counters[$player])) {
+            $cps = count(array_filter($this->counters[$player], static function (float $t) use ($time) : bool {
+                return ($time - $t) <= 1;
+            }));
         }
+
         // AntiCheat checks
-        if ($data['clicks'] >= $amount) {
-            $event->issueViolation(Mavoric::AutoClicker);
-            $event->issueMessage($clicker, 'AutoClicker', 'Clicked faster than usual with ' . $data['clicks'] . ' clicks per second');
+        if ($cps >= $amount) {
+            $event->issueViolation(Mavoric::CHEATS['AutoClicker']);
+            $event->sendAlert('AutoClicker', 'Interacted to quickly with ' . $cps . ' clicks per second');
         }
-
-        if ($data['time'] + 1 <= time()) {
-            unset($this->counters[$player]);
-            return;
-        } else {
-            $this->counters[$player]['clicks']++;
-        }
-
     }
 
     public function isEnabled(): Bool {

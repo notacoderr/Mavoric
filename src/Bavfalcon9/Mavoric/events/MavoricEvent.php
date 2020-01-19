@@ -65,9 +65,14 @@ class MavoricEvent {
         return $flag;
     }
 
+    public function alertStaff(String $cheat, String $details): Bool {
+        $this->mavoric->getLogger()->notice('DEPRECATED METHOD CALLED -> MavoricEvent::alertStaff()');
+        return $this->sendAlert($cheat, $details);
+    }
+
     public function sendAlert(String $cheat, String $details): Bool {
         $cheat = Mavoric::CHEATS[$cheat];
-        $this->mavoric($this->player, $cheat, $details);
+        $this->mavoric->alertStaff($this->player, $cheat, $details);
         return true;
     }
 }

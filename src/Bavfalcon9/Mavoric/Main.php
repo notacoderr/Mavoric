@@ -49,6 +49,11 @@ class Main extends PluginBase {
         $this->mavoric->loadChecker();
     }
 
+    public function onDisable() {
+        $this->mavoric->getWaveHandler()->saveAll();
+        $this->getLogger()->notice('Saved Ban Waves');
+    }
+
     private function loadCommands() {
         $commandMap = $this->getServer()->getCommandMap();
         $commandMap->registerAll('mavoric', [

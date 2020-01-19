@@ -20,6 +20,7 @@ use pocketmine\item\Item;
 use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\level\Position;
+use pocketmine\level\Location;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
@@ -38,12 +39,12 @@ class PlayerMove extends MavoricEvent {
         $this->to = $to;
     }
 
+    public function isTeleport(): Bool {
+        return false;
+    }
+
     public function isMoved(): Bool {
-        if (abs($this->getDistance()) >= 1) {
-            return true;
-        } else {
-            return false;
-        }
+        return !$this->getDistance() === 0;
     }
 
     public function getDistance(): float {
@@ -83,9 +84,10 @@ class PlayerMove extends MavoricEvent {
     }
 
     public function getBlocks(): Array {
+        $player = $this->player;
         return [
-            $this->player->getLevel()->getBlockAt($player->x, $player->y, $player->z),
-            $this->player->getLevel()->getBlockAt($player->x, $player->y + 1, $player->z)
+            $player->getLevel()->getBlockAt($player->x, $player->y, $player->z),
+            $player->getLevel()->getBlockAt($player->x, $player->y + 1, $player->z)
         ];
     }
 }

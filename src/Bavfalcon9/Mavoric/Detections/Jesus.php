@@ -24,7 +24,7 @@ use pocketmine\block\{
     StillWater, Water, WaterLily
 };
 
-class Jesus extends Detection {
+class Jesus implements Detection {
     /** @var Mavoric */
     private $mavoric;
 
@@ -43,7 +43,7 @@ class Jesus extends Detection {
         if ($block_below instanceof StillWater || $block_below instanceof Water || $block_below instanceof WaterLily) {
            if ($block_above->getId() === 0) {
                 $event->issueViolation(Mavoric::CHEATS['Jesus'], 1);
-                $event->alertStaff('Jesus', 'Illegal movement, walked on water');
+                $event->sendAlert('Jesus', 'Illegal movement, walked on water');
                 return;
            } 
         }

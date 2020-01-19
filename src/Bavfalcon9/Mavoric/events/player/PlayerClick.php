@@ -27,7 +27,7 @@ use Bavfalcon9\Mavoric\events\MavoricEvent;
  * Called when a player Clicks/Taps something.
  * @deprecated Deprecated until api interaction is fixed.
  */
-class Event extends MavoricEvent {
+class PlayerClick extends MavoricEvent {
     /** @var Player */
     private $player;
     /** @var Item */
@@ -117,7 +117,7 @@ class Event extends MavoricEvent {
      * Needs to be updated.
      * @deprecated
      */
-    public function thewEnderPearl(): Bool {
+    public function threwEnderPearl(): Bool {
         $inventory = $this->player->getInventory();
         return ($this->isRightClick() && $inventory->getItemInHand() instanceof EnderPearl);
     }

@@ -15,6 +15,8 @@
 
 namespace Bavfalcon9\Mavoric\Detections;
 
+use Bavfalcon9\Mavoric\events\MavoricEvent;
+
 interface Detection {
     public function onEvent(MavoricEvent $event): void;
     public function isEnabled(): Bool;

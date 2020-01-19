@@ -13,7 +13,7 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Cheats;
+namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
@@ -41,8 +41,8 @@ class NoClip implements Detection {
     private $ender_pearls = [];
     private $slabs = [182,181,126,157,44,43,139,109,67,114,108,180,128,106,209,208,175,176,177,167,144,127,105,96,94,78,101,90,85];
 
-    public function __construct(Main $plugin, Mavoric $mavoric) {
-        $this->plugin = $plugin;
+    public function __construct(Mavoric $mavoric) {
+        $this->plugin = $mavoric->getPlugin();
         $this->mavoric = $mavoric;
     }
 
@@ -50,7 +50,7 @@ class NoClip implements Detection {
         /**
          * @var PlayerMove event
          */
-        if (!$event instanceof PlayerMove) {
+        if ($event instanceof PlayerMove) {
             if (!$event->isMoved()) return;
             $blockA = $event->getBlocks()[1];
             $blockB = $event->getBLocks()[0];

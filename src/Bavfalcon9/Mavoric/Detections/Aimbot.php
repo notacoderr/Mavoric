@@ -13,7 +13,7 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Cheats;
+namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;

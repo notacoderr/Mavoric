@@ -1,6 +1,6 @@
 <?php
 
-namespace Bavfalcon9\Mavoric\Cheats;
+namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
@@ -17,8 +17,16 @@ class Flight implements Detection {
     private $checks = [];
 
     public function __construct(Mavoric $mavoric) {
-        $this->plugin = $plugin;
+        $this->plugin = $mavoric->getPlugin();
         $this->mavoric = $mavoric;
+    }
+
+    public function onEvent(MavoricEvent $event): void {
+        
+    }
+
+    public function isEnabled(): Bool {
+        return false;
     }
 
     public function onMove(PlayerMoveEvent $event) : void {
@@ -35,7 +43,7 @@ class Flight implements Detection {
                 $this->mavoric->getFlag($player)->addViolation(Mavoric::Flight, 1);
                 $this->mavoric->messageStaff('detection', $player, 'Flight');
             }
-            /*
+
             // They're in the air, start doing checks.
             if ($player->getAllowFlight() === true) return;
             if ($player->getGamemode() === 3) return;
@@ -57,7 +65,7 @@ class Flight implements Detection {
                     if (PlayerCalculate::isFallingNormal($data['position'], $player->getPosition(), $highestBlock)) {
                         /**
                          * TO DO: CHECK RANGE, MAKE SURE THAT POSITION TRAVELED ISNT THE SAME EVERY CHECK. THIS INDICATES HACKING.
-                         
+                         */
 
                         unset($this->checks[$player->getName()]);
                         return;
@@ -116,7 +124,7 @@ class Flight implements Detection {
                     return;
                 }
             }
-        */}
+        }
     }
 
     public function purgeOld() : void {
