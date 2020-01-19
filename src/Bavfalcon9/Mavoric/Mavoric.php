@@ -20,7 +20,7 @@ use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
-
+use Bavfalcon9\events\MavoricEvent;
 use Bavfalcon9\Mavoric\Detections\{
     Aimbot, AutoArmor, AutoClicker, AutoSword,
     AutoTool, Bhop, FastBreak, FastEat, Flight,
@@ -113,6 +113,9 @@ class Mavoric {
         $this->NPC = new NPC($plugin, $this, new SpecterInterface($plugin));
     }
 
+    /** 
+     * @return void
+     */
     public function loadDetections(): void {
         $this->loadedCheats = [
             new Aimbot($this),
@@ -130,10 +133,18 @@ class Mavoric {
             new Speed($this),
             new Teleport($this)
         ];
-
-        
+        $this->plugin->getLogger()->info('Enabled every single cheat with mavoric lololololololol');
     }
 
+    public function broadcastEvent(MavoricEvent $event) {
+        foreach ($this->loadedCheats as $cheat) {
+            $cheat->onEvent($event);
+        }
+    }
+
+    /**
+     * @return Array[Detection]
+     */
     public function getCheats() : Array {
         return $this->cheats;
     }
@@ -191,23 +202,11 @@ class Mavoric {
     }
 
     /**
-     * Bans a player as mavoric.
-     * @param Player $p
-     * @param String $Cheat
+     * Alert the staff on the server.
+     * @param Player $player
+     * @param int $int
+     * @param String $details
      */
-    public function ban(Player $p, String $reason="Cheating") {
-
-    }
-
-    /**
-     * Kicks a player as mavoric.
-     * @param Player $p
-     * @param String $Cheat
-     */
-    public function kick(Player $p, String $reason="Cheating") {
-
-    }
-
     public function alertStaff(Player $player, int $cheat, String $details='Unknown'): void {
         if ($player === null) return;
         $count = $this->getFlag($player)->getViolations($cheat);
