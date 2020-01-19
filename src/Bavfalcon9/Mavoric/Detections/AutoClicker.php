@@ -61,7 +61,7 @@ class AutoClicker implements Detection {
         // AntiCheat checks
         if ($data['clicks'] >= $amount) {
             $event->issueViolation(Mavoric::AutoClicker);
-            $event->issueMessage($clicker, 'AutoClicker', 'Clicked faster than usual [' . $data['clicks'] . ']');
+            $event->issueMessage($clicker, 'AutoClicker', 'Clicked faster than usual with ' . $data['clicks'] . ' clicks per second');
         }
 
         if ($data['time'] + 1 <= time()) {

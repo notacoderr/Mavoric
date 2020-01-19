@@ -77,6 +77,11 @@ class PlayerMove extends MavoricEvent {
         return $pos;
     }
 
+    public function getBlockNearPlayer(int $x = 0, int $y = 0, int $z = 0): ?Block {
+        $near = new Vector3($this->player->x + $x, $this->player->y + $y, $this->player->z + $z);
+        return $this->player->getLevel()->getBlock($near);
+    }
+
     public function getBlocks(): Array {
         return [
             $this->player->getLevel()->getBlockAt($player->x, $player->y, $player->z),

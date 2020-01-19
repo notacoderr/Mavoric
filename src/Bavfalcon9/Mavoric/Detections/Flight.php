@@ -11,12 +11,12 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\Player;
 
-class Flight implements Listener {
+class Flight implements Detection {
     private $mavoric;
     private $plugin;
     private $checks = [];
 
-    public function __construct(Main $plugin, Mavoric $mavoric) {
+    public function __construct(Mavoric $mavoric) {
         $this->plugin = $plugin;
         $this->mavoric = $mavoric;
     }

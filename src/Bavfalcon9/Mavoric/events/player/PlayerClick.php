@@ -18,6 +18,7 @@ namespace Bavfalcon9\Mavoric\events\player;
 use pocketmine\Player;
 use pocketmine\item\Item;
 use pocketmine\block\Block;
+use pocketmine\item\EnderPearl;
 use pocketmine\math\Vector3;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
@@ -110,5 +111,14 @@ class Event extends MavoricEvent {
 
     public function getFace(): int {
         return $this->face;
+    }
+
+    /** 
+     * Needs to be updated.
+     * @deprecated
+     */
+    public function thewEnderPearl(): Bool {
+        $inventory = $this->player->getInventory();
+        return ($this->isRightClick() && $inventory->getItemInHand() instanceof EnderPearl);
     }
 }

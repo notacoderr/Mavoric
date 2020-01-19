@@ -21,16 +21,11 @@ use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 
-use Bavfalcon9\Mavoric\Cheats\{
-    Speed, AutoClicker, KillAura, MultiAura, NoClip, AntiKb,
-    Flight, NoSlowdown, Criticals,
-    Bhop, Reach, Aimbot, AutoArmor,
-    AutoSteal, AutoSword, AutoTool,
-    AntiFire, AntiSlip, NoDamage,
-    BackStep, FastPlace, FastBreak,
-    Follow, FreeCam, FastEat, FastLadder,
-    GhostReach, HighJump, JetPack, NoEffects,
-    MenuWalk, Spider, Timer, Teleport
+use Bavfalcon9\Mavoric\Detections\{
+    Aimbot, AutoArmor, AutoClicker, AutoSword,
+    AutoTool, Bhop, FastBreak, FastEat, Flight,
+    KillAura, MultiAura, NoClip, NoDamage, NoSlowdown,
+    Reach, Speed, Teleport, Timer
 };
 
 use pocketmine\network\mcpe\protocol\InteractPacket;
@@ -78,26 +73,37 @@ class Mavoric {
         'FastLadder' => 25,
         'GhostReach' => 26,
         'HighJump' => 27,
-        'JetPack' => 28,
-        'NoEffects' => 29,
-        'MenuWalk' => 30,
-        'Spider' => 31,
-        'Timer' => 32,
-        'Teleport' => 33
+        'Jesus' => 28,
+        'JetPack' => 29,
+        'NoEffects' => 30,
+        'MenuWalk' => 31,
+        'Spider' => 32,
+        'Timer' => 33,
+        'Teleport' => 34
     ];
+    
     public const EPEARL_LOCATION_BAD = self::COLOR . 'No epearl glitching.';
     public const COLOR = '§';
     public const ARROW = '→';
 
+    /** @var String */
     private $version = '1.0.0';
+    /** @var Main */
     private $plugin;
+    /** @var BanHandler */
     private $banHandler;
+    /** @var MessageHandler */
     private $messageHandler;
+    /** @var TpsCheck */
     private $tpsCheck;
+    /** @var Array[Flag] */
     private $flags = [];
+    /** @var NPC */
     private $NPC;
-
+    /** @var Array[String] */
     public $ignoredPlayers = [];
+    /** @var Array[Detection] */
+    private $loadedCheats = [];
 
     public function __construct(Main $plugin) {
         $this->plugin = $plugin;
@@ -108,7 +114,24 @@ class Mavoric {
     }
 
     public function loadDetections(): void {
+        $this->loadedCheats = [
+            new Aimbot($this),
+            new AutoArmor($this),
+            new AutoClicker($this),
+            new AutoSword($this),
+            new AutoTool($this),
+            new FastEat($this),
+            new Flight($this),
+            new Jesus($this),
+            new NoClip($this),
+            new NoDamage($this),
+            new NoSlowdown($this),
+            new Reach($this),
+            new Speed($this),
+            new Teleport($this)
+        ];
 
+        
     }
 
     public function getCheats() : Array {
@@ -193,6 +216,9 @@ class Mavoric {
         $this->messageHandler->queueMessage($message, $appendance);
     }
 
+    /**
+     * @deprecated
+     */
     public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {
         $post = new DiscordPost($url, $content, $replyTo);
         $task = $this->getServer()->getAsyncPool()->submitTask($post);

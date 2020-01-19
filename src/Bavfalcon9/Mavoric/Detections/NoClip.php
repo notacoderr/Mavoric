@@ -86,7 +86,7 @@ class NoClip implements Detection {
                 }
                 
                 $event->issueViolation(Mavorics::CHEATS['NoClip']);
-                $event->sendAlert(Mavoric::CHEATS['NoClip'], 'Illegal movement, player moved whlist in block');
+                $event->sendAlert(Mavoric::CHEATS['NoClip'], 'Illegal movement, player moved while in a block');
             }
         }
 

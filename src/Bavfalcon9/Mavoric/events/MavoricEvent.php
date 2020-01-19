@@ -66,6 +66,7 @@ class MavoricEvent {
     }
 
     public function sendAlert(String $cheat, String $details): Bool {
+        $cheat = Mavoric::CHEATS[$cheat];
         $this->mavoric($this->player, $cheat, $details);
         return true;
     }

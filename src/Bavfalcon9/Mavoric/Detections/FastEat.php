@@ -17,65 +17,32 @@ namespace Bavfalcon9\Mavoric\Cheats;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-
-use pocketmine\event\Listener;
+use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\player\PlayerConsume;
+use pocketmine\Player;
 use pocketmine\utils\TextFormat as TF;
 
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
-use pocketmine\{
-    Player,
-    Server
-};
-
-use pocketmine\event\player\PlayerItemConsumeEvent;
-
-/* API CHANGE (Player) */
-/**
- * DO not use this for newer items.
- */
-
-class FastEat implements Listener {
+class FastEat implements Detection {
     private $mavoric;
     private $plugin;
 
-    private $lastConsumed = [];
-
-    public function __construct(Main $plugin, Mavoric $mavoric) {
-        $this->plugin = $plugin;
+    public function __construct(Mavoric $mavoric) {
+        $this->plugin = $mavoric->getPlugin();
         $this->mavoric = $mavoric;
     }
 
-    public function onConsume(PlayerItemConsumeEvent $event) {
+    public function onEvent(MavoricEvent $event): void {
+        if (!$event instanceof PlayerConsume) {
+            return;
+        }
+
+        /**
+         * ToDo: redo this.
+         */
         $player = $event->getPlayer();
+    }
 
-        if (!isset($this->lastConsumed[$player->getName()])) {
-            $this->lastConsumed[$player->getName()] = [
-                "consumedAt" => time(),
-                "food" => $event->getItem()->getName(),
-                "consumed" => []
-            ];
-        }
-
-        $consumed = $this->lastConsumed[$player->getName()];
-        array_push($this->lastConsumed[$player->getName()]['consumed'], $event->getItem()->getName());
-
-        if (time() - $consumed['consumedAt'] <= 2) {
-            $t = time() - $consumed['consumedAt'];
-            $food = sizeof($consumed['consumed']);
-
-            if ($food <= 1) return;
-            if ($this->mavoric->isSuppressed(Mavoric::FastEat)) {
-                $event->setCancelled();
-                $player->setFood(0);
-            }
-            $this->mavoric->getFlag($player)->addViolation(Mavoric::FastEat, 20);
-            $this->mavoric->messageStaff('detection', $player, 'FastEat');
-            return;
-        } else {
-            unset($this->lastConsumed[$player->getName()]);
-            return;
-        }
+    public function isEnabled(): Bool {
+        return false;
     }
 }
