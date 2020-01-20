@@ -39,7 +39,7 @@ class ViolationCheck extends Task {
         $currentWave = $waveHandler->getCurrentWave();
 
         foreach ($players as $player) {
-            if ($currentWave->getPlayerCount() >= 50) {
+            if ($currentWave->getPlayerCount() >= 70) {
                 $this->mavoric->issueWaveBan($currentWave);
                 $currentWave = $waveHandler->getCurrentWave();
             }
