@@ -59,6 +59,7 @@ class banwave extends Command {
             foreach ($selectedWave->getPlayers() as $p=>$d) {
                 $sender->sendMessage('§7- §f' . $p . '§8: §7' . implode('§f, §7', array_keys($d['cheats'])) . '§r');
             }
+            $sender->sendMessage('§7There are§8:§f ' . sizeof($selectedWave->getPlayerCount()) . ' players in Wave' . $selectedWave->getNumber());
             return true;
         } else {
             $this->pl->mavoric->issueWaveBan($selectedWave);
