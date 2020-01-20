@@ -66,7 +66,7 @@ class Reach implements Detection {
                 if ($this->hasTeleported($damager) === true) return;
                 if (!$damager->isCreative()) {
                     $event->issueViolation(Mavoric::CHEATS['Reach']);
-                    $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2));
+                    $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
                     return;
                 }
             }

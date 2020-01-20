@@ -79,7 +79,7 @@ class Mavoric {
         'Teleport' => 34
     ];
     
-    public const EPEARL_LOCATION_BAD = self::COLOR . 'No epearl glitching.';
+    public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     public const COLOR = '§';
     public const ARROW = '→';
 
