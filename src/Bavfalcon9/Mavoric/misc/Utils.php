@@ -18,7 +18,6 @@ namespace Bavfalcon9\Mavoric\misc;
 use pocketmine\math\Vector3;
 
 class Utils {
-    // I don't recommend doing this, but ok.
     public static function drawCircle(Vector3 $centerPoint, int $radius=2, int $steps=20): ?Array {
         $points = [];
         $speed = 2 * pi() / 4;

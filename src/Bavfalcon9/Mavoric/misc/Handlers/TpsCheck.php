@@ -56,14 +56,14 @@ class TpsCheck {
         $this->ticks++;
         if ($this->time === -1) $this->testTime = microtime(true) - 1;
         if (floor(microTime(true) - $this->testTime) > 2 || $this->tps <= 4) {
-            $this->mavoric->messageStaff('custom', null, "WARNING: Average TPS is {$this->ticks} ticks per a second! This isn't good...");
+            #$this->mavoric->messageStaff('custom', null, "WARNING: Average TPS is {$this->ticks} ticks per a second! This isn't good...");
         }
         if ($this->ticks >= 20) {
             $tps = $this->ticks / (microtime(true) - $this->testTime);
             $this->measuredTPS = $tps;
             $this->testTime = microtime(true);
             if ($this->isLow()) {
-                $this->mavoric->messageStaff('custom', null, "WARNING: Current tps is [{$tps} | {$this->tps}]");
+                #$this->mavoric->messageStaff('custom', null, "WARNING: Current tps is [{$tps} | {$this->tps}]");
             }
             $this->ticks = 0;
         }

@@ -16,6 +16,7 @@
 namespace Bavfalcon9\Mavoric\Math;
 
 use pocketmine\math\Vector3;
+use pocketmine\math\AxisAlignedBB;
 use pocketmine\entity\Entity;
 
 class Entities {
@@ -43,7 +44,11 @@ class Entities {
 
     }
 
-    public static function isLookingAt(Entity $seer, Entity $target): ?Bool {
+    public static function isLookingAtAABB(AxisAlignedBB $target, Vector3 $pos): ?Bool {
+        
+    }
+
+    public static function isLookingAtHead(Entity $seer, Entity $target): ?Bool {
         $eyeVector = self::getEyeVector3($seer);
         $toEntity = self::getEyeVector3($target)->subtract($eyeVector);
         $dot = $toEntity->normalize()->dot(self::getDirection($seer));
@@ -68,7 +73,7 @@ class Entities {
         $entities = $level->getEntities();
         foreach ($entities as $e) {
             if (abs($entity->distance($e)) > $area) continue;
-            if (self::isLookingAt($entity, $e)) array_push($matches, $e);
+            if (self::isLookingAtHead($entity, $e)) array_push($matches, $e);
             else continue;
         }
         return (empty($matches)) ? null : $matches;

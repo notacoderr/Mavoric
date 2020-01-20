@@ -24,7 +24,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use Bavfalcon9\Mavoric\Command\{
-    alert, mban, mreport
+    alert, mban, mreport, banwave
 };
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\EventManager;
@@ -40,32 +40,18 @@ class Main extends PluginBase {
         $this->mavoric = new Mavoric($this);
         $this->EventManager = new EventManager($this);
         $this->reportHandler = new ReportHandler($this->mavoric, $this);
-        //$this->SpeedTest = new SpeedTest($this);
         $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
-        //$this->getServer()->getPluginManager()->registerEvents($this->SpeedTest, $this);
         $this->loadCommands();
-        //Entity::registerEntity(Lightning::class, false, ['Lightning', 'minecraft:lightning']);
         $this->config = new Config($this->getDataFolder().'config.yml');
-        // Update current config
         $this->updateConfigs();
         $this->mavoric->checkVersion($this->config);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();
     }
 
-    public function banAnimation(Player $p, String $reason = 'Cheating') {
-        //$this->playsound('mob.enderdragon.growl', $p);
-        //$nbt = Entity::createBaseNBT($p->getPosition(), null, lcg_value() * 360, 0);
-        //Entity::createEntity('Lightning', $p->getLevel(), $nbt);
-        $this->getServer()->broadcastMessage("§c[MAVORIC]: {$p->getName()} was detected for {$reason} and was banned.");
-        $this->EventManager->onBan($p, $reason);
-        $p->close('', '§c[MAVORIC] You were banned: ' . $reason);
-        $this->mavBan($p, $reason);
-    }
-
-    private function mavBan(Player $p, String $reason) {
-        $this->getServer()->getNameBans()->addBan($p->getName(), "$reason", null, "Mavoric");
-        return;
+    public function onDisable() {
+        $this->mavoric->getWaveHandler()->saveAll();
+        $this->getLogger()->notice('Saved Ban Waves');
     }
 
     private function loadCommands() {
@@ -73,12 +59,14 @@ class Main extends PluginBase {
         $commandMap->registerAll('mavoric', [
             new alert($this),
             new mban($this),
-            new mreport($this)
+            new mreport($this),
+            new banwave($this)
         ]);
         $this->addPerms([
             new Permission('mavoric.command', 'No', Permission::DEFAULT_OP),
             new Permission('mavoric.alerts', 'View and use mavoric alerts.', Permission::DEFAULT_OP),
-            new Permission('mavoric.report', 'Report Players', Permission::DEFAULT_OP)
+            new Permission('mavoric.report', 'Report Players', Permission::DEFAULT_OP),
+            new Permission('mavoric.banwaves', 'Manage banwaves', Permission::DEFAULT_OP)
         ]);
     }
 
@@ -95,24 +83,6 @@ class Main extends PluginBase {
         if (!$this->config->get('Version')) {
             $this->config->set('Version', $this->mavoric->getVersion());
         }
-    }
-
-    public function playsound(String $sound, $player=null) {
-        if ($player === null) $player = $this->getServer()->getOnlinePlayers()[0];
-        $x = $player->getX();
-        $y = $player->getY();
-        $z = $player->getZ();
-        $volume = 500;
-        $pitch = 1;
-
-        $pk = new PlaySoundPacket();
-        $pk->soundName = $sound;
-        $pk->x = $x;
-        $pk->y = $y;
-        $pk->z = $z;
-        $pk->volume = $volume;
-        $pk->pitch = $pitch;
-        $this->getServer()->broadcastPacket($this->getServer()->getOnlinePlayers(), $pk);
     }
 
 }
