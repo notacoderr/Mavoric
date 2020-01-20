@@ -50,12 +50,14 @@ class banwave extends Command {
             $waveHandler->getWave((int) $args[1]);
 
         $viewing = (strtolower($args[0]) === 'view');
-
+        if (!$sender->isOp()) {
+            $viewing = true;
+        }
         if ($viewing) {
             $players = [];
             $sender->sendMessage('§7Viewing players in Wave§8:§f ' . $selectedWave->getNumber());
             foreach ($selectedWave->getPlayers() as $p=>$d) {
-                $sender->sendMessage('§7- §f' . $p);
+                $sender->sendMessage('§7- §f' . $p . '§8: §7' . implode('§f, §7', array_keys($d['cheats'])) . '§r');
             }
             return true;
         } else {

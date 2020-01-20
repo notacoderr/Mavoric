@@ -30,13 +30,16 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 
-/* API CHANGE (Player) */
-
 class Reach implements Detection {
+    /** @var Mavoric */
     private $mavoric;
+    /** @var Main */
     private $plugin;
+    /** @var Array */
     private $ender_pearls = [];
+    /** @var Array */
     private $teleported = [];
+    /** @var Array */
     private $teleportQueue = [];
 
     public function __construct(Mavoric $mavoric) {
@@ -51,11 +54,11 @@ class Reach implements Detection {
         if ($event instanceof PlayerAttack) {
             $damager = $event->getAttacker();
             $entity = $event->getVictim();
-            $amt = 6.3;
-            if ($damager->getPing() >= 200) {
-                $amt = $damager->getPing() / 28.9;
+            $amt = 6;
+            if ($damager->getPing() >= 230) {
+                $amt = $damager->getPing() / 34;
                 if ($damager->getPing() >= 500) {
-                    $amt = $damager->getPing() / 28.9;
+                    $amt = $damager->getPing() / 50;
                 }
             }
 

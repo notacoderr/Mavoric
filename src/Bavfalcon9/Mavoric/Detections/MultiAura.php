@@ -45,7 +45,9 @@ class MultiAura implements Detection {
             if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
             if (!in_array($victim->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $victim->getName());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
-                $event->issueViolation(Mavoric::MultiAura);
+                $inTime = time() - ($multiAura['time']);
+                $event->issueViolation(Mavoric::CHEATS['MultiAura']);
+                $event->sendAlert('MultiAura', 'Illegal attack, hit ' . sizeof($multiAura['targets']) . ' entities in ' . $inTime . 'seconds');
             }
             if (($multiAura['time'] + 0.25) <= time()) {
                 $this->queue[$damager->getName()] = [

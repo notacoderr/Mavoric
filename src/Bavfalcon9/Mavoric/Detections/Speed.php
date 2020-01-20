@@ -17,6 +17,10 @@ namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\events\{
+    MavoricEvent,
+    player\PlayerMove
+};
 
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
@@ -24,6 +28,24 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\player\PlayerMoveEvent;
 
 
-class Speed implements Listener {
+class Speed implements Detection {
+    /** @var Mavoric */
     private $mavoric;
+    /** @var Array */
+    private $timings = [];
+
+    public function __construct(Mavoric $mavoric) {
+        $this->mavoric = $mavoric;
+    }
+
+    public function onEvent(MavoricEvent $event): void {
+        /** @var PlayerMove */
+        if ($event instanceof PlayerMove) {
+
+        }
+    }
+
+    public function isEnabled(): Bool {
+        return true;
+    }
 }

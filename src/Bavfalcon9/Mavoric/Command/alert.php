@@ -20,16 +20,19 @@ use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
+use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
 
 class alert extends Command {
     private $pl;
+    private $mavoric;
 
     public function __construct($pl) {
         parent::__construct("alert");
         $this->pl = $pl;
-        $this->description = "[]";
-        $this->usageMessage = "/alert <confirm/deny/ignore/unignore/info> <player>";
+        $this->pl->mavoric = $pl->mavoric;
+        $this->description = "Manage alerts.";
+        $this->usageMessage = "/alert <confirm/deny/info> <player> <cheat>";
         $this->setPermission("mavoric.alerts");
     }
     
@@ -40,12 +43,12 @@ class alert extends Command {
         }
 
         if (!isset($args[0])) {
-            $sender->sendMessage('§cInclude <confirm/deny/info/ignore/unignore>');
+            $sender->sendMessage('§c§lError: §r§c' . $this->usageMessage);
             return true;
         }
 
-        if (!isset($args[0])) {
-            $sender->sendMessage('§cInclude a player');
+        if (!isset($args[1])) {
+            $sender->sendMessage('§c§lError: §r§c' . $this->usageMessage);
             return true;
         }
 
@@ -53,21 +56,23 @@ class alert extends Command {
         $player = $this->pl->getServer()->getPlayer(implode(' ', array_slice($args, 1)));
 
         if ($player === null || $player->isClosed()) {
-            $sender->sendMessage('§cPlayer invalid');
+            $sender->sendMessage('§c§lError: §r§c' . 'Player invalid');
             return true;
         }
         if ($type === 'confirm') {
             $flag = $this->pl->mavoric->getFlag($player);
             $top = $flag->getMostViolations();
             if ($top === -1) {
-                $sender->sendMessage('§cPlayer does not have any violations detected.');
+                $sender->sendMessage('§c§lError: §r§c' . '§cPlayer does not have any violations detected.');
                 return true;
             } else {
                 $cheat = $this->pl->mavoric->getCheat($flag->getMostViolations());
+                $currentWave = $this->pl->mavoric->getWaveHandler()->getCurrentWave();
+                $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flag->getRaw(), $flag->getTotalViolations());
+                $this->pl->mavoric->messageStaff(Mavoric::NOTICE, $sender->getName() . ' confirmed violations for: ' . $player->getName() . ' and added them to wave ' . $currentWave->getNumber());
                 $this->pl->mavoric->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->pl->mavoric->getFlag($player)), $sender->getName(), $cheat);
-                $this->pl->mavoric->alert($sender, 'alert-grant', $player, $cheat);
-                $this->pl->mavoric->ban($player, $cheat);
-                $sender->sendMessage('§aIssued ban.');
+                $this->pl->mavoric->issueBan($player, $currentWave, $data);
+                $sender->sendMessage('§aIssued ban for user and added to recent wave.');
                 return true;
             }
         }
@@ -75,16 +80,17 @@ class alert extends Command {
             $flag = $this->pl->mavoric->getFlag($player);
             $top = $flag->getMostViolations();
             if ($top === -1) {
-                $sender->sendMessage('§cPlayer does not have any violations detected.');
+                $sender->sendMessage('§c§lError: §r§c' . 'Player does not have any violations detected.');
                 return true;
             } else {
-                $this->pl->mavoric->alert($sender, 'alert-deny', $player, $this->pl->mavoric->getCheat($flag->getMostViolations()));
+                $this->pl->mavoric->messageStaff(Mavoric::NOTICE, $sender->getName() . ' cleared violations for: ' . $player->getName());
                 $this->pl->mavoric->getFlag($player)->clearViolations();
-                $sender->sendMessage('§aCleared vioations for specified player.');
+                $sender->sendMessage('§aCleared violations for specified player.');
                 return true;
             }
         }
         if ($type === 'ignore') {
+            return true;
             $ignored = $this->pl->mavoric->ignoredPlayers;
             if (in_array($player->getName(), $ignored)) {
                 $sender->sendMessage('§cPlayer is already ignored.');
@@ -96,6 +102,7 @@ class alert extends Command {
             }
         }
         if ($type === 'unignore') {
+            return true;
             $ignored = $this->pl->mavoric->ignoredPlayers;
             if (!in_array($player->getName(), $ignored)) {
                 $sender->sendMessage('§cPlayer is not ignored.');
@@ -110,14 +117,14 @@ class alert extends Command {
             $flag = $this->pl->mavoric->getFlag($player);
             $data = $flag->getFlagsByNameAndCount();
             if (empty($data)) {
-                $sender->sendMessage('§cNo violations detected for this user.');
+                $sender->sendMessage('§c§lError: §r§c' . '§cNo violations found for this user (Already cleared?).');
                 return true;
             }
             $pretty = [];
             foreach ($data as $cheat=>$amount) {
-                array_push($pretty, "§f- §c{$cheat} : §7{$amount}");
+                array_push($pretty, "§c- §f{$cheat} §r§8[§7V §f{$amount}§8]");
             }
-            $sender->sendMessage("§c=== [ALERT HISTORY FOR: §7{$player->getName()}§c] ===\n".implode("\n", $pretty));
+            $sender->sendMessage("§cAll Alerts for§8: §f{$player->getName()}\n".implode("\n", $pretty));
             return true;
         }
 

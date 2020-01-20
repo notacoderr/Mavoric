@@ -55,7 +55,7 @@ class BanWave {
             "VC" => $count,
             "time" => $time
         ];
-
+        $this->save();
         return $this->players[$name];
     }
 
@@ -64,6 +64,7 @@ class BanWave {
             return false;
         } else {
             unset($this->players[$name]);
+            $this->save();
             return true;
         }
     }

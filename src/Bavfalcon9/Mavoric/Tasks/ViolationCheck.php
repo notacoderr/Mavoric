@@ -57,7 +57,7 @@ class ViolationCheck extends Task {
                 $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
             }
 
-            if ($flag->getTotalViolations() >= 500) {
+            if ($flag->getTotalViolations() >= 200) {
                 $flags = $flag->getFlagsByNameAndCount();
                 $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
                 $this->mavoric->issueBan($player, $currentWave, $data);

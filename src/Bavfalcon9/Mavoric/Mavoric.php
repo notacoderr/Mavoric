@@ -79,6 +79,12 @@ class Mavoric {
         'Teleport' => 34
     ];
     
+    /** Message Staff Vars */
+    public const NOTICE = 1;
+    public const INFORM = 2;
+    public const ERROR = 3;
+    public const FATAL = 4;
+
     public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     public const COLOR = '§';
     public const ARROW = '→';
@@ -230,6 +236,33 @@ class Mavoric {
             $this->flags[$p->getName()] = new Flag($p->getName());
         }
         return $this->flags[$p->getName()];
+    }
+
+    /**
+     * Send a message to the staff on the server.
+     * @param Player $player
+     * @param int $int
+     * @param String $details
+     */
+    public function messageStaff(int $type = 1, String $message): void {
+        switch ($type) {
+            case self::NOTICE:
+                $message = '§b[MAVORIC] [NOTICE]§8:§f ' . $message;
+                default;
+            break;
+            case self::INFORM:
+                $message = '§f[MAVORIC]§8:§7 ' . $message;
+            break;
+            case self::ERROR:
+                $message = '§c[MAVORIC] [ERROR]§8:§f ' . $message;
+            break;
+            case self::FATAL:
+                $message = '§4[MAVORIC] [CRITICAL]§8:§f ' . $message;
+            break;
+        }
+
+        $this->messageHandler->queueMessage($message);
+        return;
     }
 
     /**

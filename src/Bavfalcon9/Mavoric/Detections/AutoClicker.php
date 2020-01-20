@@ -58,8 +58,8 @@ class AutoClicker implements Detection {
     }
 
     private function dueCheck($event, $clicker) {
-        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 24 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
-        if (!is_numeric($amount)) $amount = 24;
+        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 22 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
+        if (!is_numeric($amount)) $amount = 22;
 
         $player = $clicker->getName();
         $time = microtime(true);
