@@ -44,13 +44,23 @@ class ViolationCheck extends Task {
                 $currentWave = $waveHandler->getCurrentWave();
             }
 
+            if ($currentWave->isIssued()) {
+                $currentWave = $waveHandler->getWave($currentWave->getNumber() + 1);
+            }
+
             $flag = $this->mavoric->getFlag($player);
             $top = $flag->getMostViolations();
             $this->mavoric->getCheatName($top);
 
             if ($flag->getTotalViolations() >= 50) {
                 $flags = $flag->getFlagsByNameAndCount();
-                $currentWave->addPlayer($player->getName(), '§4[VAC] Illegal Client Modifications.', $flags, $flag->getTotalViolations());
+                $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
+            }
+
+            if ($flag->getTotalViolations() >= 500) {
+                $flags = $flag->getFlagsByNameAndCount();
+                $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
+                $this->mavoric->issueBan($player, $currentWave, $data);
             }
         }
     }

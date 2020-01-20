@@ -77,4 +77,12 @@ class Handler {
         }
     }
 
+    public function getTotalBans() {
+        $everyone = [];
+        foreach ($this->session as $wave) {
+            $everyone = array_merge($wave->getPlayers());
+        }
+        return count($everyone);
+    }
+
 }

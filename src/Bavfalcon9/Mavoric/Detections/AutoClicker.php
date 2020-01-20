@@ -19,7 +19,7 @@ use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerClick;
-
+use Bavfalcon9\Mavoric\events\player\PlayerAttack;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
@@ -39,14 +39,27 @@ class AutoClicker implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        if (!$event instanceof PlayerClick) return;
+        if ($event instanceof PlayerClick) {
+            if ($event->isRightClick()) return;
+            if ($event->clickedBlock()) return;
 
-        if ($event->isRightClick()) return;
-        
-        $clicker = $event->getPlayer();
-        
-        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 22 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
-        if (!is_numeric($amount)) $amount = 22;
+            $clicker = $event->getPlayer();
+            $this->dueCheck($clicker);
+        }
+
+        if ($event instanceof PlayerAttack) {
+            $clicker = $event->getAttacker();
+            $this->dueCheck($clicker);
+        }
+    }
+
+    public function isEnabled(): Bool {
+        return true;
+    }
+
+    private function dueCheck($clicker) {
+        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 24 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
+        if (!is_numeric($amount)) $amount = 24;
 
         $player = $clicker->getName();
         $time = microtime(true);
@@ -73,11 +86,7 @@ class AutoClicker implements Detection {
         // AntiCheat checks
         if ($cps >= $amount) {
             $event->issueViolation(Mavoric::CHEATS['AutoClicker']);
-            $event->sendAlert('AutoClicker', 'Interacted to quickly with ' . $cps . ' clicks per second');
+            $event->sendAlert('AutoClicker', 'Interacted too quickly with ' . $cps . ' clicks per second');
         }
-    }
-
-    public function isEnabled(): Bool {
-        return true;
     }
 }

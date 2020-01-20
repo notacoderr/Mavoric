@@ -43,7 +43,7 @@ class PlayerAttack extends MavoricEvent {
         return $this->attacker;
     }
 
-    public function getVictim(): ?Player {
+    public function getVictim(): ?Entity {
         return $this->victim;
     }
 

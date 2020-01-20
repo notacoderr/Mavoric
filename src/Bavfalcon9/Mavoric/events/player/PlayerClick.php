@@ -81,6 +81,10 @@ class PlayerClick extends MavoricEvent {
         }
     }
 
+    public function clickedBlock(): Bool {
+        return $this->clickedBlk;
+    }
+
     public function isAir(): Bool {
         return $this->clickedAir;
     }

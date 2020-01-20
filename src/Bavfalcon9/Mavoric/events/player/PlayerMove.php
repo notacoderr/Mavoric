@@ -68,7 +68,7 @@ class PlayerMove extends MavoricEvent {
             return new Vector3($pos->x, $max, $pos->z);
         }
 
-        for ($test = $pos; $test < $max; $test++) {
+        for ($test = $pos->y; $test < $max; $test++) {
             $block = $level->getBlockAt($pos->x, $test + 1, $pos->z);
             if ($block->getId() === 0) {
                 return new Vector3($pos->x, $test + 1, $pos->z);

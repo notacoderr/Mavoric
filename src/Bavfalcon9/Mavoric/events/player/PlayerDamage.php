@@ -33,7 +33,7 @@ class PlayerDamage extends MavoricEvent {
     private $projectile;
 
     public function __construct(Mavoric $mavoric, Entity $attacker, Player $victim, Bool $projectile) {
-        parent::__construct($mavoric, $attacker);
+        parent::__construct($mavoric, $victim);
         $this->attacker = $attacker;
         $this->victim = $victim;
         $this->projectile = $projectile;

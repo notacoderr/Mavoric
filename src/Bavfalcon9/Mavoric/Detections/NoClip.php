@@ -51,11 +51,16 @@ class NoClip implements Detection {
          * @var PlayerMove event
          */
         if ($event instanceof PlayerMove) {
-            if (!$event->isMoved()) return;
+            //if (!$event->isMoved()) return;
             $blockA = $event->getBlocks()[1];
-            $blockB = $event->getBLocks()[0];
+            $blockB = $event->getBlocks()[0];
+            $player = $event->getPlayer();
 
-            if ($blockA->isSolid() || $blockB->isSolid()) {
+            /** 
+             * TO DO: Fix and check both rather than current.
+             * aka check block a and then check block b
+             */
+            if ($blockA->isSolid() && $blockB->isSolid()) {
                 if ($event->isTeleport()) {
                     return;
                 }
@@ -85,8 +90,8 @@ class NoClip implements Detection {
                     return;
                 }
                 
-                $event->issueViolation(Mavorics::CHEATS['NoClip']);
-                $event->sendAlert(Mavoric::CHEATS['NoClip'], 'Illegal movement, player moved while in a block');
+                $event->issueViolation(Mavoric::CHEATS['NoClip']);
+                $event->sendAlert('NoClip', 'Illegal movement, player moved while in a block');
             }
         }
 
@@ -122,9 +127,10 @@ class NoClip implements Detection {
          * @var PlayerClick event
          */
         if ($event instanceof PlayerClick) {
+            if (!$event->isRightClick()) return;
             $player = $event->getPlayer();
 
-            if ($event->threwEnderPearl()) {
+            if ($event->getItem()->getId() === 368) {
                 $this->ender_pearls[$player->getName()] = microtime(true);   
             }
             return;

@@ -24,7 +24,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\network\mcpe\protocol\PlaySoundPacket;
 use Bavfalcon9\Mavoric\Command\{
-    alert, mban, mreport
+    alert, mban, mreport, banwave
 };
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\EventManager;
@@ -59,12 +59,14 @@ class Main extends PluginBase {
         $commandMap->registerAll('mavoric', [
             new alert($this),
             new mban($this),
-            new mreport($this)
+            new mreport($this),
+            new banwave($this)
         ]);
         $this->addPerms([
             new Permission('mavoric.command', 'No', Permission::DEFAULT_OP),
             new Permission('mavoric.alerts', 'View and use mavoric alerts.', Permission::DEFAULT_OP),
-            new Permission('mavoric.report', 'Report Players', Permission::DEFAULT_OP)
+            new Permission('mavoric.report', 'Report Players', Permission::DEFAULT_OP),
+            new Permission('mavoric.banwaves', 'Manage banwaves', Permission::DEFAULT_OP)
         ]);
     }
 

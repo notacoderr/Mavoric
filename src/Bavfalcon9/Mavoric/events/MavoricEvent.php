@@ -66,7 +66,7 @@ class MavoricEvent {
     }
 
     public function alertStaff(String $cheat, String $details): Bool {
-        $this->mavoric->getLogger()->notice('DEPRECATED METHOD CALLED -> MavoricEvent::alertStaff()');
+        #$this->mavoric->getPlugin()->getLogger()->notice('DEPRECATED METHOD CALLED -> MavoricEvent::alertStaff()');
         return $this->sendAlert($cheat, $details);
     }
 

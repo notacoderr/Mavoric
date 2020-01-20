@@ -121,6 +121,7 @@ class Mavoric {
         $this->eventHandler = new EventHandler($this);
         /** Handles ban waves. */
         $this->waveHandler = new WaveHandler($this->plugin->getDataFolder() . 'waves');
+        $this->plugin->getLogger()->notice('Mavoric is on BanWave: ' . $this->waveHandler->getCurrentWave()->getNumber());
     }
 
     /** 
@@ -134,12 +135,13 @@ class Mavoric {
             //new AutoSword($this),
             //new AutoTool($this),
             new FastEat($this),
+            new FastBreak($this),
             new Flight($this),
             new Jesus($this),
             new NoClip($this),
             //new NoDamage($this),
             //new NoSlowdown($this),
-            //new Reach($this),
+            new Reach($this),
             //new Speed($this),
             //new Teleport($this)
         ];
@@ -238,8 +240,8 @@ class Mavoric {
      */
     public function alertStaff(Player $player, int $cheat, String $details='Unknown'): void {
         if ($player === null) return;
-        $count = $this->getFlag($player)->getViolations($cheat);
-        $message = self::ARROW . ' ' . '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . self::getCheatName($cheat) . '§8: ';
+        $count = $this->getFlag($player)->getTotalViolations();
+        $message = /*self::ARROW . ' ' .*/ '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . self::getCheatName($cheat) . '§8: ';
         $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
         $this->messageHandler->queueMessage($message, $appendance);
     }
@@ -285,15 +287,27 @@ class Mavoric {
         $wave->setIssued(true);
         $wave->save();
         $players = $wave->getPlayers();
-
+        $this->getServer()->broadcastMessage('§4[MAVORIC] Issuing Ban Wave: ' . $wave->getNumber());
         foreach ($players as $player=>$banData) {
             $banList = $this->getServer()->getNameBans();
             $banList->addBan($player, '§4'.$banData['reason'] . ' | Wave ' . $wave->getNumber(), null, 'Mavoric');
             if ($this->getServer()->getPlayer($player)) {
-                $player->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
+                $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
+                $this->getServer()->getPlayer($player)->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
             }
             $this->getServer()->broadcastMessage('§4[MAVORIC] ' . $player . ' banned in: ' . 'Wave ' . $wave->getNumber());
         }
+    }
+
+    public function issueBan(Player $player, BanWave $wave, Array $banData) {
+        $player = $player->getName();
+        $banList = $this->getServer()->getNameBans();
+        $banList->addBan($player, '§4'.$banData['reason'] . ' | Wave ' . $wave->getNumber(), null, 'Mavoric');
+        if ($this->getServer()->getPlayer($player)) {
+            $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
+            $this->getServer()->getPlayer($player)->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
+        }
+        $this->getServer()->broadcastMessage('§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!');
     }
 
     /**

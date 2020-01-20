@@ -13,6 +13,7 @@ use pocketmine\event\{
     server\DataPacketReceiveEvent,
     block\BlockBreakEvent,
     entity\EntityDamageByEntityEvent,
+    entity\EntityDamageByChildEntityEvent,
     entity\EntityTeleportEvent,
     entity\ProjectileLaunchEvent,
     player\PlayerInteractEvent,
@@ -25,6 +26,7 @@ use pocketmine\network\mcpe\protocol\{
 };
 use Bavfalcon9\Mavoric\events\{
     player\PlayerAttack,
+    player\PlayerDamage,
     player\PlayerBreakBlock,
     player\PlayerClick,
     player\PlayerMove,
@@ -121,7 +123,9 @@ class EventHandler implements Listener {
         $isProjectile = ($entity instanceof Projectile);
 
         if ($damager instanceof Player) {
-            $this->mavoric->broadcastEvent(new PlayerAttack($this->mavoric, $damager, $entity, $isProjectile));
+            if (!$event instanceof EntityDamageByChildEntityEvent) {
+                $this->mavoric->broadcastEvent(new PlayerAttack($this->mavoric, $damager, $entity, $isProjectile));
+            }
         }
 
         if ($entity instanceof Player) {

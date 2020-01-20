@@ -40,9 +40,13 @@ class PlayerBreakBlock extends MavoricEvent {
         $this->timeTaken = $timeTaken;
     }
 
+    public function getItem(): ?Item {
+        return $this->getUsedTool();
+    }
+
     public function getUsedTool(): ?Item {
         $inventory = $this->player->getInventory();
-        return $this->player->getItemInHand();
+        return $inventory->getItemInHand();
     }
 
     public function getDistance(): float {

@@ -31,17 +31,21 @@ class FastBreak implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        /** @var PlayerBlockBreak */
-        if (!$event instanceof PlayerBlockBreak) {
+        /** @var PlayerBreakBlock */
+        if (!$event instanceof PlayerBreakBlock) {
+            return;
+        }
+        if ($event->getPlayer()->getGamemode() === 1) {
             return;
         }
 
-        $expectedTime = ciel($event->getBlock()->getBreakTime($event->getItem()));
-        $expectedTime -= 1;
+        $block = $event->getBlock();
+        $expectedTime = ceil($event->getBlock()->getBreakTime($event->getItem()));
+        $expectedTime -= 2;
 
         if ($event->getTime() < $expectedTime) {
-            $event->issueViolation();
-            $event->sendAlert(Mavoric::CHEATS['FastBreak'], "Broke block {$block->getName()} in {$event->getTime()} seconds when time should be {$expectedTime}");
+            $event->issueViolation(Mavoric::CHEATS['FastBreak']);
+            $event->sendAlert('FastBreak', "Broke block {$block->getName()} in {$event->getTime()} seconds when time should be {$expectedTime}");
             return;
         }
         
