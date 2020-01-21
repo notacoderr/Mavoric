@@ -29,7 +29,8 @@ class BanWave {
             $this->data = [
                 'players' => [],
                 'issued' => false,
-                'issuedAt' => null
+                'issuedAt' => null,
+                'issuedAtDate' => null
             ];
         } else {
             $this->data = json_decode($jsonData, true);
@@ -77,7 +78,12 @@ class BanWave {
         return sizeof(array_keys($this->data['players']));
     }
 
+    public function hasPlayer(String $name): Bool {
+        return isset($this->players[$name]);
+    }
+
     public function isIssued(): Bool {
+        if ($this->data === null || $this->data['issued'] === null) return false;
         return $this->data['issued'];
     }
 
@@ -86,9 +92,30 @@ class BanWave {
 
         if ($bool) {
             $this->data['issuedAt'] = time();
+            $this->data['issuedAtDate'] = date_create();
         }
 
         return $bool;
+    }
+    public function issuedAt(): ?int {
+        return $this->data['issuedAt'];
+    }
+
+    public function issuedAtDate(): String {
+        if (!isset($this->data['issuedAtDate'])) {
+            return 'Invalid';
+        }
+        if ($this->data['issuedAtDate'] instanceof DateTime) {
+            return $this->data['issuedAtDate']->format('Y-m-d H:i:s');
+        }
+        if ($this->data['issuedAtDate'] instanceof String) {
+            return $this->data['issuedAtDate'];
+        }
+        if (is_array($this->data['issuedAtDate'])) {
+            return $this->data['issuedAtDate']['date'] . ' (' .$this->data['issuedAtDate']['timezone'].')';
+        }
+
+        return 'Invalid';
     }
 
     public function save(): Bool {

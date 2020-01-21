@@ -32,6 +32,7 @@ use Bavfalcon9\Mavoric\Detections\{
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Bans\BanHandler;
+use Bavfalcon9\Mavoric\Tasks\BanWaveTask;
 use Bavfalcon9\Mavoric\misc\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\misc\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
@@ -251,7 +252,7 @@ class Mavoric {
                 default;
             break;
             case self::INFORM:
-                $message = '§f[MAVORIC]§8:§7 ' . $message;
+                $message = '§c[MAVORIC]§8:§7 ' . $message;
             break;
             case self::ERROR:
                 $message = '§c[MAVORIC] [ERROR]§8:§f ' . $message;
@@ -319,17 +320,9 @@ class Mavoric {
     public function issueWaveBan(BanWave $wave) {
         $wave->setIssued(true);
         $wave->save();
-        $players = $wave->getPlayers();
-        $this->getServer()->broadcastMessage('§4[MAVORIC] Issuing Ban Wave: ' . $wave->getNumber());
-        foreach ($players as $player=>$banData) {
-            $banList = $this->getServer()->getNameBans();
-            $banList->addBan($player, '§4'.$banData['reason'] . ' | Wave ' . $wave->getNumber(), null, 'Mavoric');
-            if ($this->getServer()->getPlayer($player)) {
-                $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
-                $this->getServer()->getPlayer($player)->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
-            }
-            $this->getServer()->broadcastMessage('§4[MAVORIC] ' . $player . ' banned in: ' . 'Wave ' . $wave->getNumber());
-        }
+        $scheduler = $this->plugin->getScheduler();
+        $scheduler->scheduleRepeatingTask(new BanWaveTask($this, $wave), 20 * 0.6);
+        $this->getServer()->broadcastMessage('§4[MAVORIC] Ban Wave: ' . $wave->getNumber() . ' has started.');
     }
 
     public function issueBan(Player $player, BanWave $wave, Array $banData) {

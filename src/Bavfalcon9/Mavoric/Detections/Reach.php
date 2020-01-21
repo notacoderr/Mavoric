@@ -61,6 +61,12 @@ class Reach implements Detection {
                     $amt = $damager->getPing() / 50;
                 }
             }
+            if ($entity->getPing() >= 230) {
+                $amt = $entity->getPing() / 34;
+                if ($entity->getPing() >= 500) {
+                    $amt = $entity->getPing() / 50;
+                }
+            }
 
             if ($event->getDistance() >= $amt) {
                 if ($this->pearledAway($entity) === true) return;
@@ -124,12 +130,12 @@ class Reach implements Detection {
         $p = $p->getName();
         if (empty($this->teleported)) return false;
         if (!isset($this->teleported[$p])) return false; // wtf lol
-        if ((microtime(true) - (int) $this->teleported[$p]['thrownAt']) >= 3) {
+        if ((microtime(true) - (int) $this->teleported[$p]['thrownAt']) >= 6) {
             // Three seconds passed since teleport, ignore, but still return teleport if within 5 seconds?
             $cache = $this->teleported[$p]['thrownAt'];
             unset($this->teleported[$p]);
 
-            if (microtime(true) - (int) $cache >= 5) return false;
+            if (microtime(true) - (int) $cache >= 6) return false;
             else {
                 return true;
             }
@@ -143,12 +149,12 @@ class Reach implements Detection {
         // Purge cache
         
         foreach ($this->teleportQueue as $pl=>$t) {
-            if (((int) $t + 2) >= time()) unset($this->teleportQueue[$pl]);
+            if (((int) $t + 3) >= time()) unset($this->teleportQueue[$pl]);
         }
         if (empty($this->teleportQueue)) return false;
         if (!isset($this->teleportQueue[$p])) return false; // wtf lol
 
-        if ((microtime(true) - (int) $this->teleportQueue[$p]) >= 2) {
+        if ((microtime(true) - (int) $this->teleportQueue[$p]) >= 5) {
             $cache = $this->teleportQueue[$p];
             unset($this->teleportQueue[$p]);
             return false;

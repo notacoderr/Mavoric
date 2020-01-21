@@ -34,6 +34,12 @@ class Handler {
         } else {
             $index = 1;
             foreach ($this->session as $wave) {
+                if (!$wave->isIssued()) {
+                    return $wave;
+                }
+            }
+
+            foreach ($this->session as $wave) {
                 if ($index === (sizeof($this->session))) {
                     if ($wave->isIssued()) {
                         return $this->getWave($wave->getNumber() + 1);
@@ -41,7 +47,6 @@ class Handler {
                         return $wave;
                     }
                 }
-
                 $index++;
             }
 

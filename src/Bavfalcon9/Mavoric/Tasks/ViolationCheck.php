@@ -47,12 +47,15 @@ class ViolationCheck extends Task {
             $top = $flag->getMostViolations();
             $this->mavoric->getCheatName($top);
 
-            if ($flag->getTotalViolations() >= 50) {
+            if ($flag->getTotalViolations() >= 53) {
                 $flags = $flag->getFlagsByNameAndCount();
+                if (!$currentWave->hasPlayer($player->getName())) {
+                    $this->mavoric->messageStaff(Mavoric::INFORM, $player->getName() . ' has been automatically added to wave: ' . $currentWave->getNumber());
+                }
                 $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
             }
 
-            if ($flag->getTotalViolations() >= 200) {
+            if ($flag->getTotalViolations() >= 240) {
                 $flags = $flag->getFlagsByNameAndCount();
                 $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
                 $this->mavoric->issueBan($player, $currentWave, $data);

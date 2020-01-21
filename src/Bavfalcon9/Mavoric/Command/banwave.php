@@ -44,12 +44,12 @@ class banwave extends Command {
             return true;
         }
         
+        $viewing = (strtolower($args[0]) === 'view');
         $waveHandler = $this->pl->mavoric->getWaveHandler();
         $selectedWave = (!isset($args[1])) ? $waveHandler->getCurrentWave() :
-            (sizeof($waveHandler->getWaves()) < $args[1]) ? $waveHandler->getCurrentWave() :
+            ($waveHandler->getCurrentWave()->getNumber() <  $args[1]) ? $waveHandler->getCurrentWave() :
             $waveHandler->getWave((int) $args[1]);
 
-        $viewing = (strtolower($args[0]) === 'view');
         if (!$sender->isOp()) {
             $viewing = true;
         }
@@ -60,8 +60,19 @@ class banwave extends Command {
                 $sender->sendMessage('§7- §f' . $p . '§8: §7' . implode('§f, §7', array_keys($d['cheats'])) . '§r');
             }
             $sender->sendMessage('§7There are§8:§f ' . $selectedWave->getPlayerCount() . ' players §7in Wave§8:§f ' . $selectedWave->getNumber());
+            if ($selectedWave->isIssued()) {
+                $sender->sendMessage('§aThis wave was issued: ' . $selectedWave->issuedAtDate());
+            }
             return true;
         } else {
+            if (!isset($args[2])) {
+                $sender->sendMessage('§c§lError: §r§c' . 'Code missing.');
+                return true;
+            }
+            if ($args[2] !== '0658') {
+                $sender->sendMessage('§c§lError: §r§c' . 'Code incorrect.');
+                return true;
+            }
             $this->pl->mavoric->issueWaveBan($selectedWave);
             return true;
         }
