@@ -30,13 +30,16 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 
-/* API CHANGE (Player) */
-
 class Reach implements Detection {
+    /** @var Mavoric */
     private $mavoric;
+    /** @var Main */
     private $plugin;
+    /** @var Array */
     private $ender_pearls = [];
+    /** @var Array */
     private $teleported = [];
+    /** @var Array */
     private $teleportQueue = [];
 
     public function __construct(Mavoric $mavoric) {
@@ -51,11 +54,17 @@ class Reach implements Detection {
         if ($event instanceof PlayerAttack) {
             $damager = $event->getAttacker();
             $entity = $event->getVictim();
-            $amt = 6.3;
-            if ($damager->getPing() >= 200) {
-                $amt = $damager->getPing() / 28.9;
+            $amt = 6;
+            if ($damager->getPing() >= 230) {
+                $amt = $damager->getPing() / 34;
                 if ($damager->getPing() >= 500) {
-                    $amt = $damager->getPing() / 28.9;
+                    $amt = $damager->getPing() / 50;
+                }
+            }
+            if ($entity->getPing() >= 230) {
+                $amt = $entity->getPing() / 34;
+                if ($entity->getPing() >= 500) {
+                    $amt = $entity->getPing() / 50;
                 }
             }
 
@@ -66,7 +75,7 @@ class Reach implements Detection {
                 if ($this->hasTeleported($damager) === true) return;
                 if (!$damager->isCreative()) {
                     $event->issueViolation(Mavoric::CHEATS['Reach']);
-                    $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2));
+                    $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
                     return;
                 }
             }
@@ -121,12 +130,12 @@ class Reach implements Detection {
         $p = $p->getName();
         if (empty($this->teleported)) return false;
         if (!isset($this->teleported[$p])) return false; // wtf lol
-        if ((microtime(true) - (int) $this->teleported[$p]['thrownAt']) >= 3) {
+        if ((microtime(true) - (int) $this->teleported[$p]['thrownAt']) >= 6) {
             // Three seconds passed since teleport, ignore, but still return teleport if within 5 seconds?
             $cache = $this->teleported[$p]['thrownAt'];
             unset($this->teleported[$p]);
 
-            if (microtime(true) - (int) $cache >= 5) return false;
+            if (microtime(true) - (int) $cache >= 6) return false;
             else {
                 return true;
             }
@@ -140,12 +149,12 @@ class Reach implements Detection {
         // Purge cache
         
         foreach ($this->teleportQueue as $pl=>$t) {
-            if (((int) $t + 2) >= time()) unset($this->teleportQueue[$pl]);
+            if (((int) $t + 3) >= time()) unset($this->teleportQueue[$pl]);
         }
         if (empty($this->teleportQueue)) return false;
         if (!isset($this->teleportQueue[$p])) return false; // wtf lol
 
-        if ((microtime(true) - (int) $this->teleportQueue[$p]) >= 2) {
+        if ((microtime(true) - (int) $this->teleportQueue[$p]) >= 5) {
             $cache = $this->teleportQueue[$p];
             unset($this->teleportQueue[$p]);
             return false;

@@ -32,6 +32,7 @@ use Bavfalcon9\Mavoric\Detections\{
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Bans\BanHandler;
+use Bavfalcon9\Mavoric\Tasks\BanWaveTask;
 use Bavfalcon9\Mavoric\misc\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\misc\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
@@ -79,7 +80,13 @@ class Mavoric {
         'Teleport' => 34
     ];
     
-    public const EPEARL_LOCATION_BAD = self::COLOR . 'No epearl glitching.';
+    /** Message Staff Vars */
+    public const NOTICE = 1;
+    public const INFORM = 2;
+    public const ERROR = 3;
+    public const FATAL = 4;
+
+    public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     public const COLOR = '§';
     public const ARROW = '→';
 
@@ -233,6 +240,33 @@ class Mavoric {
     }
 
     /**
+     * Send a message to the staff on the server.
+     * @param Player $player
+     * @param int $int
+     * @param String $details
+     */
+    public function messageStaff(int $type = 1, String $message): void {
+        switch ($type) {
+            case self::NOTICE:
+                $message = '§b[MAVORIC] [NOTICE]§8:§f ' . $message;
+                default;
+            break;
+            case self::INFORM:
+                $message = '§c[MAVORIC]§8:§7 ' . $message;
+            break;
+            case self::ERROR:
+                $message = '§c[MAVORIC] [ERROR]§8:§f ' . $message;
+            break;
+            case self::FATAL:
+                $message = '§4[MAVORIC] [CRITICAL]§8:§f ' . $message;
+            break;
+        }
+
+        $this->messageHandler->queueMessage($message);
+        return;
+    }
+
+    /**
      * Alert the staff on the server.
      * @param Player $player
      * @param int $int
@@ -286,17 +320,9 @@ class Mavoric {
     public function issueWaveBan(BanWave $wave) {
         $wave->setIssued(true);
         $wave->save();
-        $players = $wave->getPlayers();
-        $this->getServer()->broadcastMessage('§4[MAVORIC] Issuing Ban Wave: ' . $wave->getNumber());
-        foreach ($players as $player=>$banData) {
-            $banList = $this->getServer()->getNameBans();
-            $banList->addBan($player, '§4'.$banData['reason'] . ' | Wave ' . $wave->getNumber(), null, 'Mavoric');
-            if ($this->getServer()->getPlayer($player)) {
-                $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
-                $this->getServer()->getPlayer($player)->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
-            }
-            $this->getServer()->broadcastMessage('§4[MAVORIC] ' . $player . ' banned in: ' . 'Wave ' . $wave->getNumber());
-        }
+        $scheduler = $this->plugin->getScheduler();
+        $scheduler->scheduleRepeatingTask(new BanWaveTask($this, $wave), 20 * 0.6);
+        $this->getServer()->broadcastMessage('§4[MAVORIC] Ban Wave: ' . $wave->getNumber() . ' has started.');
     }
 
     public function issueBan(Player $player, BanWave $wave, Array $banData) {

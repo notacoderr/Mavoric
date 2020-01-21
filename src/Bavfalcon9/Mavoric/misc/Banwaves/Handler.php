@@ -29,14 +29,28 @@ class Handler {
     }
 
     public function getCurrentWave(): BanWave {
-        if (sizeof($this->session) === 0) {
+        if (empty($this->session)) {
             return $this->getWave(1);
         } else {
-            if ($this->session["".sizeof($this->session)]->isIssued()) {
-                return $this->getWave(sizeof($this->session) + 1);
-            } else {
-                return $this->session["".sizeof($this->session)];
+            $index = 1;
+            foreach ($this->session as $wave) {
+                if (!$wave->isIssued()) {
+                    return $wave;
+                }
             }
+
+            foreach ($this->session as $wave) {
+                if ($index === (sizeof($this->session))) {
+                    if ($wave->isIssued()) {
+                        return $this->getWave($wave->getNumber() + 1);
+                    } else {
+                        return $wave;
+                    }
+                }
+                $index++;
+            }
+
+            return $this->getWave(1);
         }
     }
 

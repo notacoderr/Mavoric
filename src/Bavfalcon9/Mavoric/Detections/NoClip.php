@@ -24,7 +24,9 @@ use Bavfalcon9\Mavoric\events\player\PlayerTeleport;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Level\Position;
+use pocketmine\math\Vector3;
 use pocketmine\block\BlockIds;
+use pocketmine\block\Stair;
 
 use pocketmine\{
     Player,
@@ -56,6 +58,10 @@ class NoClip implements Detection {
             $blockB = $event->getBlocks()[0];
             $player = $event->getPlayer();
 
+            if ($player->isSpectator()) return;
+            if ($player->isCreative()) return;
+
+            $pearl_data = $this->pearledAway($event->getPlayer()); 
             /** 
              * TO DO: Fix and check both rather than current.
              * aka check block a and then check block b
@@ -64,13 +70,23 @@ class NoClip implements Detection {
                 if ($event->isTeleport()) {
                     return;
                 }
-                if ($this->pearledAway($event->getPlayer())) {
-                    $player->teleport($this->pearledAway($event->getPlayer())['pos']);
-                    $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
-                    return;
+                if ($pearl_data !== false) {
+                    if (!$pearl_data['pos'] instanceof Vector3) {
+                        $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
+                        return;
+                    } else {
+                        $player->teleport($pearl_data['pos']);
+                        $player->sendMessage(Mavoric::EPEARL_LOCATION_BAD);
+                        return;
+                    }
                 }
 
                 if (in_array($blockA->getId(), $this->slabs) || in_array($blockB->getId(), $this->slabs)) {
+                    return;
+                }
+
+                if ($blockA instanceof Stair) {
+                    // Prevent stair bugging (usually when you run up stairs)
                     return;
                 }
 

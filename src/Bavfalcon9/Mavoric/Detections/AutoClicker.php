@@ -44,12 +44,12 @@ class AutoClicker implements Detection {
             if ($event->clickedBlock()) return;
 
             $clicker = $event->getPlayer();
-            $this->dueCheck($clicker);
+            $this->dueCheck($event, $clicker);
         }
 
         if ($event instanceof PlayerAttack) {
             $clicker = $event->getAttacker();
-            $this->dueCheck($clicker);
+            $this->dueCheck($event, $clicker);
         }
     }
 
@@ -57,9 +57,9 @@ class AutoClicker implements Detection {
         return true;
     }
 
-    private function dueCheck($clicker) {
-        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 24 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
-        if (!is_numeric($amount)) $amount = 24;
+    private function dueCheck($event, $clicker) {
+        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 22 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
+        if (!is_numeric($amount)) $amount = 22;
 
         $player = $clicker->getName();
         $time = microtime(true);

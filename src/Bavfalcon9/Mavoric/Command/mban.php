@@ -39,6 +39,7 @@ class mban extends Command {
             return true;
         }
 
+        $sender->sendMessage('§c§lWarning: §r§cDeprecated command.');
         if (!isset($args[0])) {
             $sender->sendMessage('§cInclude a player.');
             return true;
