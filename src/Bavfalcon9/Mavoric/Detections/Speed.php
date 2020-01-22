@@ -27,12 +27,14 @@ use pocketmine\utils\TextFormat as TF;
 
 use pocketmine\event\player\PlayerMoveEvent;
 
-
+// to complete....
 class Speed implements Detection {
     /** @var Mavoric */
     private $mavoric;
     /** @var Array */
     private $timings = [];
+    /** @var int */
+    private $lastTick = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->mavoric = $mavoric;
@@ -41,7 +43,15 @@ class Speed implements Detection {
     public function onEvent(MavoricEvent $event): void {
         /** @var PlayerMove */
         if ($event instanceof PlayerMove) {
+            $playerName = $event->getPlayer()->getName();
+            $tickDiff = $event->getTick() - $this->lastTick;
 
+            if (!isset($this->timings[$playerName])) {
+                $this->timings[$playerName] = null;
+            }
+
+            // Time for some checks.
+            if (count($this->timings[$playerName]))
         }
     }
 

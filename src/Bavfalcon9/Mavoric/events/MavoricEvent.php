@@ -27,16 +27,13 @@ class MavoricEvent {
     private $isCancelled = false;
     private $isCheating = false;
 
-    public function __construct(Mavoric $mavoric, Player $target) {
+    public function __construct($e, Mavoric $mavoric, Player $target) {
         $this->mavoric = $mavoric;
         $this->player = $target;
+        $this->eventData = $e;
     }
 
-    public function setPMEvent($event) {
-        $this->eventData = $event;
-    }
-
-    public function cancel(Bool $val=true): Bool {
+    public function cancel(Bool $val = true): Bool {
         $this->eventData->setCancelled($val);
         $this->isCancelled = $val;
         return $val;
@@ -48,6 +45,14 @@ class MavoricEvent {
 
     public function getPMEvent() {
         return $this->eventData;
+    }
+
+    public function getServer(): Server {
+        return $this->mavoric->getServer();
+    }
+
+    public function getTick(): int {
+        return $this->mavoric->getServer()->getTick();
     }
 
     public function setCheating(Bool $val): Bool {

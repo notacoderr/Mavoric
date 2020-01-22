@@ -1,14 +1,15 @@
-=======
-# Mavoric - v1.0.0-Alpha
-# This version is in development.
+# Mavoric
+Mavoric is a plugin designed to enforce the generic functions of MC:BE. Mavoric is designed to execute and enforce 
+general cheat detection powerfully without a hassle. <br />
+**Note:** Mavoric is intended to be lightweight in terms of a fully functional anticheat.
 
-## The best AntiCheat for Pocketmine
 
-### Introduction
-You might be wondering, what is mavoric? How does it work? and why I personally think it's the best anti-cheat you can get for Pocketmine.
+## Information
+Mavoric is still currently in development and I can not insure that you will recieve a 100% bug free experience.
+If you have any bugs or suggestions, please feel free to report them on this repository by clicking [here](https://github.com/Olybear9/Mavoric/issues/new).
 
-**What Is mavoric?**<br />
-Mavoric is a MCPE Anticheat designed to enhance a server and being light weight in the process.
-
-**How does it work?**<br />
-Mavoric is designed to learn from cheaters and normal players, similar to watchdog, the anticheat will do it's best to decipher a legitimate player from a cheater. **DISCLAIMER** NO anticheat is 100% accurate, mavoric will occasionally false ban. 
+## History
+Early stages of Mavoric were originally developed for the [OwnagePE](shop.ownagepe.com) network, 
+after multiple failed attempts at making something functional, Mavoric was then taken into private development 
+for improvements and shortly after made an appearance on [Versai](versai.pro) in August 2019 where it has been 
+used on a mass scale to help improve it's overall functionality.

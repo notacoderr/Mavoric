@@ -13,21 +13,31 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\events\player;
+namespace Bavfalcon9\Mavoric\events\packet;
 
 use pocketmine\Player;
-use pocketmine\item\Item;
-use pocketmine\block\Block;
-use pocketmine\math\Vector3;
+use pocketmine\network\mcpe\protocol\DataPacket;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 
-class Event extends MavoricEvent {
+class PacketRecieve extends MavoricEvent {
+    /** @var DataPacket */
+    private $packet;
     /** @var Player */
     private $player;
+    /** @var Bool */
+    private $inBatch;
 
-    public function __construct($e, Mavoric $mavoric, Player $player) {
+    public function __construct($e, Mavoric $mavoric, Player $player, DataPacket $packet, Bool $inBatch = false) {
         parent::__construct($e, $mavoric, $player);
-        $this->player = $player;
+        $this->packet = $packet;
+    }
+
+    public function isPartOfBatch(): Bool {
+        return $this->inBatch;
+    }
+
+    public function getPacket(): DataPacket {
+        return $this->packet;
     }
 }

@@ -32,8 +32,8 @@ class PlayerAttack extends MavoricEvent {
     /** @var Bool */
     private $projectile;
 
-    public function __construct(Mavoric $mavoric, Player $attacker, Entity $victim, Bool $projectile) {
-        parent::__construct($mavoric, $attacker);
+    public function __construct($e, Mavoric $mavoric, Player $attacker, Entity $victim, Bool $projectile) {
+        parent::__construct($e, $mavoric, $attacker);
         $this->attacker = $attacker;
         $this->victim = $victim;
         $this->projectile = $projectile;

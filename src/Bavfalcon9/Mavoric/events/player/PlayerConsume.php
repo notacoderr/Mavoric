@@ -29,8 +29,8 @@ class PlayerConsume extends MavoricEvent {
     /** @var Item */
     private $item;
 
-    public function __construct(Mavoric $mavoric, Player $player, Item $item) {
-        parent::__construct($mavoric, $player);
+    public function __construct($e, Mavoric $mavoric, Player $player, Item $item) {
+        parent::__construct($e, $mavoric, $player);
         $this->player = $player;
         $this->item = $item;
     }

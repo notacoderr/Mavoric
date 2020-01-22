@@ -33,8 +33,8 @@ class PlayerBreakBlock extends MavoricEvent {
     /** @var int */
     private $timeTaken;
 
-    public function __construct(Mavoric $mavoric, Player $player, Block $block, int $timeTaken) {
-        parent::__construct($mavoric, $player);
+    public function __construct($e, Mavoric $mavoric, Player $player, Block $block, int $timeTaken) {
+        parent::__construct($e, $mavoric, $player);
         $this->player = $player;
         $this->block = $block;
         $this->timeTaken = $timeTaken;

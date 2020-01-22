@@ -64,7 +64,7 @@ class Reach implements Detection {
             if ($entity->getPing() >= 230) {
                 $amt = $entity->getPing() / 34;
                 if ($entity->getPing() >= 500) {
-                    $amt = $entity->getPing() / 50;
+                    $amt = $entity->getPing() / 52;
                 }
             }
 
