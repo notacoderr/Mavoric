@@ -1,8 +1,10 @@
 # Mavoric
 Mavoric is a plugin designed to enforce the generic functions of MC:BE. Mavoric is designed to execute and enforce 
 general cheat detection powerfully without a hassle. <br />
-**Note:** Mavoric is intended to be lightweight in terms of a fully functional anticheat.
+**Note:** Mavoric is intended to be lightweight in terms of a fully functional anticheat. 
 
+## Developers
+If you use any code present here, please have the code reference this repository.
 
 ## Information
 Mavoric is still currently in development and I can not insure that you will recieve a 100% bug free experience.
