@@ -124,7 +124,7 @@ class EventHandler implements Listener {
             if ($event->getPacket()->transactionType === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY) {
                 $this->makeClickEvent($event, $event->getPlayer(), false, false, true);
             }
-        }elseif ($event->getPacket()::NETWORK_ID === LevelSoundEventPacket::NETWORK_ID) {
+        } else if ($event->getPacket()::NETWORK_ID === LevelSoundEventPacket::NETWORK_ID) {
             if ($event->getPacket()->sound === LevelSoundEventPacket::SOUND_ATTACK_NODAMAGE) {
                 $this->makeClickEvent($event, $event->getPlayer(), true, false, true);
             }

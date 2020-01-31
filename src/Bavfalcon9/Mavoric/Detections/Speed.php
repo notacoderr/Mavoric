@@ -51,7 +51,9 @@ class Speed implements Detection {
             }
 
             // Time for some checks.
-            if (count($this->timings[$playerName]))
+            if (count($this->timings[$playerName])) {
+                
+            }
         }
     }
 

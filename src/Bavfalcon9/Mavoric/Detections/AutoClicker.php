@@ -26,7 +26,6 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\Player;
 use pocketmine\Server;
 
-/* API CHANGE (Player) */
 
 class AutoClicker implements Detection {
     private $mavoric;
