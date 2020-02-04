@@ -33,7 +33,7 @@ class MultiAura implements Detection {
         $this->mavoric = $mavoric;
     }
 
-    public function onEvent(MavoricEvent $event) {
+    public function onEvent(MavoricEvent $event): void {
         if (!$event instanceof PlayerAttack) return;
 
         $victim = $event->getVictim();

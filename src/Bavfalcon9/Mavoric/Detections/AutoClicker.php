@@ -83,6 +83,11 @@ class AutoClicker implements Detection {
         }
 
         // AntiCheat checks
+        if ($cps >= 100) {
+            $event->issueViolation(Mavoric::CHEATS['AutoClicker'], 900);
+            $event->sendAlert('AutoClicker', 'Interacted too quickly with ' . $cps . ' clicks per second');
+            $event->getPlayer()->close('', 'Fragmented packet');
+        }
         if ($cps >= $amount) {
             $event->issueViolation(Mavoric::CHEATS['AutoClicker']);
             $event->sendAlert('AutoClicker', 'Interacted too quickly with ' . $cps . ' clicks per second');

@@ -26,7 +26,7 @@ use Bavfalcon9\Mavoric\Detections\{
     Aimbot, AutoArmor, AutoClicker, AutoSword,
     AutoTool, Bhop, FastBreak, FastEat, Flight,
     KillAura, MultiAura, NoClip, NoDamage, NoSlowdown,
-    Reach, Speed, Teleport, Timer, Jesus
+    Reach, Speed, Teleport, Timer, Jesus, Jetpack
 };
 
 use pocketmine\utils\MainLogger;
@@ -72,7 +72,7 @@ class Mavoric {
         'GhostReach' => 26,
         'HighJump' => 27,
         'Jesus' => 28,
-        'JetPack' => 29,
+        'Jetpack' => 29,
         'NoEffects' => 30,
         'MenuWalk' => 31,
         'Spider' => 32,
@@ -145,12 +145,14 @@ class Mavoric {
             new FastBreak($this),
             new Flight($this),
             new Jesus($this),
+            new JetPack($this),
+            new MultiAura($this),
             new NoClip($this),
             //new NoDamage($this),
             //new NoSlowdown($this),
             new Reach($this),
-            //new Speed($this),
-            //new Teleport($this)
+            new Speed($this),
+            new Teleport($this)
         ];
 
         foreach ($allDetections as $cheat) {

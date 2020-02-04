@@ -67,6 +67,8 @@ class MavoricEvent {
     public function issueViolation(int $cheat, int $count = 1): Flag {
         $flag = $this->mavoric->getFlag($this->player);
         $flag->addViolation($cheat, $count);
+        $this->cancel(true); // SUPPRESSION FOR EACH ALERT JAJAJAJA
+
         return $flag;
     }
 

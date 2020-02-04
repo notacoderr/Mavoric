@@ -50,9 +50,11 @@ class Speed implements Detection {
                 $this->timings[$playerName] = null;
             }
 
-            // Time for some checks.
-            if (count($this->timings[$playerName])) {
-                
+            $pos = $event->getPlayer()->getPosition();
+
+            if ($event->getPlayer()->getPosition()->distance($pos) >= 0.2) {
+                $event->alertStaff('Speed', 'Illegal movement, moved to quickly');
+                $event->issueViolation(Mavoric::CHEATS['Speed']);
             }
         }
     }

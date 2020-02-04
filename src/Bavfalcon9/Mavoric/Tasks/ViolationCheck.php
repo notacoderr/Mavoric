@@ -38,6 +38,7 @@ class ViolationCheck extends Task {
         $waveHandler = $this->mavoric->getWaveHandler();
         $currentWave = $waveHandler->getCurrentWave();
 
+        /*
         foreach ($players as $player) {
             if ($currentWave->isIssued()) {
                 $currentWave = $waveHandler->getWave($currentWave->getNumber() + 1);
@@ -60,6 +61,6 @@ class ViolationCheck extends Task {
                 $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
                 $this->mavoric->issueBan($player, $currentWave, $data);
             }
-        }
+        }*/
     }
 }

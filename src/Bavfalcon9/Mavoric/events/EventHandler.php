@@ -99,18 +99,26 @@ class EventHandler implements Listener {
     }
 
     public function onSendpacket(DataPacketSendEvent $event): void {
-        if ($event->getPacket() instanceof BatchPacket) {
-            foreach ($event->getPacket()->getPackets() as $buf) {
+        try {
+            if ($event->getPacket() instanceof BatchPacket) {
                 try {
-                    $pk = PacketPool::getPacket($buf);
-                    $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                    foreach ($event->getPacket()->getPackets() as $buf) {
+                        try {
+                            $pk = PacketPool::getPacket($buf);
+                            $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                        } catch (\Throwable $e) {
+                            continue;
+                        }
+                    }
+                    return;
                 } catch (\Throwable $e) {
-                    continue;
+                    return;
                 }
+            } else {
+                $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                return;
             }
-            return;
-        } else {
-            $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+        } catch (\Throwable $e) {
             return;
         }
     }
