@@ -85,6 +85,7 @@ class Mavoric {
     public const INFORM = 2;
     public const ERROR = 3;
     public const FATAL = 4;
+    public const WARN = 5;
 
     public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     public const COLOR = '§';
@@ -118,7 +119,7 @@ class Mavoric {
         $this->plugin = $plugin;
         /** Handle alert messages (so they dont spam staff) */
         $this->messageHandler = new MessageHandler($plugin, $this);
-        /** Ticks per second check (TODO: Transfer to another thread checking server.) */
+        /** Ticks per second check  */
         $this->tpsCheck = new TpsCheck($plugin, $this);
         /** @deprecated Handles bans */
         $this->banManager = new BanHandler($this->plugin->getDataFolder() . 'ban_data');
@@ -260,7 +261,10 @@ class Mavoric {
                 $message = '§c[MAVORIC] [ERROR]§8:§f ' . $message;
             break;
             case self::FATAL:
-                $message = '§4[MAVORIC] [CRITICAL]§8:§f ' . $message;
+                $message = '§4[MAVORIC] [CRITICAL]§8:§c ' . $message;
+            break;
+            case self::WARN:
+                $message = '§4[MAVORIC] [WARNING]§8:§f ' . $message;
             break;
         }
 

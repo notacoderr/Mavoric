@@ -10,7 +10,7 @@ Autoban:
   disabled: false # set this to true for no auto bans.
   vague-reasoning: true # set this to false if you want mavoric to put "PLAYER WAS BANNED FOR {CHEAT}" instead of "PLAYER WAS BANNED FOR CHEATING"
 Alerts:
-  tps: 17 # At 15 tps warn online staff members.
+  tps: 20 # At 15 tps warn online staff members.
   tps-low: 10 # Below 10 tps warn online staff members.
 Reports: true
 Suppression: true # This applies to all cheats, should mavoric cancel events if cheating

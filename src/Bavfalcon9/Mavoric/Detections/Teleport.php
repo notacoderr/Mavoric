@@ -60,6 +60,6 @@ class Teleport implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return true;
+        return false;
     }
 }

@@ -17,27 +17,59 @@ namespace Bavfalcon9\Mavoric\misc\Handlers;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Main;
 use pocketmine\scheduler\Task;
-class TpsCheckTask extends Task {
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
+class TpsCheckTask extends AsyncTask {
+    private $lastTick;
+    private $callback;
+
+    public function __construct($lastTick, $callback) {
+        $this->lastTick = $lastTick;
+        $this->callback = $callback;
+    }
+
+    public function onRun() {
+        sleep(1);
+    }
+
+    public function onCompletion(Server $server) {
+        $expected = $this->lastTick + 20;
+        $actual = $server->getTick();
+        $diff = $expected - $actual;
+        $callback = $this->callback;
+        $callback($server, $diff);
+    }
+}
+class RepeatingAsyncTask extends Task {
     private $tps;
     public function __construct($tps) {
         $this->tps = $tps;
     }
 
     public function onRun(int $tick) {
-        $this->tps->postTick($tick);
+        $this->tps->runAsyncTask();
     }
 }
+class HaltedTask extends Task {
+    private $tpscheck;
+    public function __construct($tpscheck) {
+        $this->tpscheck = $tpscheck;
+    }
+
+    public function onRun(int $tick) {
+        $this->tpscheck->cancelHalt();
+    }
+}
+
 class TpsCheck {
     private $plugin;
     private $mavoric;
     private $checks;
     private $tps;
     private $measuredTPS = 20;
-    private $ticks = 0;
+    private $ticks = [];
     private $skipped = 0;
-    private $expected = 0;
-    private $time = -1;
-    private $halted;
+    private $halted = false;
     private $task;
 
     public function __construct(Main $plugin, Mavoric $mavoric) {
@@ -47,39 +79,118 @@ class TpsCheck {
     }
 
     private function registerCheck() {
-        $this->task = $this->plugin->getScheduler()->scheduleRepeatingTask(new TpsCheckTask($this), 1);
+        $this->start();
         $this->tps = 20;
     }
 
-    public function postTick(int $tick) {
-        $this->tps = $this->plugin->getServer()->getTicksPerSecond();
-        $this->ticks++;
-        if ($this->time === -1) $this->testTime = microtime(true) - 1;
-        if (floor(microTime(true) - $this->testTime) > 2 || $this->tps <= 4) {
-            #$this->mavoric->messageStaff('custom', null, "WARNING: Average TPS is {$this->ticks} ticks per a second! This isn't good...");
-        }
-        if ($this->ticks >= 20) {
-            $tps = $this->ticks / (microtime(true) - $this->testTime);
-            $this->measuredTPS = $tps;
-            $this->testTime = microtime(true);
-            if ($this->isLow()) {
-                #$this->mavoric->messageStaff('custom', null, "WARNING: Current tps is [{$tps} | {$this->tps}]");
+    public function postTick(float $diff) {
+        $diff === round($diff, 3);
+        $tps = 20 - $diff;
+        $this->ticks[] = $tps;
+
+        if ($tps >= 19.5) {
+            /* server running at 20 tps */
+            if ($this->halted) {
+                $this->cancelHalt();
             }
-            $this->ticks = 0;
+            return;
         }
-        $this->expected = $tick + 1;
+
+        if ($tps < 19.5 && $tps >= 19)  {
+            // 19 TPS
+            if ($this->halted) {
+                $this->cancelHalt();
+            }
+            return;
+        }
+
+        if ($tps <= 18.5 && $tps > 17) {
+            // 18 tps
+            if ($this->halted) {
+                $this->cancelHalt();
+            }
+            $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
+            return;
+        } 
+
+        if ($tps < 17) {
+            if ($tps <= 16) {
+                if ($this->halted) return;
+                $this->setHalted($tps);
+                $this->mavoric->messageStaff(Mavoric::WARN, 'Server running very slow! TPS: ' . $tps);
+                $this->mavoric->messageStaff(Mavoric::FATAL, 'Pausing detections. A message will be prompted when detections are re-enabled.');
+                return;
+            } else {
+                $this->mavoric->messageStaff(Mavoric::WARN, 'Server running very slow! TPS: ' . $tps);
+            }
+        }
+    }
+
+    private function setHalted(float $tps = 0) {
+        $waitUntil = $tps * 20;
+        #$this->stop();
+        $this->halted = true;
+        #$this->plugin->getScheduler()->scheduleDelayedTask(new HaltedTask($this), $waitUntil);
+        return;
     }
 
     /**
      * Halts occur when the TPS is below 15 or is spiking.
      */
-    public function isHalted() : ?Bool {
-        return false;
+    public function isHalted(): Bool {
+        return $this->halted;
     }
 
-    public function isLow() : ?Bool {
+    public function cancelHalt() {
+        #$this->start();
+        $this->mavoric->messageStaff(Mavoric::INFORM, 'No longer pausing detections.');
+        $this->halted = false;
+    }
+
+    public function isLow(): Bool {
         if ($this->isHalted()) return true;
         if ($this->tps <= 17) return true;
         else return false;
+    }
+
+    public function stop(): Bool {
+        if ($this->task) {
+            $this->task->remove();
+            $this->task = null;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function getAverageTPS(): int {
+        $avg = 20;
+        foreach ($this->ticks as $tick) {
+            $avg += $tick;
+        }
+
+        $avg = $avg / sizeof($this->ticks);
+        return $avg;
+    }
+
+    public function start(): Bool {
+        if ($this->task) {
+            return false;
+        } else {
+            $this->task = $this->plugin->getScheduler()->scheduleRepeatingTask(new RepeatingAsyncTask($this), 20);
+            return true;
+        }
+    }
+
+    public function runAsyncTask() {
+        $this->plugin->getServer()->getAsyncPool()->submitTask(new TpsCheckTask($this->plugin->getServer()->getTick(), function ($server, $diff) {
+                $mavoric = $server->getPluginManager()->getPlugin('Mavoric');
+                if (!$mavoric) {
+                    return;
+                } else {
+                    $mavoric->mavoric->getTpsCheck()->postTick($diff);
+                }
+            })
+        );
     }
 }

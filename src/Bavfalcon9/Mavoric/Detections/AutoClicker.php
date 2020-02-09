@@ -57,7 +57,7 @@ class AutoClicker implements Detection {
     }
 
     private function dueCheck($event, $clicker) {
-        $amount = (!$this->plugin->config->getNested('Cheats.AutoClicker.max-cps')) ? 22 : $this->plugin->config->getNested('Cheats.AutoClicker.max-cps');
+        $amount = (!$this->plugin->config->getNested('AutoClicker.max-cps')) ? 22 : $this->plugin->config->getNested('AutoClicker.max-cps');
         if (!is_numeric($amount)) $amount = 22;
 
         $player = $clicker->getName();
@@ -69,13 +69,6 @@ class AutoClicker implements Detection {
 
         array_unshift($this->counters[$player], $time);
         
-        /*
-        if (count($this->counters[$player]) >= 50) {
-            $event->issueViolation(Mavoric::CHEATS['AutoClicker']);
-            $event->sendAlert('AutoClicker', 'Interacted to quickly with over' . count($this->counters[$player]) . ' clicks per second');
-            array_pop($this->counters[$player]);
-        }*/
-
         if (!empty($this->counters[$player])) {
             $cps = count(array_filter($this->counters[$player], static function (float $t) use ($time) : bool {
                 return ($time - $t) <= 1;

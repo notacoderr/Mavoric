@@ -52,10 +52,11 @@ class MessageHandler {
         $this->plugin->getLogger()->info($message.$append);
         $players = $this->plugin->getServer()->getOnlinePlayers();
         foreach ($players as $p) {
-            //if ($p->hasPermission('mavoric.alerts')) {
+            /* Modify line 56 and 59 for testing */
+            if ($p->hasPermission('mavoric.alerts')) {
                 if (in_array($p->getName(), $this->staffIgnored)) return;
                 $p->sendMessage($message.$append);
-            //}
+            }
         }
     }
 

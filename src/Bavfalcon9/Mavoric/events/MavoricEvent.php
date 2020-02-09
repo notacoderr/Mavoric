@@ -34,6 +34,10 @@ class MavoricEvent {
     }
 
     public function cancel(Bool $val = true): Bool {
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return false;
+        }
+        
         $this->eventData->setCancelled($val);
         $this->isCancelled = $val;
         return $val;
@@ -65,6 +69,10 @@ class MavoricEvent {
     }
 
     public function issueViolation(int $cheat, int $count = 1): Flag {
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return $this->mavoric->getFlag(null);
+        }
+
         $flag = $this->mavoric->getFlag($this->player);
         $flag->addViolation($cheat, $count);
         $this->cancel(true); // SUPPRESSION FOR EACH ALERT JAJAJAJA
@@ -74,10 +82,16 @@ class MavoricEvent {
 
     public function alertStaff(String $cheat, String $details): Bool {
         #$this->mavoric->getPlugin()->getLogger()->notice('DEPRECATED METHOD CALLED -> MavoricEvent::alertStaff()');
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return false;
+        }
         return $this->sendAlert($cheat, $details);
     }
 
     public function sendAlert(String $cheat, String $details): Bool {
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return false;
+        }
         $cheat = Mavoric::CHEATS[$cheat];
         $this->mavoric->alertStaff($this->player, $cheat, $details);
         return true;

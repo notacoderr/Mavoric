@@ -43,23 +43,45 @@ class Speed implements Detection {
     public function onEvent(MavoricEvent $event): void {
         /** @var PlayerMove */
         if ($event instanceof PlayerMove) {
-            $playerName = $event->getPlayer()->getName();
-            $tickDiff = $event->getTick() - $this->lastTick;
-
-            if (!isset($this->timings[$playerName])) {
-                $this->timings[$playerName] = null;
+            $player = $event->getPlayer();
+            $to = $event->getTo();
+            $from = $event->getFrom();
+            $distance = abs($to->distance($from));
+            $allowed = 2;
+            if ($player->isCreative() || $player->isSpectator()) {
+                return;
             }
-
-            $pos = $event->getPlayer()->getPosition();
-
-            if ($event->getPlayer()->getPosition()->distance($pos) >= 0.2) {
-                $event->alertStaff('Speed', 'Illegal movement, moved to quickly');
-                $event->issueViolation(Mavoric::CHEATS['Speed']);
+            if ($player->getEffect(1) !== null) {
+                if ($player->getEffect(1)->getEffectLevel() === 1) {
+                    $allowed = 2.3;
+                } else {
+                    $allowed = $player->getEffect(1)->getEffectLevel() * 1.6;
+                }
+            }
+            // fix falling and flying
+            if ($player->getAllowFlight()) {
+                $allowed = 4;
+            }
+            if (($from->y > $to->y) && $distance < 6) {
+                return;
+            }
+            if ($distance >= $allowed) {
+                if ($player->getPing() >= 300) {
+                    $distance = round($distance, 2);
+                    #$player->sendMessage('Evaluation failed. Shard: ' . rand(1, 99999));
+                    #$event->issueViolation(Mavoric::CHEATS['Speed']);
+                    return;
+                } else {
+                    $distance = round($distance, 2);
+                    $event->sendAlert('Speed', "Illegal movement, Moved {$distance} blocks too quickly.");
+                    $event->issueViolation(Mavoric::CHEATS['Speed']);
+                    return;
+                }
             }
         }
     }
 
     public function isEnabled(): Bool {
-        return true;
+        return false;
     }
 }

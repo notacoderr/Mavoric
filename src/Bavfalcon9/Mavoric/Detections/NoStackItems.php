@@ -13,17 +13,17 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
+
+ // Pretty much a big fuck you, to all hackers, oh sweety.
 namespace Bavfalcon9\Mavoric\Detections;
 
-use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
-use Bavfalcon9\Mavoric\events\player\PlayerBreakBlock;
-use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat as TF;
+use Bavfalcon9\Mavoric\events\player\PlayerMove;
 use pocketmine\Player;
 
-class FastBreak implements Detection {
+class NoStackItems implements Detection {
+    /** @var Mavoric */
     private $mavoric;
 
     public function __construct(Mavoric $mavoric) {
@@ -31,26 +31,24 @@ class FastBreak implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        /** @var PlayerBreakBlock */
-        if (!$event instanceof PlayerBreakBlock) {
-            return;
-        }
-        if ($event->getPlayer()->getGamemode() === 1) {
+        if (!$event instanceof PlayerMove) {
             return;
         }
 
-        $block = $event->getBlock();
-        $expectedTime = ceil($event->getBlock()->getBreakTime($event->getItem()));
-        $expectedTime -= 2;
+        $block_below = $event->getBlockNearPlayer(0, -1, 0);
+        $block_above = $event->getBlockNearPlayer(0, 1, 0);
 
-        if ($event->getTime() < $expectedTime) {
-            $event->issueViolation(Mavoric::CHEATS['FastBreak']);
-            $event->sendAlert('FastBreak', "Broke block {$block->getName()} in {$event->getTime()} seconds when time should be {$expectedTime}");
-            return;
+        if ($block_below instanceof StillWater || $block_below instanceof Water || $block_below instanceof WaterLily) {
+           if ($block_above->getId() === 0) {
+                $event->issueViolation(Mavoric::CHEATS['Jesus'], 1);
+                $event->sendAlert('Jesus', 'Illegal movement, walked on water');
+                return;
+           } 
         }
-        
+
+        return;
     }
-    
+
     public function isEnabled(): Bool {
         return false;
     }

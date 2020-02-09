@@ -34,7 +34,8 @@ class Main extends PluginBase {
     public $EventManager;
     public $config;
     public $reportHandler;
-
+    public $mavoric;
+    
     public function onEnable() {
         $this->saveResource('config.yml');
         $this->mavoric = new Mavoric($this);
