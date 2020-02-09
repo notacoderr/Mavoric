@@ -14,6 +14,7 @@
  */
 namespace Bavfalcon9\Mavoric\misc\Handlers;
 
+use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Main;
 use pocketmine\scheduler\Task;
@@ -71,6 +72,7 @@ class TpsCheck {
     private $skipped = 0;
     private $halted = false;
     private $task;
+    private $checkTask;
 
     public function __construct(Main $plugin, Mavoric $mavoric) {
         $this->mavoric = $mavoric;
@@ -130,6 +132,7 @@ class TpsCheck {
         $waitUntil = $tps * 20;
         #$this->stop();
         $this->halted = true;
+        $this->checkTask->remove();
         #$this->plugin->getScheduler()->scheduleDelayedTask(new HaltedTask($this), $waitUntil);
         return;
     }
@@ -143,6 +146,7 @@ class TpsCheck {
 
     public function cancelHalt() {
         #$this->start();
+        $this->checkTask = $this->plugin->getScheduler()->scheduleRepeatingTask(new ViolationCheck($this->mavoric), 20);
         $this->mavoric->messageStaff(Mavoric::INFORM, 'No longer pausing detections.');
         $this->halted = false;
     }
@@ -157,6 +161,7 @@ class TpsCheck {
         if ($this->task) {
             $this->task->remove();
             $this->task = null;
+            $this->checkTask->remove();
             return true;
         } else {
             return false;
@@ -178,6 +183,7 @@ class TpsCheck {
             return false;
         } else {
             $this->task = $this->plugin->getScheduler()->scheduleRepeatingTask(new RepeatingAsyncTask($this), 20);
+            $this->checkTask = $this->plugin->getScheduler()->scheduleRepeatingTask(new ViolationCheck($this->mavoric), 20);
             return true;
         }
     }

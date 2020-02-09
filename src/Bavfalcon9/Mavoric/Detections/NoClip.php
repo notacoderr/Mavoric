@@ -157,8 +157,14 @@ class NoClip implements Detection {
      * @return Bool
      */
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
+
+
+    /**
+     * Private functions.
+     */
+
 
     private function pearledAway($p) {
         $p = $p->getName();

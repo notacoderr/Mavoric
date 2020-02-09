@@ -82,6 +82,6 @@ class Speed implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

@@ -73,18 +73,17 @@ class MavoricEvent {
             return $this->mavoric->getFlag(null);
         }
 
+        if ($this->mavoric->settings->isSuppressed(Mavoric::getCheatName($cheat))) {
+            $this->cancel(true);
+        }
+
         $flag = $this->mavoric->getFlag($this->player);
         $flag->addViolation($cheat, $count);
-        $this->cancel(true); // SUPPRESSION FOR EACH ALERT JAJAJAJA
 
         return $flag;
     }
 
     public function alertStaff(String $cheat, String $details): Bool {
-        #$this->mavoric->getPlugin()->getLogger()->notice('DEPRECATED METHOD CALLED -> MavoricEvent::alertStaff()');
-        if ($this->mavoric->getTpsCheck()->isHalted()) {
-            return false;
-        }
         return $this->sendAlert($cheat, $details);
     }
 

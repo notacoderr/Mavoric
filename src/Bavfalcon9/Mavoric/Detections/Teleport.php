@@ -44,7 +44,7 @@ class Teleport implements Detection {
         $to = $event->getTo();
         $from = $event->getFrom();
         $distance = abs($to->distance($from));
-        if ($distance >= 2) {
+        if ($distance >= 10) {
             if ($player->getPing() >= 300) {
                 $distance = round($distance, 2);
                 $event->sendAlert('Teleport', "Traveled {$distance} blocks in one move");
@@ -60,6 +60,6 @@ class Teleport implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

@@ -18,7 +18,6 @@ namespace Bavfalcon9\Mavoric;
 use Bavfalcon9\Mavoric\misc\Flag;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
-use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\EventHandler;
@@ -33,6 +32,7 @@ use pocketmine\utils\MainLogger;
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Bans\BanHandler;
 use Bavfalcon9\Mavoric\Tasks\BanWaveTask;
+use Bavfalcon9\Mavoric\misc\Settings;
 use Bavfalcon9\Mavoric\misc\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\misc\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
@@ -91,8 +91,10 @@ class Mavoric {
     public const COLOR = '§';
     public const ARROW = '→';
 
+    /** @var Settings */
+    public $settings;
     /** @var String */
-    private $version = '1.0.0';
+    private $version = '1.0.2';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -117,6 +119,8 @@ class Mavoric {
     public function __construct(Main $plugin) {
         /** Plugin Cache */
         $this->plugin = $plugin;
+        /** Plugin config */
+        $this->settings = new Settings(new Config($this->plugin->getDataFolder().'config.yml'));
         /** Handle alert messages (so they dont spam staff) */
         $this->messageHandler = new MessageHandler($plugin, $this);
         /** Ticks per second check  */
@@ -160,14 +164,14 @@ class Mavoric {
             $name = str_replace('Bavfalcon9\Mavoric\Detections\\', '', get_class($cheat));
             
             if (!$cheat->isEnabled()) {
-                $this->plugin->getLogger()->notice('[CORE] Disabled detection: ' . $name);
+                $this->plugin->getLogger()->critical('[CORE] Disabled detection: ' . $name);
                 continue;
             }
             if ($this->isEnabled($name)) {
                 $this->plugin->getLogger()->notice('Enabled detection: ' . $name);
                 array_push($this->loadedCheats, $cheat);
             } else {
-                $this->plugin->getLogger()->notice('Disabled detection: ' . $name);
+                $this->plugin->getLogger()->critical('Disabled detection: ' . $name);
                 continue;
             }
         }
@@ -214,19 +218,17 @@ class Mavoric {
     }
 
     /**
-     * @deprecated
      * @return int
      */
     public static function getCheatFromString(String $name): ?int {
-        return $self::CHEATS[$name];
+        return self::CHEATS[$name];
     }
 
     /**
+     * @deprecated
      * @return Boolean?
      */
     public function loadChecker(): ?Bool {
-        $scheduler = $this->plugin->getScheduler();
-        $scheduler->scheduleRepeatingTask(new ViolationCheck($this), 20);
         return false;
     }
 
@@ -311,14 +313,17 @@ class Mavoric {
         if ($config->get('Version') !== $this->version) {
             MainLogger::getLogger()->info('Mavoric config version does not match plugin version. Should match version: ' . $this->version.', fixing...');
             $this->plugin->saveResource('config.yml', true);
-            $new = new Config($this->plugin->getDataFolder().'config.yml');
+            $new = new Config($this->plugin->getDataFolder(). 'config.yml');
+            /*
             $old = $config->getAll();
             foreach ($old as $key=>$val) {
                 $new->set($key, $val);
             }
             $new->set('Version', $this->version);
-            $new->save();
+            $new->save();*/
+            $this->settings->update($new);
             MainLogger::getLogger()->info('Mavoric config updated to v' . $this->version.'.');
+            MainLogger::getLogger()->critical('Mavoric config overwrote old config to update to v' . $this->version.'!');
         }
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
     }
@@ -331,15 +336,24 @@ class Mavoric {
         $this->getServer()->broadcastMessage('§4[MAVORIC] Ban Wave: ' . $wave->getNumber() . ' has started.');
     }
 
-    public function issueBan(Player $player, BanWave $wave, Array $banData) {
+    public function issueBan(Player $player, $wave, Array $banData) {
         $player = $player->getName();
         $banList = $this->getServer()->getNameBans();
-        $banList->addBan($player, '§4'.$banData['reason'] . ' | Wave ' . $wave->getNumber(), null, 'Mavoric');
+        $append = (!$wave) ? '' : ' | Wave ' . $wave->getNumber();
+        $configReason = $this->settings->getConfig()->getNested('Autoban.reason') ?? '§4[AC] Illegal client modifications.';
+        $type = (!$wave) ? $this->settings->getConfig()->getNested('Autoban.type') : 'ban';
+
         if ($this->getServer()->getPlayer($player)) {
             $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
-            $this->getServer()->getPlayer($player)->close('', $banData['reason'] . ' | Wave ' . $wave->getNumber());
+            $this->getServer()->getPlayer($player)->close('', $banData['reason'] . $append);
         }
-        $this->getServer()->broadcastMessage('§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!');
+
+        if (strtolower($type) === 'ban') {
+            $banList->addBan($player, '§4'. $banData['reason'] . $append, null, 'Mavoric');
+            $this->getServer()->broadcastMessage('§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!');
+        } else {
+            $this->getServer()->broadcastMessage('§4[MAVORIC] A player in your game has been kicked for abusing or hacking.');
+        }
     }
 
     /**
@@ -347,12 +361,7 @@ class Mavoric {
      * @return Bool
      */
     public function isSuppressed(Float $cheat): ?Bool {
-        if (!$this->getCheatName($cheat)) return $this->plugin->config->get('Suppression');
-        $mascular = $this->plugin->config->get('Suppression');
-        $singular = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.suppression"); 
-        if ($singular === true) return true;
-        if ($singular === null) return $mascular;
-        else return $singular;
+        return $this->settings->isSuppressed($this->getCheat($cheat));
     }
 
     /**
@@ -360,11 +369,7 @@ class Mavoric {
      * @return Bool
      */
     public function canAutoBan(Float $cheat): ?Bool {
-        if (!$this->getCheatName($cheat)) return !$this->plugin->config->getNested('Autoban.disabled');
-        $mascular = !$this->plugin->config->getNested('Autoban.disabled');
-        $singular = $this->plugin->config->getNested("Cheats.{$this->getCheatName($cheat)}.autoban"); 
-        if ($singular === null) return $mascular;
-        return $singular;
+        return $this->settings->isEnabled('Autoban');
     }
 
     /**
@@ -372,10 +377,7 @@ class Mavoric {
      * @return Bool
      */
     public function isEnabled(String $cheat): ?Bool {
-        if (!isset(self::CHEATS[$cheat])) return null;
-        
-        $cheat = $this->plugin->config->getNested("Cheats.$cheat.enabled");
-        return ($cheat === null) ? true : $cheat;
+        return $this->settings->isCheatEnabled(Mavoric::getCheatFromString($cheat));
     }
 
     /**
