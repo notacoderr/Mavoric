@@ -27,12 +27,14 @@ use pocketmine\utils\TextFormat as TF;
 
 use pocketmine\event\player\PlayerMoveEvent;
 
-
+// to complete....
 class Speed implements Detection {
     /** @var Mavoric */
     private $mavoric;
     /** @var Array */
     private $timings = [];
+    /** @var int */
+    private $lastTick = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->mavoric = $mavoric;
@@ -41,7 +43,41 @@ class Speed implements Detection {
     public function onEvent(MavoricEvent $event): void {
         /** @var PlayerMove */
         if ($event instanceof PlayerMove) {
-
+            $player = $event->getPlayer();
+            $to = $event->getTo();
+            $from = $event->getFrom();
+            $distance = abs($to->distance($from));
+            $allowed = 2;
+            if ($player->isCreative() || $player->isSpectator()) {
+                return;
+            }
+            if ($player->getEffect(1) !== null) {
+                if ($player->getEffect(1)->getEffectLevel() === 1) {
+                    $allowed = 2.3;
+                } else {
+                    $allowed = $player->getEffect(1)->getEffectLevel() * 1.6;
+                }
+            }
+            // fix falling and flying
+            if ($player->getAllowFlight()) {
+                $allowed = 4;
+            }
+            if (($from->y > $to->y) && $distance < 6) {
+                return;
+            }
+            if ($distance >= $allowed) {
+                if ($player->getPing() >= 300) {
+                    $distance = round($distance, 2);
+                    #$player->sendMessage('Evaluation failed. Shard: ' . rand(1, 99999));
+                    #$event->issueViolation(Mavoric::CHEATS['Speed']);
+                    return;
+                } else {
+                    $distance = round($distance, 2);
+                    $event->sendAlert('Speed', "Illegal movement, Moved {$distance} blocks too quickly.");
+                    $event->issueViolation(Mavoric::CHEATS['Speed']);
+                    return;
+                }
+            }
         }
     }
 

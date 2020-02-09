@@ -35,31 +35,59 @@ class ViolationCheck extends Task {
         $this->seconds++;
         $this->mavoric->getPlugin()->reportHandler->checkReports();
         $players = $this->mavoric->getPlugin()->getServer()->getOnlinePlayers();
-        $waveHandler = $this->mavoric->getWaveHandler();
-        $currentWave = $waveHandler->getCurrentWave();
 
-        foreach ($players as $player) {
-            if ($currentWave->isIssued()) {
-                $currentWave = $waveHandler->getWave($currentWave->getNumber() + 1);
-            }
+        if ($this->mavoric->settings->isEnabled('Autoban')) {
+            $max = $this->mavoric->settings->getConfig()->getNested('Autoban.max-violations') ?? 64;
 
-            $flag = $this->mavoric->getFlag($player);
-            $top = $flag->getMostViolations();
-            $this->mavoric->getCheatName($top);
+            foreach ($players as $player) {
+                $flag = $this->mavoric->getFlag($player);
+                $top = $flag->getMostViolations();
 
-            if ($flag->getTotalViolations() >= 53) {
-                $flags = $flag->getFlagsByNameAndCount();
-                if (!$currentWave->hasPlayer($player->getName())) {
-                    $this->mavoric->messageStaff(Mavoric::INFORM, $player->getName() . ' has been automatically added to wave: ' . $currentWave->getNumber());
+                if ($flag->getTotalViolations() >= $max) {
+                    $reason = $this->mavoric->getCheat($flag->getMostViolations());
+                    $this->mavoric->banManager->saveBan($player->getName(), $flag->clone()->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mavoric->getFlag($player)), 'MAVORIC', $reason);
+                    $this->mavoric->issueBan($player, null, $flag->toBanwaveData());
+                    continue;
                 }
-                $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
+            }
+            return;
+        }
+
+        if ($this->mavoric->settings->isEnabled('Banwaves')) {
+            $violations = $this->mavoric->settings->getConfig()->getNested('Banwaves.violations') ?? 54;
+            $max = $this->mavoric->settings->getConfig()->getNested('Banwaves.max-violations') ?? 240;
+            $waveHandler = $this->mavoric->getWaveHandler();
+            $currentWave = $waveHandler->getCurrentWave();
+
+            if ($max === false) {
+                $max = -69;
             }
 
-            if ($flag->getTotalViolations() >= 240) {
-                $flags = $flag->getFlagsByNameAndCount();
-                $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
-                $this->mavoric->issueBan($player, $currentWave, $data);
+            foreach ($players as $player) {
+                if ($currentWave->isIssued()) {
+                    $currentWave = $waveHandler->getWave($currentWave->getNumber() + 1);
+                }
+
+                $flag = $this->mavoric->getFlag($player);
+                $top = $flag->getMostViolations();
+                $this->mavoric->getCheatName($top);
+
+                if ($flag->getTotalViolations() >= $violations) {
+                    $flags = $flag->getFlagsByNameAndCount();
+                    if (!$currentWave->hasPlayer($player->getName())) {
+                        $this->mavoric->messageStaff(Mavoric::INFORM, $player->getName() . ' has been automatically added to wave: ' . $currentWave->getNumber());
+                    }
+                    $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
+                }
+
+                if ($flag->getTotalViolations() >= $max) {
+                    $flags = $flag->getFlagsByNameAndCount();
+                    $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
+                    $this->mavoric->issueBan($player, $currentWave, $data);
+                }
             }
+
+            return;
         }
     }
 }

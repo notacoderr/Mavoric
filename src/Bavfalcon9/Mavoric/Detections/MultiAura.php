@@ -33,7 +33,7 @@ class MultiAura implements Detection {
         $this->mavoric = $mavoric;
     }
 
-    public function onEvent(MavoricEvent $event) {
+    public function onEvent(MavoricEvent $event): void {
         if (!$event instanceof PlayerAttack) return;
 
         $victim = $event->getVictim();
@@ -44,10 +44,10 @@ class MultiAura implements Detection {
             $distance = $damager->getPosition()->distance($victim->getPosition());
             if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
             if (!in_array($victim->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $victim->getName());    
-            if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.25) >= time()) {
+            if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.20) >= time()) {
                 $inTime = time() - ($multiAura['time']);
                 $event->issueViolation(Mavoric::CHEATS['MultiAura']);
-                $event->sendAlert('MultiAura', 'Illegal attack, hit ' . sizeof($multiAura['targets']) . ' entities in ' . $inTime . 'seconds');
+                $event->sendAlert('MultiAura', 'Illegal attack, hit ' . sizeof($multiAura['targets']) . ' entities in ' . $inTime . ' seconds');
             }
             if (($multiAura['time'] + 0.25) <= time()) {
                 $this->queue[$damager->getName()] = [
@@ -64,6 +64,6 @@ class MultiAura implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return true;
+        return false;
     }
 }

@@ -72,6 +72,15 @@ class Flag {
         $this->flags = [];
     }
 
+    public function toBanwaveData(): Array {
+        return [
+            "cheats" => $this->getFlagsByNameAndCount(),
+            "reason" => '§4[AC] Illegal Client Modifications or Abuse.',
+            "VC" => $this->getTotalViolations(),
+            "time" => date_create()
+        ];
+    }
+
     public function getFlagsByNameAndCount() {
         $newArr = [];
         foreach ($this->flags as $cheat=>$count) {

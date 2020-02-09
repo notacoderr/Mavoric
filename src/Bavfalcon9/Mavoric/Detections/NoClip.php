@@ -160,6 +160,12 @@ class NoClip implements Detection {
         return true;
     }
 
+
+    /**
+     * Private functions.
+     */
+
+
     private function pearledAway($p) {
         $p = $p->getName();
         if (empty($this->teleported)) return false;

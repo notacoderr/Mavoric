@@ -32,8 +32,8 @@ class PlayerMove extends MavoricEvent {
     /** @var Position */
     private $to;
 
-    public function __construct(Mavoric $mavoric, Player $player, Position $from, Position $to) {
-        parent::__construct($mavoric, $player);
+    public function __construct($e, Mavoric $mavoric, Player $player, Position $from, Position $to) {
+        parent::__construct($e, $mavoric, $player);
         $this->player = $player;
         $this->from = $from;
         $this->to = $to;

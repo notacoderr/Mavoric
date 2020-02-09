@@ -17,21 +17,16 @@ namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-
-use pocketmine\event\Listener;
+use Bavfalcon9\Mavoric\events\{
+    MavoricEvent,
+    player\PlayerMove,
+    inventory\InventoryTransaction
+};
 use pocketmine\utils\TextFormat as TF;
+use pocketmine\Player;
+use pocketmine\Server;
 
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
-use pocketmine\{
-    Player,
-    Server
-};
-
-/* API CHANGE (Player) */
-
-class AutoArmor implements Listener {
+class AutoArmor implements Detection {
     private $mavoric;
     private $plugin;
 

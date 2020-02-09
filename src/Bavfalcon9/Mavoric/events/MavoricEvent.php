@@ -27,16 +27,17 @@ class MavoricEvent {
     private $isCancelled = false;
     private $isCheating = false;
 
-    public function __construct(Mavoric $mavoric, Player $target) {
+    public function __construct($e, Mavoric $mavoric, Player $target) {
         $this->mavoric = $mavoric;
         $this->player = $target;
+        $this->eventData = $e;
     }
 
-    public function setPMEvent($event) {
-        $this->eventData = $event;
-    }
-
-    public function cancel(Bool $val=true): Bool {
+    public function cancel(Bool $val = true): Bool {
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return false;
+        }
+        
         $this->eventData->setCancelled($val);
         $this->isCancelled = $val;
         return $val;
@@ -50,6 +51,14 @@ class MavoricEvent {
         return $this->eventData;
     }
 
+    public function getServer(): Server {
+        return $this->mavoric->getServer();
+    }
+
+    public function getTick(): int {
+        return $this->mavoric->getServer()->getTick();
+    }
+
     public function setCheating(Bool $val): Bool {
         $this->isCheating = $val;
         return $val;
@@ -60,17 +69,28 @@ class MavoricEvent {
     }
 
     public function issueViolation(int $cheat, int $count = 1): Flag {
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return $this->mavoric->getFlag(null);
+        }
+
+        if ($this->mavoric->settings->isSuppressed(Mavoric::getCheatName($cheat))) {
+            $this->cancel(true);
+        }
+
         $flag = $this->mavoric->getFlag($this->player);
         $flag->addViolation($cheat, $count);
+
         return $flag;
     }
 
     public function alertStaff(String $cheat, String $details): Bool {
-        #$this->mavoric->getPlugin()->getLogger()->notice('DEPRECATED METHOD CALLED -> MavoricEvent::alertStaff()');
         return $this->sendAlert($cheat, $details);
     }
 
     public function sendAlert(String $cheat, String $details): Bool {
+        if ($this->mavoric->getTpsCheck()->isHalted()) {
+            return false;
+        }
         $cheat = Mavoric::CHEATS[$cheat];
         $this->mavoric->alertStaff($this->player, $cheat, $details);
         return true;

@@ -27,7 +27,7 @@ use pocketmine\{
     Server
 };
 
-class Teleport implements Detection {
+class Jetpack implements Detection {
     private $mavoric;
     private $plugin;
     private $disabled = true;
@@ -40,26 +40,26 @@ class Teleport implements Detection {
 
     public function onEvent(MavoricEvent $event): void {
         if (!$event instanceof PlayerMove) return;
-        $player = $event->getPlayer();
-        $to = $event->getTo();
-        $from = $event->getFrom();
-        $distance = abs($to->distance($from));
-        if ($distance >= 10) {
-            if ($player->getPing() >= 300) {
-                $distance = round($distance, 2);
-                $event->sendAlert('Teleport', "Traveled {$distance} blocks in one move");
-                $event->issueViolation(Mavoric::CHEATS['Teleport']);
-                return;
-            } else {
-                $distance = round($distance, 2);
-                $event->sendAlert('Teleport', "Traveled {$distance} blocks in one move");
-                $event->issueViolation(Mavoric::CHEATS['Teleport']);
-                return;
+            $player = $event->getPlayer();
+            $to = $event->getTo();
+            $from = $event->getFrom();
+            $distance = abs($to->distance($from));
+            if ($distance >= 1) {
+                if ($player->getPing() >= 300) {
+                    $distance = round($distance, 2);
+                    $event->sendAlert('Jetpack', "Illegal movement, jetpack detected with {$distance} blocks in few moves.");
+                    $event->issueViolation(Mavoric::CHEATS['Jetpack']);
+                    return;
+                } else {
+                    $distance = round($distance, 2);
+                    $event->sendAlert('Jetpack', "Illegal movement, jetpack detected with {$distance} blocks in few moves.");
+                    $event->issueViolation(Mavoric::CHEATS['Jetpack']);
+                    return;
+                }
             }
-        }
     }
 
     public function isEnabled(): Bool {
-        return true;
+        return false;
     }
 }

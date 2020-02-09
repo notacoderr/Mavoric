@@ -47,8 +47,8 @@ class PlayerClick extends MavoricEvent {
     /** @var Bool */
     private $clickedBlk = false;
 
-    public function __construct(Mavoric $mavoric, Player $player, int $type, Item $item, Block $block, Vector3 $location, int $face) {
-        parent::__construct($mavoric, $player);
+    public function __construct($e, Mavoric $mavoric, Player $player, int $type, Item $item, Block $block, Vector3 $location, int $face) {
+        parent::__construct($e, $mavoric, $player);
         $this->player = $player;
         $this->block = $block;
         $this->item = $item;

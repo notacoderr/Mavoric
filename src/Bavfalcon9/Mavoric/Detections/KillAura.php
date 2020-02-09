@@ -25,8 +25,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\math\Vector3;
 
-
-/* API CHANGE (Player) */
+// To complete
 
 class KillAura implements Detection {
     private $mavoric;

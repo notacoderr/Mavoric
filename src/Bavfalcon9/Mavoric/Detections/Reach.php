@@ -54,6 +54,7 @@ class Reach implements Detection {
         if ($event instanceof PlayerAttack) {
             $damager = $event->getAttacker();
             $entity = $event->getVictim();
+
             $amt = 6;
             if ($damager->getPing() >= 230) {
                 $amt = $damager->getPing() / 34;
@@ -61,10 +62,13 @@ class Reach implements Detection {
                     $amt = $damager->getPing() / 50;
                 }
             }
-            if ($entity->getPing() >= 230) {
-                $amt = $entity->getPing() / 34;
-                if ($entity->getPing() >= 500) {
-                    $amt = $entity->getPing() / 50;
+
+            if ($entity instanceof Player) {
+                if ($entity->getPing() >= 230) {
+                    $amt = $entity->getPing() / 34;
+                    if ($entity->getPing() >= 500) {
+                        $amt = $entity->getPing() / 52;
+                    }
                 }
             }
 
