@@ -103,6 +103,8 @@ class TpsCheck {
             if ($this->halted) {
                 $this->cancelHalt();
             }
+
+            $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
             return;
         }
 
@@ -111,6 +113,7 @@ class TpsCheck {
             if ($this->halted) {
                 $this->cancelHalt();
             }
+
             $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
             return;
         } 
@@ -119,11 +122,11 @@ class TpsCheck {
             if ($tps <= 16) {
                 if ($this->halted) return;
                 $this->setHalted($tps);
-                $this->mavoric->messageStaff(Mavoric::WARN, 'Server running very slow! TPS: ' . $tps);
+                $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running very slow! TPS: ' . $tps);
                 $this->mavoric->messageStaff(Mavoric::FATAL, 'Pausing detections. A message will be prompted when detections are re-enabled.');
                 return;
             } else {
-                $this->mavoric->messageStaff(Mavoric::WARN, 'Server running very slow! TPS: ' . $tps);
+                $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running very slow! TPS: ' . $tps);
             }
         }
     }

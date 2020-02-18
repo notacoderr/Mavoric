@@ -30,6 +30,7 @@ use pocketmine\event\{
     entity\EntityDamageByChildEntityEvent,
     entity\EntityTeleportEvent,
     entity\ProjectileLaunchEvent,
+    inventory\InventoryTransactionEvent,
     player\PlayerInteractEvent,
     player\PlayerMoveEvent
 };
@@ -42,6 +43,7 @@ use pocketmine\network\mcpe\protocol\{
     PlayerActionPacket
 };
 use Bavfalcon9\Mavoric\events\{
+    player\InventoryTransaction,
     player\PlayerAttack,
     player\PlayerDamage,
     player\PlayerBreakBlock,
@@ -77,6 +79,15 @@ class EventHandler implements Listener {
         return;
     }
 
+    public function onTransaction(InventoryTransactionEvent $event): void {
+        $transaction = $event->getTransaction();
+        $player = $transaction->getSource();
+
+        if (!$player instanceof Player) return;
+        $e = new InventoryTransaction($event, $this->mavoric, $player, $transaction);
+        $this->mavoric->broadcastEvent($e);
+    }
+
     /**
      * PACKETS
      */
@@ -86,7 +97,7 @@ class EventHandler implements Listener {
             foreach ($event->getPacket()->getPackets() as $buf) {
                 try {
                     $pk = PacketPool::getPacket($buf);
-                    $this->mavoric->broadcastEvent(new PacketRecieve($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                    $this->mavoric->broadcastEvent(new PacketRecieve($event, $this->mavoric, $event->getPlayer(), $pk, true));
                 } catch (\Throwable $e) {
                     continue;
                 }
@@ -105,7 +116,7 @@ class EventHandler implements Listener {
                     foreach ($event->getPacket()->getPackets() as $buf) {
                         try {
                             $pk = PacketPool::getPacket($buf);
-                            $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                            $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $pk, true));
                         } catch (\Throwable $e) {
                             continue;
                         }

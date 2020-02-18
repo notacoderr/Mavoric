@@ -58,6 +58,11 @@ class PlayerTeleport extends MavoricEvent {
         return $this->to;
     }
 
+    /** To Do: Since teleports are only issued by the server, check if the client sent the request or not. */
+    public function isAuthoritative(): Bool {
+        return true;
+    }
+
     public function getNextAirBlock(): Vector3 {
         $level = $this->player->getLevel();
         $pos = $this->player->getPosition();

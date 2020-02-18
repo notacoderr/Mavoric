@@ -58,11 +58,15 @@ class Speed implements Detection {
                     $allowed = $player->getEffect(1)->getEffectLevel() * 1.6;
                 }
             }
-            // fix falling and flying
+            // fix falling, flying and knockback
             if ($player->getAllowFlight()) {
                 $allowed = 4;
             }
-            if (($from->y > $to->y) && $distance < 6) {
+
+            if (($from->y > $to->y) && $distance < 4) {
+                return;
+            }
+            if (($from->y < $to->y)  && $distance < 4) {
                 return;
             }
             if ($distance >= $allowed) {
