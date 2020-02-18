@@ -7,10 +7,13 @@
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
- *   THIS CODE IS TO NOT BE REDISTRUBUTED
- *   @author MavoricAC
- *   @copyright Everything is copyrighted to their respective owners.
- *   @link https://github.com/Olybear9/Mavoric                                  
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  @author Bavfalcon9
+ *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
 
@@ -25,7 +28,7 @@ use Bavfalcon9\Mavoric\Detections\{
     Aimbot, AutoArmor, AutoClicker, AutoSword,
     AutoTool, Bhop, FastBreak, FastEat, Flight,
     KillAura, MultiAura, NoClip, NoDamage, NoSlowdown,
-    Reach, Speed, Teleport, Timer, Jesus, Jetpack
+    Reach, Speed, Teleport, Timer, Jesus, Jetpack, NoStackItems
 };
 
 use pocketmine\utils\MainLogger;
@@ -77,7 +80,8 @@ class Mavoric {
         'MenuWalk' => 31,
         'Spider' => 32,
         'Timer' => 33,
-        'Teleport' => 34
+        'Teleport' => 34,
+        'NoStackItems' => 35
     ];
     
     /** Message Staff Vars */
@@ -155,6 +159,7 @@ class Mavoric {
             new NoClip($this),
             //new NoDamage($this),
             //new NoSlowdown($this),
+            new NoStackItems($this),
             new Reach($this),
             new Speed($this),
             new Teleport($this)

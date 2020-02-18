@@ -7,10 +7,13 @@
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
- *   THIS CODE IS TO NOT BE REDISTRUBUTED
- *   @author MavoricAC
- *   @copyright Everything is copyrighted to their respective owners.
- *   @link https://github.com/Olybear9/Mavoric                                  
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  @author Bavfalcon9
+ *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
 namespace Bavfalcon9\Mavoric\events;
@@ -30,6 +33,7 @@ use pocketmine\event\{
     entity\EntityDamageByChildEntityEvent,
     entity\EntityTeleportEvent,
     entity\ProjectileLaunchEvent,
+    inventory\InventoryTransactionEvent,
     player\PlayerInteractEvent,
     player\PlayerMoveEvent
 };
@@ -42,6 +46,7 @@ use pocketmine\network\mcpe\protocol\{
     PlayerActionPacket
 };
 use Bavfalcon9\Mavoric\events\{
+    player\InventoryTransaction,
     player\PlayerAttack,
     player\PlayerDamage,
     player\PlayerBreakBlock,
@@ -77,6 +82,15 @@ class EventHandler implements Listener {
         return;
     }
 
+    public function onTransaction(InventoryTransactionEvent $event): void {
+        $transaction = $event->getTransaction();
+        $player = $transaction->getSource();
+
+        if (!$player instanceof Player) return;
+        $e = new InventoryTransaction($event, $this->mavoric, $player, $transaction);
+        $this->mavoric->broadcastEvent($e);
+    }
+
     /**
      * PACKETS
      */
@@ -86,7 +100,7 @@ class EventHandler implements Listener {
             foreach ($event->getPacket()->getPackets() as $buf) {
                 try {
                     $pk = PacketPool::getPacket($buf);
-                    $this->mavoric->broadcastEvent(new PacketRecieve($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                    $this->mavoric->broadcastEvent(new PacketRecieve($event, $this->mavoric, $event->getPlayer(), $pk, true));
                 } catch (\Throwable $e) {
                     continue;
                 }
@@ -105,7 +119,7 @@ class EventHandler implements Listener {
                     foreach ($event->getPacket()->getPackets() as $buf) {
                         try {
                             $pk = PacketPool::getPacket($buf);
-                            $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $event->getPacket()));
+                            $this->mavoric->broadcastEvent(new PacketSend($event, $this->mavoric, $event->getPlayer(), $pk, true));
                         } catch (\Throwable $e) {
                             continue;
                         }

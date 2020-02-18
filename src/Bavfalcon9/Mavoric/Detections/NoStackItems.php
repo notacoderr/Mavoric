@@ -7,20 +7,24 @@
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
- *   THIS CODE IS TO NOT BE REDISTRUBUTED
- *   @author MavoricAC
- *   @copyright Everything is copyrighted to their respective owners.
- *   @link https://github.com/Olybear9/Mavoric                                  
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  @author Bavfalcon9
+ *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-
- // Pretty much a big fuck you, to all hackers, oh sweety.
 namespace Bavfalcon9\Mavoric\Detections;
 
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
-use Bavfalcon9\Mavoric\events\player\PlayerMove;
+use Bavfalcon9\Mavoric\events\packet\PacketRecieve;
+use Bavfalcon9\Mavoric\events\player\InventoryTransaction;
 use pocketmine\Player;
+use pocketmine\inventory\ArmorInventory;
+use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 
 class NoStackItems implements Detection {
     /** @var Mavoric */
@@ -31,25 +35,17 @@ class NoStackItems implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        if (!$event instanceof PlayerMove) {
+        if (!$event instanceof InventoryTransaction) {
             return;
         }
 
-        $block_below = $event->getBlockNearPlayer(0, -1, 0);
-        $block_above = $event->getBlockNearPlayer(0, 1, 0);
-
-        if ($block_below instanceof StillWater || $block_below instanceof Water || $block_below instanceof WaterLily) {
-           if ($block_above->getId() === 0) {
-                $event->issueViolation(Mavoric::CHEATS['Jesus'], 1);
-                $event->sendAlert('Jesus', 'Illegal movement, walked on water');
-                return;
-           } 
+        if ($event->hasIllegalStackedItem()) {
+            $event->issueViolation(Mavoric::CHEATS['NoStackItems'], 50);
+            $event->sendAlert('NoStackItems', 'Illegal inventory transaction, Stacked non-stackable item.');
         }
-
-        return;
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

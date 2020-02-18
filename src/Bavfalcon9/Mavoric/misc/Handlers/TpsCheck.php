@@ -7,10 +7,13 @@
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
- *   THIS CODE IS TO NOT BE REDISTRUBUTED
- *   @author MavoricAC
- *   @copyright Everything is copyrighted to their respective owners.
- *   @link https://github.com/Olybear9/Mavoric                                  
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU Lesser General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ * 
+ *  @author Bavfalcon9
+ *  @link https://github.com/Olybear9/Mavoric                                  
  */
 namespace Bavfalcon9\Mavoric\misc\Handlers;
 
@@ -20,6 +23,7 @@ use Bavfalcon9\Mavoric\Main;
 use pocketmine\scheduler\Task;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
+
 class TpsCheckTask extends AsyncTask {
     private $lastTick;
     private $callback;
@@ -103,6 +107,8 @@ class TpsCheck {
             if ($this->halted) {
                 $this->cancelHalt();
             }
+
+            $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
             return;
         }
 
@@ -111,6 +117,7 @@ class TpsCheck {
             if ($this->halted) {
                 $this->cancelHalt();
             }
+
             $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
             return;
         } 
@@ -119,11 +126,11 @@ class TpsCheck {
             if ($tps <= 16) {
                 if ($this->halted) return;
                 $this->setHalted($tps);
-                $this->mavoric->messageStaff(Mavoric::WARN, 'Server running very slow! TPS: ' . $tps);
+                $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running very slow! TPS: ' . $tps);
                 $this->mavoric->messageStaff(Mavoric::FATAL, 'Pausing detections. A message will be prompted when detections are re-enabled.');
                 return;
             } else {
-                $this->mavoric->messageStaff(Mavoric::WARN, 'Server running very slow! TPS: ' . $tps);
+                $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running very slow! TPS: ' . $tps);
             }
         }
     }
