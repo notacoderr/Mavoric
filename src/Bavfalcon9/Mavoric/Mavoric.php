@@ -190,6 +190,10 @@ class Mavoric {
                 $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($cheat) . '!' . "\n$e");
             }
         }
+
+        foreach ($this->events as $event) {
+            
+        }
     }
 
     /**
