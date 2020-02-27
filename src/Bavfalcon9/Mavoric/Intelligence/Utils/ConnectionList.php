@@ -17,7 +17,9 @@
  */
 
 namespace Bavfalcon9\Mavoric\Intelliegence\Utils;
+use Bavfalcon9\Mavoric\Intelligence\Neuron;
 
 class ConnectionList {
-
+    public $neurons = [];
+    public $weights = [];
 }

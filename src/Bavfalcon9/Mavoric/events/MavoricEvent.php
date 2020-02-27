@@ -22,6 +22,7 @@ use pocketmine\Player;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\misc\Flag;
 
+/** @deprecated */
 class MavoricEvent {
     private $mavoric;
     private $type;

@@ -34,7 +34,7 @@ class Neuron {
     /** @var Output */
     private $_output;
     /** @var Output */
-    private $output;
+    public $output;
 
     public function __construct() {
         $this->id = CUID::generate();
@@ -44,11 +44,37 @@ class Neuron {
     }
 
     public function connect(Neuron $neuron, int $weight) {
-        $this->outgoing->addNeuron($neuron);
-        $neuron->incoming->addNueron($this);
+        $this->outgoing->neurons[$neuron->getId()] = $neuron;
+        $neuron->incoming->neurons[$this->getId()] = $this;
         $weight = mt_rand() / mt_getrandmax();
         $this->outgoing->weights[$neuron->getId()] = $weight; 
         $neuron->incoming->weights[$this->getId()] = $weight;
     } 
+
+    public function getId(): String {
+        return $this->id;
+    }
+
+    public function train($set = null) {
+        $self = $this; // needed because of unnamed functions
+        if ($set !== null) {
+            $this->_output = 1;
+            $this->output = $set;
+        } else {
+            // Sigma (x • w)
+            /**
+             * to do, reduce neurons for output
+             */
+            return $this->output;
+        }
+    }
+
+    private function sigmoid($int) {
+        return 1 / (1 + exp(-$int)); // f of x
+    }
+
+    private function sigmoidX($x) {
+        return $this->sigmoid(x) * (1 - $this->sigmoid(x)); // f'x derative testing
+    }
 
 }
