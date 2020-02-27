@@ -34,13 +34,28 @@ class DiscordPost extends AsyncTask {
     }
 
     public function onRun() {
-        $t = Internet::postURL($this->url, $this->content);
-        $this->setResult($t);
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, $this->url);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $this->content);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        $response = curl_exec($curl);
+        $curlerror = curl_error($curl);
+
+        $responsejson = json_decode($response, true);
+
+        if ($curlerror != '') {
+            $error = $curlerror;
+        } else if (curl_getinfo($curl, CURLINFO_HTTP_CODE) != 204) {
+            $response = '';
+        }
+
+        $this->setResult($response);
     }
 
     public function onCompletion(Server $server) {
         $p = $server->getPlayer($this->replyTo);
-        echo $this->getResult();
         if ($p === null || $p->isClosed()) return;
         else {
             if ($this->getResult() !== '') $p->sendMessage('§c[ALERT]: Failed to post ban on discord.');

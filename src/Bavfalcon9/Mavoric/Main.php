@@ -30,7 +30,6 @@ use Bavfalcon9\Mavoric\Command\{
     alert, mban, mreport, banwave
 };
 use pocketmine\utils\Config;
-use Bavfalcon9\Mavoric\EventManager;
 use Bavfalcon9\Mavoric\misc\Handlers\ReportHandler;
 
 class Main extends PluginBase {
@@ -42,12 +41,12 @@ class Main extends PluginBase {
     public function onEnable() {
         $this->saveResource('config.yml');
         $this->mavoric = new Mavoric($this);
-        $this->EventManager = new EventManager($this);
         $this->reportHandler = new ReportHandler($this->mavoric, $this);
-        $this->getServer()->getPluginManager()->registerEvents($this->EventManager, $this);
+
         $this->loadCommands();
         $this->config = new Config($this->getDataFolder().'config.yml');
         $this->updateConfigs();
+
         $this->mavoric->checkVersion($this->config);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();
