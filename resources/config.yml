@@ -1,10 +1,8 @@
-Version: 1.0.2 # DO NOT CHANGE THIS!
+Version: 1.0.3 # DO NOT CHANGE THIS!
 Webhooks:
   # All of the following accept a DISCORDWEBHOOKURL or false.
-  alert-deny: false
-  alert-grant: false
   alerts: false
-  reports: false
+  system: false
 
 Autoban:
   # Should autobans be enabled? (IF THIS IS ENABLED, BANWAVES ARE OVERRIDDEN REGARDLESS IF BANWAVES ARE ENABLED!)

@@ -98,7 +98,7 @@ class Mavoric {
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.2';
+    private $version = '1.0.3';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -169,14 +169,14 @@ class Mavoric {
             $name = str_replace('Bavfalcon9\Mavoric\Detections\\', '', get_class($cheat));
             
             if (!$cheat->isEnabled()) {
-                $this->plugin->getLogger()->critical('[CORE] Disabled detection: ' . $name);
+                $this->plugin->getLogger()->info('[CORE] Disabled detection: ' . $name);
                 continue;
             }
             if ($this->isEnabled($name)) {
-                $this->plugin->getLogger()->notice('Enabled detection: ' . $name);
+                $this->plugin->getLogger()->info('Enabled detection: ' . $name);
                 array_push($this->loadedCheats, $cheat);
             } else {
-                $this->plugin->getLogger()->critical('Disabled detection: ' . $name);
+                $this->plugin->getLogger()->info('Disabled detection: ' . $name);
                 continue;
             }
         }
