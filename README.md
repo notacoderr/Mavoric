@@ -1,7 +1,14 @@
-<p align="center">
-  <img width="150" style="float: center;" alt="portfolio_view" src="https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mavoric_black_and_white.png">
-  <h1 align="center"> Mavoric Anticheat</h1>
-</p>
+<div align="center">
+  <p>
+    <img width="150" alt="portfolio_view" src="https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mavoric_black_and_white.png">
+  </p>
+  <p>
+    <h1> Mavoric Anticheat</h1>
+    <a href="https://discord.gg/2humhkN">
+      <img src="https://discordapp.com/api/guilds/683167375771828277/embed.png" alt="Discord">
+    </a>
+  </p>
+</div>
 
 ## Description
 Mavoric is a plugin designed to enforce the generic functions of MC:BE. Mavoric is designed to execute and enforce 
@@ -20,8 +27,3 @@ Early stages of Mavoric were originally developed for the [OwnagePE](shop.ownage
 after multiple failed attempts at making something functional, Mavoric was then taken into private development 
 for improvements and shortly after made an appearance on [Versai](versai.pro) in August 2019 where it has been 
 used on a mass scale to help improve it's overall functionality.
-
-<p align="center">
-  <h2 align="center"> Links </h2>
-  <a align="center" href="https://discord.gg/2humhkN">Discord Support Server</a>
-</p>
