@@ -17,54 +17,17 @@
  */
 namespace Bavfalcon9\Mavoric\misc\Handlers;
 
-use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
-use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Main;
+use Bavfalcon9\Mavoric\{
+    Tasks\ViolationCheck,
+    Tasks\Tps\CheckTask,
+    Tasks\Tps\RepeatingAsyncTask,
+    Tasks\Tps\HaltedTask,
+    Mavoric,
+    Main
+};
 use pocketmine\scheduler\Task;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
-
-class TpsCheckTask extends AsyncTask {
-    private $lastTick;
-    private $callback;
-
-    public function __construct($lastTick, $callback) {
-        $this->lastTick = $lastTick;
-        $this->callback = $callback;
-    }
-
-    public function onRun() {
-        sleep(1);
-    }
-
-    public function onCompletion(Server $server) {
-        $expected = $this->lastTick + 20;
-        $actual = $server->getTick();
-        $diff = $expected - $actual;
-        $callback = $this->callback;
-        $callback($server, $diff);
-    }
-}
-class RepeatingAsyncTask extends Task {
-    private $tps;
-    public function __construct($tps) {
-        $this->tps = $tps;
-    }
-
-    public function onRun(int $tick) {
-        $this->tps->runAsyncTask();
-    }
-}
-class HaltedTask extends Task {
-    private $tpscheck;
-    public function __construct($tpscheck) {
-        $this->tpscheck = $tpscheck;
-    }
-
-    public function onRun(int $tick) {
-        $this->tpscheck->cancelHalt();
-    }
-}
 
 class TpsCheck {
     private $plugin;

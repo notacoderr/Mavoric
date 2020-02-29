@@ -15,32 +15,22 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\misc\Handlers;
 
-namespace Bavfalcon9\Mavoric\events\packet;
-
-use pocketmine\Player;
-use pocketmine\network\mcpe\protocol\DataPacket;
+use Bavfalcon9\Mavoric\Handlers\TpsCheck;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\Main;
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
-class PacketSend extends MavoricEvent {
-    /** @var DataPacket */
-    private $packet;
-    /** @var Player */
-    private $player;
-    /** @var Bool */
-    private $inBatch;
-
-    public function __construct($e, Mavoric $mavoric, Player $player, DataPacket $packet, Bool $inBatch = false) {
-        parent::__construct($e, $mavoric, $player);
-        $this->packet = $packet;
+class HaltedTask extends Task {
+    private $tps;
+    public function __construct(TpsCheck $tps) {
+        $this->tps = $tps;
     }
 
-    public function isPartOfBatch(): Bool {
-        return $this->inBatch;
-    }
-
-    public function getPacket(): DataPacket {
-        return $this->packet;
+    public function onRun(int $tick) {
+        $this->tps->cancelHalt();
     }
 }
