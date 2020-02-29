@@ -1,6 +1,5 @@
-# ![Mavoric](https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mavoric_black_and_white.png)
 
-Mavoric
+![Mavoric](https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mbnw_120x120.png) Mavoric
 ======
 
 Mavoric is a plugin designed to enforce the generic functions of MC:BE. Mavoric is designed to execute and enforce 
