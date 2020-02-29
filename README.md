@@ -1,6 +1,7 @@
-
-![Mavoric](https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mavoric_black_and_white|height=200|width=auto) Mavoric
-======
+<p align="center">
+  <img width="150" style="float: center;" alt="portfolio_view" src="https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mavoric_black_and_white.png">
+  <h1 align="center"> Mavoric Anticheat </h1>
+</p>
 
 Mavoric is a plugin designed to enforce the generic functions of MC:BE. Mavoric is designed to execute and enforce 
 general cheat detection powerfully without a hassle. <br />
