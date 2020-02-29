@@ -37,14 +37,20 @@ class MessageHandler {
 
     public function queueMessage(String $message, String $append='') {
         $this->purgeOldCache();
-        if (in_array($message, $this->ignored)) return;
+        if (in_array($message, $this->ignored)) {
+            return false;
+        }
         if (isset($this->sent[$message])) {
             if ($this->sent[$message]['time'] + 3 <= time()) {
                 unset($this->sent[$message]);
                 $this->sendMessage($message, $append);
-            } else return;
+                return true;
+            } else {
+                return false;
+            }
         } else {
             $this->sendMessage($message, $append);
+            return true;
         }
     }
 

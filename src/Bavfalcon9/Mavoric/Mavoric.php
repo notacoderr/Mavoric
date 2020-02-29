@@ -256,6 +256,7 @@ class Mavoric {
      * @param String $details
      */
     public function messageStaff(int $type = 1, String $message): void {
+        $pre = $message;
         switch ($type) {
             case self::NOTICE:
                 $message = '§b[MAVORIC] [NOTICE]§8:§f ' . $message;
@@ -280,17 +281,18 @@ class Mavoric {
             break;
         }
 
-        $this->messageHandler->queueMessage($message);
-        $this->postWebhook('system', json_encode([
-            "username" => "[System] Mavoric",
-            "embeds" => [
-                [
-                    "color" => $color,
-                    "title" => "System reported message",
-                    "content" => $message
+        if ($this->messageHandler->queueMessage($message)) {
+            $this->postWebhook('system', json_encode([
+                "username" => "[System] Mavoric",
+                "embeds" => [
+                    [
+                        "color" => $color,
+                        "title" => "System reported message",
+                        "description" => $pre
+                    ]
                 ]
-            ]
-        ]));
+            ]));
+        }
         return;
     }
 
@@ -312,7 +314,7 @@ class Mavoric {
                 [
                     "color" => 0xFFFF00,
                     "title" => "Alert type: " . self::getCheatName($cheat),
-                    "content" => $appendance
+                    "description" => $details . "[V {$count}]"
                 ]
             ]
         ]));
