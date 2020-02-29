@@ -1,6 +1,7 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
+about: Suggest an idea for this project. Please note if an idea has already been suggested
+  your issue will be closed.
 title: "[REQUEST] <request name>"
 labels: Feature Request, enhancement
 assignees: Olybear9
