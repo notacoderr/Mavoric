@@ -45,5 +45,5 @@ v1.0.3-alpha | N/A | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavo
 Version | Released | Maintained | Details
 ------- | -------- | ---------- | -------
 v0.0.**X** | June 14th 2019 | ❌ No | Initial release of Mavoric, consists of detection list with poor handling.
-v1.0.**x** | November 3rd 2019 | ✔ Yes | Consists of core improvments for event handling and code improvements.
-v1.1.**x** | Not Complete (2020) | ✔ Yes | Multiple fixes and core improvements consisting of events and proper handling for cheats and loading.
+v1.0.**X** | November 3rd 2019 | ✔ Yes | Consists of core improvments for event handling and code improvements.
+v1.1.**X** | Not Complete (2020) | ✔ Yes | Multiple fixes and core improvements consisting of events and proper handling for cheats and loading.
