@@ -15,12 +15,22 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\misc\Handlers;
 
-namespace Bavfalcon9\Mavoric\Detections;
+use Bavfalcon9\Mavoric\Handlers\TpsCheck;
+use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Main;
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
-use Bavfalcon9\Mavoric\events\MavoricEvent;
+class RepeatingAsyncTask extends Task {
+    private $tps;
+    public function __construct(TpsCheck $tps) {
+        $this->tps = $tps;
+    }
 
-interface Detection {
-    public function onEvent(MavoricEvent $event): void;
-    public function isEnabled(): Bool;
+    public function onRun(int $tick) {
+        $this->tps->runAsyncTask();
+    }
 }
