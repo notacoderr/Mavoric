@@ -39,7 +39,7 @@ v0.0.7 | November 3rd 2019 | ❌ No | [Mavoric_v0.1.7](https://github.com/Olybea
 v1.0.0 | Janurary 22nd 2020 | ❌ No | [Mavoric_v1.0.0](https://github.com/Olybear9/Mavoric/releases/download/v1.0.0/Mavoric_v1.0.0.phar)
 v1.0.1 | Never | ❌ No | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavoric/releases)~~
 v1.0.2 | Feburary 7th 2020 | ❌ No | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
-v1.0.3-alpha | N/A | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3-alpha/Mavoric_v1.0.3.phar)
+v1.0.3 | March 3rd 2020 | ❌ No | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
 
 ### API Versions
 Version | Released | Maintained | Details
