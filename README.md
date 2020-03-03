@@ -19,7 +19,7 @@ general cheat detection powerfully without a hassle. <br />
 If you use any code present here, please have the code reference this repository.
 
 ## Information
-Mavoric is still currently in development and I can not insure that you will recieve a 100% bug free experience.
+Mavoric is still currently in development and I can not ensure that you will recieve a 100% bug free experience.
 If you have any bugs or suggestions, please feel free to report them on this repository by clicking [here](https://github.com/Olybear9/Mavoric/issues/new).
 
 ## History
