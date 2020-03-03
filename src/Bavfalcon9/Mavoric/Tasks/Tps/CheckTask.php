@@ -15,31 +15,32 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\misc\Handlers;
 
-namespace Bavfalcon9\Mavoric\Detections;
-
-use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Main;
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
-use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat as TF;
+class CheckTask extends AsyncTask {
+    private $lastTick;
+    private $callback;
 
-use pocketmine\event\entity\{
-    EntityDamageByEntityEvent
-};
-use pocketmine\{
-    Player,
-    Server
-};
+    public function __construct($lastTick, $callback) {
+        $this->lastTick = $lastTick;
+        $this->callback = $callback;
+    }
 
-/* API CHANGE (Player) */
+    public function onRun() {
+        sleep(1);
+    }
 
-class Timer implements Listener {
-    private $mavoric;
-    private $plugin;
-
-    public function __construct(Main $plugin, Mavoric $mavoric) {
-        $this->plugin = $plugin;
-        $this->mavoric = $mavoric;
+    public function onCompletion(Server $server) {
+        $expected = $this->lastTick + 20;
+        $actual = $server->getTick();
+        $diff = $expected - $actual;
+        $callback = $this->callback;
+        $callback($server, $diff);
     }
 }
