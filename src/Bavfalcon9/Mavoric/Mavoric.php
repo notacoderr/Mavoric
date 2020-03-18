@@ -98,7 +98,7 @@ class Mavoric {
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.2';
+    private $version = '1.0.3';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -171,14 +171,14 @@ class Mavoric {
             $name = str_replace('Bavfalcon9\Mavoric\Detections\\', '', get_class($cheat));
             
             if (!$cheat->isEnabled()) {
-                $this->plugin->getLogger()->critical('[CORE] Disabled detection: ' . $name);
+                $this->plugin->getLogger()->info('[CORE] Disabled detection: ' . $name);
                 continue;
             }
             if ($this->isEnabled($name)) {
-                $this->plugin->getLogger()->notice('Enabled detection: ' . $name);
+                $this->plugin->getLogger()->info('Enabled detection: ' . $name);
                 array_push($this->loadedCheats, $cheat);
             } else {
-                $this->plugin->getLogger()->critical('Disabled detection: ' . $name);
+                $this->plugin->getLogger()->info('Disabled detection: ' . $name);
                 continue;
             }
         }
@@ -271,26 +271,43 @@ class Mavoric {
      * @param String $details
      */
     public function messageStaff(int $type = 1, String $message): void {
+        $pre = $message;
         switch ($type) {
             case self::NOTICE:
                 $message = '§b[MAVORIC] [NOTICE]§8:§f ' . $message;
+                $color = 0x03FFEE;
                 default;
             break;
             case self::INFORM:
                 $message = '§c[MAVORIC]§8:§7 ' . $message;
+                $color = 0xF7FF03;
             break;
             case self::ERROR:
                 $message = '§c[MAVORIC] [ERROR]§8:§f ' . $message;
+                $color = 0xFF4040;
             break;
             case self::FATAL:
                 $message = '§4[MAVORIC] [CRITICAL]§8:§c ' . $message;
+                $color = 0xFF0000;
             break;
             case self::WARN:
                 $message = '§4[MAVORIC] [WARNING]§8:§f ' . $message;
+                $color = 0xFF5A1F;
             break;
         }
 
-        $this->messageHandler->queueMessage($message);
+        if ($this->messageHandler->queueMessage($message)) {
+            $this->postWebhook('system', json_encode([
+                "username" => "[System] Mavoric",
+                "embeds" => [
+                    [
+                        "color" => $color,
+                        "title" => "System reported message",
+                        "description" => $pre
+                    ]
+                ]
+            ]));
+        }
         return;
     }
 
@@ -306,12 +323,25 @@ class Mavoric {
         $message = /*self::ARROW . ' ' .*/ '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . self::getCheatName($cheat) . '§8: ';
         $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
         $this->messageHandler->queueMessage($message, $appendance);
+        $this->postWebhook('alerts', json_encode([
+            "username" => "[Alert] {$player->getName()}",
+            "embeds" => [
+                [
+                    "color" => 0xFFFF00,
+                    "title" => "Alert type: " . self::getCheatName($cheat),
+                    "description" => $details . "[V {$count}]"
+                ]
+            ]
+        ]));
     }
 
-    /**
-     * @deprecated
-     */
     public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {
+        $url = $this->plugin->config->getNested("Webhooks.$url") ?? false;
+
+        if (!$url) {
+            return; // hook invalid
+        }
+
         $post = new DiscordPost($url, $content, $replyTo);
         $task = $this->getServer()->getAsyncPool()->submitTask($post);
         return;
