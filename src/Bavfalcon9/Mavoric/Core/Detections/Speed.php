@@ -66,10 +66,10 @@ class Speed implements Detection {
                 $allowed = 4;
             }
 
-            if (($from->y > $to->y) && $distance < 4) {
+            if (($from->y > $to->y) && $distance < 6) {
                 return;
             }
-            if (($from->y < $to->y)  && $distance < 4) {
+            if (($from->y < $to->y)  && $distance < 6) {
                 return;
             }
             if ($distance >= $allowed) {
