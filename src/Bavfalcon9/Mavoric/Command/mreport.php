@@ -45,7 +45,7 @@ class mreport extends Command {
         }
         
         if (isset($args[0]) && $args[0] === 'help') {
-            $sender->sendMessage('§c[MAVORIC-REPORT] Help for reports:');
+            $sender->sendMessage('§c[REPORT] Help for reports:');
             $sender->sendMessage('§c- Basic Usage: §7/mreport "A hacker" cheat1 cheat2 cheat3');
             $sender->sendMessage('§c- §7Quotations are only required if the player whom you wish to report has a space in their name.');
             $sender->sendMessage('§c- §7When reporting, you must provide at least one cheat, however more can be specified as shown above.');
@@ -56,7 +56,7 @@ class mreport extends Command {
         }
 
         if (isset($args[0]) && $args[0] === 'cheats') {       
-            $sender->sendMessage('§c[MAVORIC-REPORT] List of valid cheats for reporting:');
+            $sender->sendMessage('§c[REPORT] List of valid cheats for reporting:');
             $sender->sendMessage('§ckill-aura:§7 The player is attacking you without looking at you.');
             $sender->sendMessage('§cautoclicker:§7 The player is clicking faster than usual, this can usually be indicated with sound.');
             $sender->sendMessage('§cspeed:§7 The player is faster than usual when moving around');
@@ -71,24 +71,24 @@ class mreport extends Command {
         $cheat = (!isset($args[1])) ? false : CheatTranslation::TranslateCheats(array_slice($args, 1));
 
         if (!$player) {
-            $sender->sendMessage('§c[MAVORIC-REPORT]: Player invalid! For help use §7/mreport help');
+            $sender->sendMessage('§c[REPORT]:§f Player invalid! For help use §7/mreport help');
             return true;
         }
         if (!$cheat) {
-            $sender->sendMessage('§c[MAVORIC-REPORT]: Invalid cheat! Please specify 1 or more valid cheats. For help use §7/mreport help');
+            $sender->sendMessage('§c[REPORT]:§f Invalid cheat! Please specify 1 or more valid cheats. For help use §7/mreport help');
             return true;
         }
         if ($player->getName() === $sender->getName()) {
-            $sender->sendMessage('§c[MAVORIC-REPORT]: You can not report yourself.');
+            $sender->sendMessage('§c[REPORT]:§f You can not report yourself.');
             return true;
         }
         $submission = $this->pl->reportHandler->submitReport($player->getName(), $cheat, $sender->getName());
         if (!$submission) {
-            $sender->sendMessage('§c[MAVORIC-REPORT]: You have already reported this player.');
+            $sender->sendMessage('§c[REPORT]:§4 You have already reported this player.');
             return true;
         } else {
-            $this->pl->mavoric->messageStaff('report', null, "§7{$sender->getName()} §chas reported §7{$player->getName()} §cfor: §7".$this->getNames($cheat));
-            $sender->sendMessage('§a[MAVORIC-REPORT]: You have successfully reported §7'.$player->getName().'§a for §7'.$this->getNames($cheat));
+            $this->pl->mavoric->messageStaff(Mavoric::INFORM, "§7{$sender->getName()} §chas reported §7{$player->getName()} §cfor: §7".$this->getNames($cheat));
+            $sender->sendMessage('§a[REPORT]: You have successfully reported §7'.$player->getName().'§a for §7'.$this->getNames($cheat));
             return true;
         }
 

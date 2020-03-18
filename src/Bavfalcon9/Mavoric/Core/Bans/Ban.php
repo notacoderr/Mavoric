@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Bans;
+namespace Bavfalcon9\Mavoric\Core\Bans;
 
 class Ban {
     /** @var String - Raw ban data*/

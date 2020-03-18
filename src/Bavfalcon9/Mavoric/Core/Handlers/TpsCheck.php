@@ -15,16 +15,13 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\misc\Handlers;
-
-use Bavfalcon9\Mavoric\{
-    Tasks\ViolationCheck,
-    Tasks\Tps\CheckTask,
-    Tasks\Tps\RepeatingAsyncTask,
-    Tasks\Tps\HaltedTask,
-    Mavoric,
-    Main
-};
+namespace Bavfalcon9\Mavoric\Core\Handlers;
+use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Main;
+use Bavfalcon9\Mavoric\Core\Handlers\TPS\RepeatingAsyncTask;
+use Bavfalcon9\Mavoric\Core\Handlers\TPS\CheckTask;
+use Bavfalcon9\Mavoric\Core\Handlers\TPS\HaltedTask;
+use Bavfalcon9\Mavoric\Tasks\ViolationCheck;
 use pocketmine\scheduler\Task;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
@@ -159,7 +156,7 @@ class TpsCheck {
     }
 
     public function runAsyncTask() {
-        $this->plugin->getServer()->getAsyncPool()->submitTask(new TpsCheckTask($this->plugin->getServer()->getTick(), function ($server, $diff) {
+        $this->plugin->getServer()->getAsyncPool()->submitTask(new CheckTask($this->plugin->getServer()->getTick(), function ($server, $diff) {
                 $mavoric = $server->getPluginManager()->getPlugin('Mavoric');
                 if (!$mavoric) {
                     return;

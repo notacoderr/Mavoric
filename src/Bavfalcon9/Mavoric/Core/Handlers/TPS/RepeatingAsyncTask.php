@@ -15,32 +15,20 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\misc\Handlers;
+namespace Bavfalcon9\Mavoric\Core\Handlers\TPS;
 
-use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Main;
+use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
 use pocketmine\scheduler\Task;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
-class CheckTask extends AsyncTask {
-    private $lastTick;
-    private $callback;
-
-    public function __construct($lastTick, $callback) {
-        $this->lastTick = $lastTick;
-        $this->callback = $callback;
+class RepeatingAsyncTask extends Task {
+    private $tps;
+    public function __construct(TpsCheck $tps) {
+        $this->tps = $tps;
     }
 
-    public function onRun() {
-        sleep(1);
-    }
-
-    public function onCompletion(Server $server) {
-        $expected = $this->lastTick + 20;
-        $actual = $server->getTick();
-        $diff = $expected - $actual;
-        $callback = $this->callback;
-        $callback($server, $diff);
+    public function onRun(int $tick) {
+        $this->tps->runAsyncTask();
     }
 }

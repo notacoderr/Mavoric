@@ -30,7 +30,7 @@ use Bavfalcon9\Mavoric\Command\{
     alert, mban, mreport, banwave
 };
 use pocketmine\utils\Config;
-use Bavfalcon9\Mavoric\misc\Handlers\ReportHandler;
+use Bavfalcon9\Mavoric\Core\Handlers\ReportHandler;
 
 class Main extends PluginBase {
     public $EventManager;

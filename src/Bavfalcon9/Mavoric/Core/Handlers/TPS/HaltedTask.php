@@ -15,7 +15,7 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\misc\Handlers;
+namespace Bavfalcon9\Mavoric\Core\Handlers\TPS;
 
 use Bavfalcon9\Mavoric\Handlers\TpsCheck;
 use Bavfalcon9\Mavoric\Mavoric;
@@ -24,13 +24,13 @@ use pocketmine\scheduler\Task;
 use pocketmine\scheduler\AsyncTask;
 use pocketmine\Server;
 
-class RepeatingAsyncTask extends Task {
+class HaltedTask extends Task {
     private $tps;
     public function __construct(TpsCheck $tps) {
         $this->tps = $tps;
     }
 
     public function onRun(int $tick) {
-        $this->tps->runAsyncTask();
+        $this->tps->cancelHalt();
     }
 }

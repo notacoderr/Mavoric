@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\misc\Banwaves;
+namespace Bavfalcon9\Mavoric\Core\Banwaves;
 
 class Handler {
     private $total = 0;
