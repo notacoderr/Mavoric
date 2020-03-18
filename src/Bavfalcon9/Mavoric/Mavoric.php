@@ -129,6 +129,10 @@ class Mavoric {
         $this->messageHandler = new MessageHandler($plugin, $this);
         /** Ticks per second check  */
         $this->tpsCheck = new TpsCheck($plugin, $this);
+        /** @deprecated Handles bans */
+        $this->banManager = new BanHandler($this->plugin->getDataFolder() . 'ban_data');
+        /** @deprecated Handles NPC checks. */
+        $this->NPC = new NPC($plugin, new SpecterInterface($plugin));
         /** Handles events that are broadcasted and translated to detections */
         $this->eventHandler = new EventHandler($this);
         /** Handles ban waves. */
@@ -178,10 +182,6 @@ class Mavoric {
         }
     }
 
-    /**
-     * @param MavoricEvent $event - Event to broadcast. 
-     * @deprecated - Warning this will be removed in future versions
-     */
     public function broadcastEvent(MavoricEvent $event) {
         foreach ($this->loadedCheats as $cheat) {
             try {
@@ -202,7 +202,7 @@ class Mavoric {
     /**
      * @var int $number - AntiCheat identification Code
      * @return String
-     * @deprecated - Warning this will be removed in future versions
+     * @deprecated
      */
 
     public function getCheat(int $number) : String {
@@ -212,7 +212,7 @@ class Mavoric {
     /**
      * @var int $number - AntiCheat identification Code
      * @return String
-     * @deprecated - Warning this will be removed in future versions
+     * @deprecated
      */
 
     public static function getCheatName(int $number): String {
@@ -230,7 +230,7 @@ class Mavoric {
     }
 
     /**
-     * @deprecated - Warning this will be removed in future versions
+     * @deprecated
      * @return Boolean?
      */
     public function loadChecker(): ?Bool {
@@ -371,9 +371,6 @@ class Mavoric {
         $this->getServer()->broadcastMessage('§4[MAVORIC] Ban Wave: ' . $wave->getNumber() . ' has started.');
     }
 
-    /**
-     * @deprecated - Warning this will be removed in future versions
-     */
     public function issueBan(Player $player, $wave, Array $banData) {
         $player = $player->getName();
         $banList = $this->getServer()->getNameBans();
