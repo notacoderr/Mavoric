@@ -68,6 +68,7 @@ class InventoryTransaction extends MavoricEvent {
             $actual = $item->getCount();
 
             if ($item instanceof Armor) continue;
+            if ($item->getId() === 0) continue;
 
             if ($actual > $allowed) {
                 return true;
