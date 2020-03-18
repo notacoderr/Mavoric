@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\misc\Handlers;
+namespace Bavfalcon9\Mavoric\Core\Handlers;
 
 use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
 use Bavfalcon9\Mavoric\Mavoric;

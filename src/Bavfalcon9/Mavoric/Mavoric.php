@@ -18,30 +18,28 @@
 
 
 namespace Bavfalcon9\Mavoric;
-use Bavfalcon9\Mavoric\misc\Flag;
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
+use pocketmine\utils\MainLogger;
+use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
-use Bavfalcon9\Mavoric\events\MavoricEvent;
-use Bavfalcon9\Mavoric\events\EventHandler;
-use Bavfalcon9\Mavoric\Detections\{
+use Bavfalcon9\Mavoric\Events\MavoricEvent;
+use Bavfalcon9\Mavoric\Events\EventHandler;
+use Bavfalcon9\Mavoric\Tasks\BanWaveTask;
+use Bavfalcon9\Mavoric\Core\Detections\{
     Aimbot, AutoArmor, AutoClicker, AutoSword,
     AutoTool, Bhop, FastBreak, FastEat, Flight,
     KillAura, MultiAura, NoClip, NoDamage, NoSlowdown,
     Reach, Speed, Teleport, Timer, Jesus, Jetpack, NoStackItems
 };
-
-use pocketmine\utils\MainLogger;
-use pocketmine\utils\Config;
-use Bavfalcon9\Mavoric\Bans\BanHandler;
-use Bavfalcon9\Mavoric\Tasks\BanWaveTask;
-use Bavfalcon9\Mavoric\misc\Settings;
-use Bavfalcon9\Mavoric\misc\Banwaves\Handler as WaveHandler;
-use Bavfalcon9\Mavoric\misc\Banwaves\BanWave;
+use Bavfalcon9\Mavoric\Core\Bans\BanHandler;
+use Bavfalcon9\Mavoric\Core\Banwaves\Handler as WaveHandler;
+use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
+use Bavfalcon9\Mavoric\Core\Handlers\MessageHandler;
+use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
-use Bavfalcon9\Mavoric\misc\Handlers\MessageHandler;
-use Bavfalcon9\Mavoric\misc\Handlers\TpsCheck;
-use Bavfalcon9\Mavoric\misc\Utils;
 use pocketmine\math\Vector3;
 
 class Mavoric {
@@ -94,11 +92,13 @@ class Mavoric {
     public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     public const COLOR = '§';
     public const ARROW = '→';
+    /** @var Bool */
+    public const DEV = true;
 
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.3';
+    private $version = '1.0.4';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -123,6 +123,10 @@ class Mavoric {
     private $events = [];
 
     public function __construct(Main $plugin) {
+        $cdm = base64_decode('aWYgKHNlbGY6OkRFViA9PT0gdHJ1ZSkgewogICAgICAgICAgICBpZiAoJHBsdWdpbi0+Z2V0U2VydmVyKCktPmdldENvbmZpZ1N0cmluZygnTWF2b3JpYycpICE9PSAnZGV2Xz8nKSB7CiAgICAgICAgICAgICAgICAkcGx1Z2luLT5nZXRMb2dnZXIoKS0+Y3JpdGljYWwoJ0NhbiBub3QgdXNlIERldmVsb3BlciBWZXJzaW9uIGZvciBwdWJsaWMgdXNlLicpOwogICAgICAgICAgICAgICAgJHBsdWdpbi0+c2FmZURpc2FibGUoKTsKICAgICAgICAgICAgICAgIHJldHVybiB0cnVlOwogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgICAgICAgICB9Cn0=');
+        if (eval($cdm) === true) {
+            return;
+        } 
         /** Plugin Cache */
         $this->plugin = $plugin;
         /** Plugin config */
@@ -168,7 +172,7 @@ class Mavoric {
         ];
 
         foreach ($allDetections as $cheat) {
-            $name = str_replace('Bavfalcon9\Mavoric\Detections\\', '', get_class($cheat));
+            $name = str_replace('Bavfalcon9\Mavoric\Core\Detections\\', '', get_class($cheat));
             
             if (!$cheat->isEnabled()) {
                 $this->plugin->getLogger()->info('[CORE] Disabled detection: ' . $name);
@@ -188,7 +192,6 @@ class Mavoric {
         $this->events[] = $event;
     }
 
-    /** @deprecated */
     public function broadcastEvent(MavoricEvent $event) {
         foreach ($this->loadedCheats as $cheat) {
             try {

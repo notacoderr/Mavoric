@@ -30,7 +30,7 @@ use Bavfalcon9\Mavoric\Command\{
     alert, mban, mreport, banwave
 };
 use pocketmine\utils\Config;
-use Bavfalcon9\Mavoric\misc\Handlers\ReportHandler;
+use Bavfalcon9\Mavoric\Core\Handlers\ReportHandler;
 
 class Main extends PluginBase {
     public $EventManager;
@@ -53,8 +53,15 @@ class Main extends PluginBase {
     }
 
     public function onDisable() {
+        if (Mavoric::DEV) {
+            return;
+        }
         $this->mavoric->getWaveHandler()->saveAll();
         $this->getLogger()->notice('Saved Ban Waves');
+    }
+
+    public function safeDisable() {
+        $this->getServer()->getPluginManager()->disablePlugin($this);
     }
 
     private function loadCommands() {

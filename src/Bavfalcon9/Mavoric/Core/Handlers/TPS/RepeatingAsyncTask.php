@@ -15,25 +15,20 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Core\Handlers\TPS;
 
-namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
+use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
-use pocketmine\math\Vector3;
-
-class Utils {
-    public static function drawCircle(Vector3 $centerPoint, int $radius=2, int $steps=20): ?Array {
-        $points = [];
-        $speed = 2 * pi() / 4;
-        for ($i = 0; $i < $steps; $i++) {
-            $angle = $speed * $i;
-            array_push($points, self::circlePoint($centerPoint, $radius, $angle));
-        }
-        return $points;
+class RepeatingAsyncTask extends Task {
+    private $tps;
+    public function __construct(TpsCheck $tps) {
+        $this->tps = $tps;
     }
 
-    public static function circlePoint(Vector3 $center, float $radius, float $angleRad): ?Vector3 {
-        $x = $center->x + $radius * cos($angleRad);
-        $z = $center->z + $radius * sin($angleRad);
-        return new Vector3($x, $center->y, $z);
+    public function onRun(int $tick) {
+        $this->tps->runAsyncTask();
     }
 }

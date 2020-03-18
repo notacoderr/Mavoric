@@ -15,7 +15,7 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\misc\Handlers;
+namespace Bavfalcon9\Mavoric\Core\Handlers;
 
 class MessageHandler {
     private $plugin;

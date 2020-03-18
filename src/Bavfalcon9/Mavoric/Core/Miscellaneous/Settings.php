@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\misc;
+namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
 
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Mavoric;
