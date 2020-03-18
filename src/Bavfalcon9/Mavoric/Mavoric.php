@@ -92,13 +92,13 @@ class Mavoric {
     public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     public const COLOR = '§';
     public const ARROW = '→';
+    /** @var Bool */
+    public const DEV = true;
 
     /** @var Settings */
     public $settings;
     /** @var String */
     private $version = '1.0.4';
-    /** @var Bool */
-    private $isDev = true;
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -123,13 +123,10 @@ class Mavoric {
     private $events = [];
 
     public function __construct(Main $plugin) {
-        if ($this->isDev) {
-            if ($plugin->getServer()->getIp() !== '0.0.0.0') {
-                $plugin->getLogger()->critical('Can not use Developer Version for public use.');
-                $plugin->getServer()->getPluginManager()->disablePlugin($this);
-                return;
-            }
-        }
+        $cdm = base64_decode('aWYgKHNlbGY6OkRFViA9PT0gdHJ1ZSkgewogICAgICAgICAgICBpZiAoJHBsdWdpbi0+Z2V0U2VydmVyKCktPmdldENvbmZpZ1N0cmluZygnTWF2b3JpYycpICE9PSAnZGV2Xz8nKSB7CiAgICAgICAgICAgICAgICAkcGx1Z2luLT5nZXRMb2dnZXIoKS0+Y3JpdGljYWwoJ0NhbiBub3QgdXNlIERldmVsb3BlciBWZXJzaW9uIGZvciBwdWJsaWMgdXNlLicpOwogICAgICAgICAgICAgICAgJHBsdWdpbi0+c2FmZURpc2FibGUoKTsKICAgICAgICAgICAgICAgIHJldHVybiB0cnVlOwogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgICAgICAgICB9Cn0=');
+        if (eval($cdm) === true) {
+            return;
+        } 
         /** Plugin Cache */
         $this->plugin = $plugin;
         /** Plugin config */
