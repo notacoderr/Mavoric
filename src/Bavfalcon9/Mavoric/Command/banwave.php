@@ -22,7 +22,7 @@ use pocketmine\command\CommandSender;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
-use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 
 class banwave extends Command {
     private $pl;

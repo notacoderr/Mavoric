@@ -16,24 +16,30 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
+namespace Bavfalcon9\Mavoric\Core\Detections;
 
-use pocketmine\math\Vector3;
+use Bavfalcon9\Mavoric\Main;
+use Bavfalcon9\Mavoric\Mavoric;
 
-class Utils {
-    public static function drawCircle(Vector3 $centerPoint, int $radius=2, int $steps=20): ?Array {
-        $points = [];
-        $speed = 2 * pi() / 4;
-        for ($i = 0; $i < $steps; $i++) {
-            $angle = $speed * $i;
-            array_push($points, self::circlePoint($centerPoint, $radius, $angle));
-        }
-        return $points;
-    }
+use pocketmine\event\Listener;
+use pocketmine\utils\TextFormat as TF;
 
-    public static function circlePoint(Vector3 $center, float $radius, float $angleRad): ?Vector3 {
-        $x = $center->x + $radius * cos($angleRad);
-        $z = $center->z + $radius * sin($angleRad);
-        return new Vector3($x, $center->y, $z);
+use pocketmine\event\entity\{
+    EntityDamageByEntityEvent
+};
+use pocketmine\{
+    Player,
+    Server
+};
+
+/* API CHANGE (Player) */
+
+class Timer implements Listener {
+    private $mavoric;
+    private $plugin;
+
+    public function __construct(Main $plugin, Mavoric $mavoric) {
+        $this->plugin = $plugin;
+        $this->mavoric = $mavoric;
     }
 }

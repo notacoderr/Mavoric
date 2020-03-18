@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 namespace Bavfalcon9\Mavoric\Command;
-use Bavfalcon9\Mavoric\misc\Classes\CheatTranslation;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatTranslation;
 use Bavfalcon9\Mavoric\Mavoric;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
