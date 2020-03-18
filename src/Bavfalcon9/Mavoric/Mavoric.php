@@ -119,6 +119,8 @@ class Mavoric {
     private $waveHandler;
     /** @var Array[Detection] */
     private $loadedCheats = [];
+    /** @var Array[MavoricEvent] */
+    private $events = [];
 
     public function __construct(Main $plugin) {
         /** Plugin Cache */
@@ -182,12 +184,25 @@ class Mavoric {
         }
     }
 
+    public function registerEvent(MavoricEvent $event) {
+        $this->events[] = $event;
+    }
+
+    /** @deprecated */
     public function broadcastEvent(MavoricEvent $event) {
         foreach ($this->loadedCheats as $cheat) {
             try {
                 $cheat->onEvent($event);
             } catch (Throwable $e) {
                 $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($cheat) . '!' . "\n$e");
+            }
+        }
+
+        foreach ($this->events as $ev) {
+            try {
+                $ev->onEvent($event);
+            } catch (Throwable $e) {
+                $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($ev) . '!' . "\n$e");
             }
         }
     }
