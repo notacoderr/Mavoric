@@ -97,6 +97,8 @@ class Mavoric {
     public $settings;
     /** @var String */
     private $version = '1.0.4';
+    /** @var Bool */
+    private $isDev = true;
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -121,6 +123,13 @@ class Mavoric {
     private $events = [];
 
     public function __construct(Main $plugin) {
+        if ($this->isDev) {
+            if ($plugin->getServer()->getIp() !== '0.0.0.0') {
+                $plugin->getLogger()->critical('Can not use Developer Version for public use.');
+                $plugin->getServer()->getPluginManager()->disablePlugin($this);
+                return;
+            }
+        }
         /** Plugin Cache */
         $this->plugin = $plugin;
         /** Plugin config */
