@@ -41,9 +41,10 @@ v1.0.1 | Never | ❌ No | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavoric
 v1.0.2 | Feburary 7th 2020 | ❌ No | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
 v1.0.3 | March 3rd 2020 | ❌ No | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
 v1.0.4 | Unknown | ✔ Yes | [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
+
 ### API Versions
 Version | Released | Maintained | Details
 ------- | -------- | ---------- | -------
 v0.0.**X** | June 14th 2019 | ❌ No | Initial release of Mavoric, consists of detection list with poor handling.
 v1.0.**X** | November 3rd 2019 | ✔ Yes | Consists of core improvments for event handling and code improvements.
-v1.1.**X** | Not Complete (2020) | ✔ Yes | Multiple fixes and core improvements consisting of events and proper handling for cheats and loading.
+v2.0.**X** | Not Complete (2020) | ❌ No | Unknown
