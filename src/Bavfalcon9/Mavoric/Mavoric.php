@@ -115,12 +115,12 @@ class Mavoric {
     /** @var String */
     public const ARROW = '→';
     /** @var Bool */
-    public const DEV = true;
+    public const DEV = false;
 
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.5';
+    private $version = '1.0.4';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
