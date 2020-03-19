@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\events;
+namespace Bavfalcon9\Mavoric\Events;
 
 use pocketmine\event\Listener;
 use pocketmine\Player;
@@ -45,7 +45,7 @@ use pocketmine\network\mcpe\protocol\{
     PacketPool,
     PlayerActionPacket
 };
-use Bavfalcon9\Mavoric\events\{
+use Bavfalcon9\Mavoric\Events\{
     player\InventoryTransaction,
     player\PlayerAttack,
     player\PlayerDamage,
@@ -139,7 +139,7 @@ class EventHandler implements Listener {
 
     /**
      * @author Zedstar16 - (ClickChecks)
-     * To Do: Add more events.
+     * To Do: Add more Events.
      */
     public function onClickCheck(DataPacketReceiveEvent $event): void {
         if ($event->getPacket()::NETWORK_ID === InventoryTransactionPacket::NETWORK_ID) {

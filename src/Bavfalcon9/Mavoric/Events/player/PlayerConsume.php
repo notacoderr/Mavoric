@@ -16,12 +16,12 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\events\player;
+namespace Bavfalcon9\Mavoric\Events\player;
 
 use pocketmine\Player;
 use pocketmine\item\Item;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\Events\MavoricEvent;
 
 /**
  * Called when a player consumes an item.

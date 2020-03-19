@@ -19,7 +19,7 @@
 namespace Bavfalcon9\Mavoric\Tasks;
 use pocketmine\scheduler\Task;
 
-use Bavfalcon9\Mavoric\misc\Banwaves\BanWave;
+use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\Mavoric;
 
 class BanWaveTask extends Task {

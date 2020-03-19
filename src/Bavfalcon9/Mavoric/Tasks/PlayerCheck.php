@@ -22,7 +22,7 @@ use Bavfalcon9\Mavoric\Mavoric;
 use pocketmine\Player;
 use pocketmine\Level\Position;
 use pocketmine\math\Vector3;
-use Bavfalcon9\Mavoric\misc\Utils;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\Utils;
 
 class PlayerCheck extends Task {
     private $mav;

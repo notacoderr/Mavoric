@@ -16,12 +16,12 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\events\packet;
+namespace Bavfalcon9\Mavoric\Events\packet;
 
 use pocketmine\Player;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\Events\MavoricEvent;
 
 class PacketRecieve extends MavoricEvent {
     /** @var DataPacket */

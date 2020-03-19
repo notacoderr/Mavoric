@@ -16,11 +16,11 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\events;
+namespace Bavfalcon9\Mavoric\Events;
 
 use pocketmine\Player;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\misc\Flag;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
 
 /** @deprecated */
 class MavoricEvent {

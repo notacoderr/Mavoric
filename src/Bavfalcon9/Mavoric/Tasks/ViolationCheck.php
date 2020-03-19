@@ -19,7 +19,7 @@
 namespace Bavfalcon9\Mavoric\Tasks;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 use Bavfalcon9\Mavoric\Bavfalcon9\Mavoric\Bans\BanHandler;
 
 class ViolationCheck extends Task {
