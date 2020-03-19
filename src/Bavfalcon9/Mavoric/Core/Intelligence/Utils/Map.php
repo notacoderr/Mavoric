@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Intelliegence\Utils;
+namespace Bavfalcon9\Mavoric\Core\Intelligence\Utils;
 
 class Map {
 

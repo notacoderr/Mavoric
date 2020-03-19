@@ -14,9 +14,8 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-// This class was made solely for naming conventions
-//namespace Bavfalcon9\Mavoric\misc\Classes;
-// Saving for later
+namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
+
 use pocketmine\utils\Config;
 use pocketmine\utils\MainLogger;
 use Bavfalcon9\Mavoric\Mavoric;
@@ -51,6 +50,6 @@ class CheatConfig {
     }
 
     public function getCpsLimit(): ?Float {
-        return ($this->config[Mavoric::AutoClicker])
+        return ($this->config[Mavoric::AutoClicker]);
     }
 }

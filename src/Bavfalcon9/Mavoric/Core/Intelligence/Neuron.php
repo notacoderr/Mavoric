@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Intelliegence;
+namespace Bavfalcon9\Mavoric\Core\Intelliegence;
 
 use Bavfalcon9\Mavoric\Intelligence\Utils\Map;
 

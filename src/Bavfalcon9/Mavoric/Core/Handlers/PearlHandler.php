@@ -15,35 +15,22 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Core\Handlers;
 
-namespace Bavfalcon9\Mavoric\Events\player;
+use pocketmine\event\Listener;
+use Bavfalcon9\Mavoric\Main;
+use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlThrow;
 
-use pocketmine\Player;
-use pocketmine\item\Item;
-use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Events\MavoricEvent;
+class PearlHandler implements Listener {
+    /** @var PearlThrow[] */
+    private $throws = [];
+    /** @var Main */
+    private $plugin;
 
-/**
- * Called when a player consumes an item.
- */
-class PlayerConsume extends MavoricEvent {
-    /** @var Player */
-    private $player;
-    /** @var Item */
-    private $item;
-
-    public function __construct($e, Mavoric $mavoric, Player $player, Item $item) {
-        parent::__construct($e, $mavoric, $player);
-        $this->player = $player;
-        $this->item = $item;
+    public function __construct(Main $plugin) {
+        $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
+        $this->plugin = $plugin;
     }
 
-    public function getItem(): ?Item {
-        return $this->item;
-    }
-
-    public function getTime(): int {
-        // TO DO
-        return -1;
-    }
+    public function 
 }
