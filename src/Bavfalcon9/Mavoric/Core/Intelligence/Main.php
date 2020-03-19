@@ -15,6 +15,8 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
+namespace Bavfalcon9\Mavoric\Core\Intelligence;
+
 class Main {
     private $mode;
     private $cache;

@@ -12,6 +12,8 @@
  *   @copyright Everything is copyrighted to their respective owners.
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
+
 class Analytics {
     private $mavoric;
     private $bans = [];

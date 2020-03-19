@@ -14,6 +14,7 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
+namespace Bavfalcon9\Mavoric\Core\Intelligence;
 
 use pocketmine\event\block\{
     BlockBreakEvent, BlockBurnEvent, BlockEvent, BlockFormEvent, BlockGrowEvent, BlockPlaceEvent, BlockSpreadEvent,
@@ -56,7 +57,7 @@ use pocketmine\event\server\{
     ServerEvent, UpdateNotifyEvent
 };
 
-class Translate {
+class Translation {
     public function __construct() {
 
     }

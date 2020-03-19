@@ -13,7 +13,7 @@
  *   @link https://github.com/Olybear9/Mavoric                                  
  */
 
-//namespace Bavfalcon9\Mavoric\Core\Miscellaneous\Classes;
+namespace Bavfalcon9\Mavoric\Core\Miscellaneous\Classes;
 
 class CheatSetting {
     public function getValue(String $custom) {

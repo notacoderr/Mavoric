@@ -18,6 +18,7 @@
 
 
 namespace Bavfalcon9\Mavoric;
+
 use pocketmine\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\utils\MainLogger;
@@ -26,19 +27,34 @@ use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 use Bavfalcon9\Mavoric\Events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\EventHandler;
 use Bavfalcon9\Mavoric\Tasks\BanWaveTask;
-use Bavfalcon9\Mavoric\Core\Detections\{
-    Aimbot, AutoArmor, AutoClicker, AutoSword,
-    AutoTool, Bhop, FastBreak, FastEat, Flight,
-    KillAura, MultiAura, NoClip, NoDamage, NoSlowdown,
-    Reach, Speed, Teleport, Timer, Jesus, Jetpack, NoStackItems
-};
+use Bavfalcon9\Mavoric\Core\Detections\Aimbot;
+use Bavfalcon9\Mavoric\Core\Detections\AutoArmor;
+use Bavfalcon9\Mavoric\Core\Detections\AutoClicker;
+use Bavfalcon9\Mavoric\Core\Detections\AutoSword;
+use Bavfalcon9\Mavoric\Core\Detections\AutoTool;
+use Bavfalcon9\Mavoric\Core\Detections\Bhop;
+use Bavfalcon9\Mavoric\Core\Detections\FastBreak;
+use Bavfalcon9\Mavoric\Core\Detections\FastEat;
+use Bavfalcon9\Mavoric\Core\Detections\Flight;
+use Bavfalcon9\Mavoric\Core\Detections\Jesus;
+use Bavfalcon9\Mavoric\Core\Detections\JetPack;
+use Bavfalcon9\Mavoric\Core\Detections\KillAura;
+use Bavfalcon9\Mavoric\Core\Detections\MultiAura;
+use Bavfalcon9\Mavoric\Core\Detections\NoClip;
+use Bavfalcon9\Mavoric\Core\Detections\NoDamage;
+use Bavfalcon9\Mavoric\Core\Detections\NoStackItems;
+use Bavfalcon9\Mavoric\Core\Detections\NoSlowdown;
+use Bavfalcon9\Mavoric\Core\Detections\Reach;
+use Bavfalcon9\Mavoric\Core\Detections\Speed;
+use Bavfalcon9\Mavoric\Core\Detections\Teleport;
+use Bavfalcon9\Mavoric\Core\Detections\Timer;
 use Bavfalcon9\Mavoric\Core\Bans\BanHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
-use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
-use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
 use Bavfalcon9\Mavoric\Core\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 use pocketmine\math\Vector3;
 
@@ -82,15 +98,21 @@ class Mavoric {
         'NoStackItems' => 35
     ];
     
-    /** Message Staff Vars */
+    /** @var Int */
     public const NOTICE = 1;
+    /** @var Int */
     public const INFORM = 2;
+    /** @var Int */
     public const ERROR = 3;
+    /** @var Int */
     public const FATAL = 4;
+    /** @var Int */
     public const WARN = 5;
-
+    /** @var String */
     public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
+    /** @var String */
     public const COLOR = '§';
+    /** @var String */
     public const ARROW = '→';
     /** @var Bool */
     public const DEV = true;
@@ -98,7 +120,7 @@ class Mavoric {
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.4';
+    private $version = '1.0.5';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -188,6 +210,9 @@ class Mavoric {
         }
     }
 
+    /**
+     * @param MavoricEvent $event - The event to register
+     */
     public function registerEvent(MavoricEvent $event) {
         $this->events[] = $event;
     }
@@ -332,13 +357,20 @@ class Mavoric {
                 [
                     "color" => 0xFFFF00,
                     "title" => "Alert type: " . self::getCheatName($cheat),
-                    "description" => $details . "[V {$count}]"
+                    "description" => "**Player:** {$player->getName()}\n" . $details . "[V {$count}]"
                 ]
             ]
         ]));
     }
 
-    public function postWebhook(String $url, String $content, String $replyTo='MavoricAC') {
+    /**
+     * Post to a discord webhook
+     * @param String $url - The webhook url
+     * @param String $content - JSON encoded content
+     * @param String $replyTo - The player to reply to.
+     * @return void
+     */
+    public function postWebhook(String $url, String $content, String $replyTo='MavoricAC'): void {
         $url = $this->plugin->config->getNested("Webhooks.$url") ?? false;
 
         if (!$url) {
@@ -352,6 +384,8 @@ class Mavoric {
 
     /**
      * Checks the version of mavoric
+     * @param Config|Null $config - The config
+     * @return void
      */
     public function checkVersion($config): void {
         if (!$config) {
@@ -381,15 +415,29 @@ class Mavoric {
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
     }
 
-    public function issueWaveBan(BanWave $wave) {
+
+    /**
+     * Issues a ban wave (so its readable in chat)
+     * @param BanWave $wave - The wave instance.
+     * @return void
+     */
+    public function issueWaveBan(BanWave $wave): void {
         $wave->setIssued(true);
         $wave->save();
         $scheduler = $this->plugin->getScheduler();
         $scheduler->scheduleRepeatingTask(new BanWaveTask($this, $wave), 20 * 0.6);
         $this->getServer()->broadcastMessage('§4[MAVORIC] Ban Wave: ' . $wave->getNumber() . ' has started.');
+        return;
     }
 
-    public function issueBan(Player $player, $wave, Array $banData) {
+    /**
+     * Issue a ban with mavoric.
+     * @param Player $player - The player to issue the ban on
+     * @param BanWave|Null $wave - The banwave number.
+     * @param Mixed[] $banData - The ban data for the user.
+     * @return void
+     */
+    public function issueBan(Player $player, $wave, Array $banData): void {
         $player = $player->getName();
         $banList = $this->getServer()->getNameBans();
         $append = (!$wave) ? '' : ' | Wave ' . $wave->getNumber();

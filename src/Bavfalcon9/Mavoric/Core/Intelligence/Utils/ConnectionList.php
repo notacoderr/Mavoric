@@ -16,8 +16,8 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Intelliegence\Utils;
-use Bavfalcon9\Mavoric\Intelligence\Neuron;
+namespace Bavfalcon9\Mavoric\Core\Intelligence\Utils;
+use Bavfalcon9\Mavoric\Core\Intelligence\Neuron;
 
 class ConnectionList {
     public $neurons = [];
