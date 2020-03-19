@@ -26,7 +26,7 @@ use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlPurgeTask;
 
 class PearlHandler implements Listener {
     /** @var PearlThrow[] */
-    private $throws = [];
+    private $throws;
     /** @var Main */
     private $plugin;
 
@@ -34,6 +34,7 @@ class PearlHandler implements Listener {
         $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
         $plugin->getScheduler()->scheduleRepeatingTask(new PearlPurgeTask($this), 20 * 10);
         $this->plugin = $plugin;
+        $this->throws = [];
     }
 
     /**
