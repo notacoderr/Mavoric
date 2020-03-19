@@ -25,7 +25,7 @@ use pocketmine\math\Vector3;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Events\MavoricEvent;
 
-class Event extends MavoricEvent {
+class PlayerEvent extends MavoricEvent {
     /** @var Player */
     private $player;
 

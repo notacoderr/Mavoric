@@ -16,9 +16,9 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Core\Intelliegence;
+namespace Bavfalcon9\Mavoric\Core\Intelligence;
 
-use Bavfalcon9\Mavoric\Intelligence\Utils\Map;
+use Bavfalcon9\Mavoric\Core\Intelligence\Utils\Map;
 
 class Neuron {
     /** @var Array */
