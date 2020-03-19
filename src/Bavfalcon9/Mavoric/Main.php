@@ -18,18 +18,21 @@
 
 namespace Bavfalcon9\Mavoric;
 
-use pocketmine\plugin\PluginBase;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\network\mcpe\protocol\PlaySoundPacket;
+use pocketmine\item\ItemFactory;
+use pocketmine\plugin\PluginBase;
 use pocketmine\permission\Permission;
+use pocketmine\utils\Config;
 use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\Server;
-use pocketmine\network\mcpe\protocol\PlaySoundPacket;
+
+use Bavfalcon9\Mavoric\entity\Pearl\EnderPearl;
 use Bavfalcon9\Mavoric\Command\{
     alert, mban, mreport, banwave
 };
-use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Core\Handlers\ReportHandler;
 
 class Main extends PluginBase {
@@ -47,6 +50,10 @@ class Main extends PluginBase {
         $this->config = new Config($this->getDataFolder().'config.yml');
         $this->updateConfigs();
 
+        /** Entity Register */
+        ItemFactory::registerItem(new EnderPearl(), true);
+
+        /** Mavoric Related */
         $this->mavoric->checkVersion($this->config);
         $this->mavoric->loadDetections();
         $this->mavoric->loadChecker();

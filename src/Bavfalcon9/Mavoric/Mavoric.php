@@ -20,9 +20,11 @@
 namespace Bavfalcon9\Mavoric;
 
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\scheduler\Task;
 use pocketmine\utils\MainLogger;
 use pocketmine\utils\Config;
+use pocketmine\math\Vector3;
 use Bavfalcon9\Mavoric\Tasks\DiscordPost;
 use Bavfalcon9\Mavoric\Events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\EventHandler;
@@ -53,10 +55,10 @@ use Bavfalcon9\Mavoric\Core\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\Core\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
+use Bavfalcon9\Mavoric\Core\Handlers\PearlHandler;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
-use pocketmine\math\Vector3;
 
 class Mavoric {
     public const CHEATS = [
@@ -115,18 +117,20 @@ class Mavoric {
     /** @var String */
     public const ARROW = '→';
     /** @var Bool */
-    public const DEV = false;
+    public const DEV = true;
 
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.4';
+    private $version = '1.0.5';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
     private $banHandler;
     /** @var MessageHandler */
     private $messageHandler;
+    /** @var PearlHandler */
+    private $pearlHandler;
     /** @var TpsCheck */
     private $tpsCheck;
     /** @var Array[Flag] */
@@ -155,6 +159,8 @@ class Mavoric {
         $this->settings = new Settings(new Config($this->plugin->getDataFolder().'config.yml'));
         /** Handle alert messages (so they dont spam staff) */
         $this->messageHandler = new MessageHandler($plugin, $this);
+        /** Handle thrown pearls */
+        $this->pearlHandler = new PearlHandler($plugin);
         /** Ticks per second check  */
         $this->tpsCheck = new TpsCheck($plugin, $this);
         /** @deprecated Handles bans */
@@ -483,6 +489,7 @@ class Mavoric {
 
     /**
      * Get the version of mavoric.
+     * @return String|Null
      */
     public function getVersion(): ?String {
         return $this->version;
@@ -490,26 +497,41 @@ class Mavoric {
     
     /**
      * Get the plugin.
+     * @return Main
      */
-    public function getPlugin() {
+    public function getPlugin(): Main {
         return $this->plugin;
     }
 
     /**
      * Get tps check.
+     * @return TpsCheck
      */
-    public function getTpsCheck() {
+    public function getTpsCheck(): TpsCheck {
         return $this->tpsCheck;
     }
 
+    /**
+     * Get the wave handler
+     * @return WaveHandler
+     */
     public function getWaveHandler(): WaveHandler {
         return $this->waveHandler;
+    }
+
+    /**
+     * Get the pearl handler
+     * @return PearlHandler
+     */
+    public function getPearlHandler(): PearlHandler {
+        return $this->pearlHandler;
     }
     
     /**
      * Get the server
+     * @return Server
      */
-    public function getServer() {
+    public function getServer(): Server {
         return $this->plugin->getServer();
     }
 }

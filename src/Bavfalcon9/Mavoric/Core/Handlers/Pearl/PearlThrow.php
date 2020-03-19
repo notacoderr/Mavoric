@@ -56,6 +56,22 @@ class PearlThrow {
         }
     }
 
+    /** 
+     * Gets the time the pearl landed at (-1 if still in air)
+     * @return int - The time the pearl landed.
+     */
+    public function getLandingTime(): int {
+        return $this->completedAt;
+    }
+
+    /**
+     * Gets the time the pearl was thrown
+     * @return int - The time the pearl was thrown
+     */
+    public function getThrownTime(): int {
+        return $this->thrownAt;
+    }
+
     /**
      * Gets whether the throw has been completed.
      * @return Bool - Whether or not the pearl has landed.
