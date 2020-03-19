@@ -18,7 +18,6 @@
 
 namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
 
-use Bavfalcon9\Mavoric\misc\Flag;
 use Bavfalcon9\Mavoric;
 
 class CheatPercentile {
