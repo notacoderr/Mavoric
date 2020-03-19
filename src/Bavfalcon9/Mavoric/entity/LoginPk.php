@@ -15,20 +15,13 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Core\Handlers;
 
-use pocketmine\event\Listener;
-use Bavfalcon9\Mavoric\Main;
-use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlThrow;
+namespace Bavfalcon9\Mavoric\entity;
 
-class PearlHandler implements Listener {
-    /** @var PearlThrow[] */
-    private $throws = [];
-    /** @var Main */
-    private $plugin;
+use pocketmine\network\mcpe\protocol\LoginPacket;
 
-    public function __construct(Main $plugin) {
-        $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
-        $this->plugin = $plugin;
+class LoginPk extends LoginPacket {
+    public function decodeAdditional() {
+        /** Empty because no need to decode any additional info. */
     }
 }

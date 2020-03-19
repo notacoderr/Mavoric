@@ -28,7 +28,6 @@ use Bavfalcon9\Mavoric\Main;
 use pocketmine\event\server\DataPacketReceiveEvent;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\PacketPool;
 use pocketmine\network\mcpe\protocol\PlayStatusPacket;
@@ -196,10 +195,7 @@ class SpecterInterface implements SourceInterface{
             $this->ackStore[$username] = [];
             $this->replyStore[$username] = [];
             $this->mavoric->getServer()->addPlayer($player);
-            $pk = new class() extends LoginPacket{
-                public function decodeAdditional(){
-                }
-            };
+            $pk = new LoginPk();
             $pk->username = $username;
             $pk->protocol = ProtocolInfo::CURRENT_PROTOCOL;
             $pk->clientUUID = UUID::fromData($address, $port, $username)->toString();
