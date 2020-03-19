@@ -93,7 +93,7 @@ class Mavoric {
     public const COLOR = '§';
     public const ARROW = '→';
     /** @var Bool */
-    public const DEV = true;
+    public const DEV = false;
 
     /** @var Settings */
     public $settings;
@@ -188,6 +188,9 @@ class Mavoric {
         }
     }
 
+    /**
+     * @param MavoricEvent $event - The event to register
+     */
     public function registerEvent(MavoricEvent $event) {
         $this->events[] = $event;
     }
