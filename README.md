@@ -32,20 +32,19 @@ used on a mass scale to help improve it's overall functionality.
 This is a list of **public** releases, and with detail about each release and a provided download.
 
 ### Official Release Versions
-Version | Released | In-Progress | Download 
+Version | Released | Completed | Download 
 ------- | ------- | ---------- | --------
-v0.0.6 | October 26th 2019 | ❌ No | [Mavoric_v0.1.6](https://github.com/Olybear9/Mavoric/releases/download/v0.1.6/Mavoric_v0.1.6.phar)
-v0.0.7 | November 3rd 2019 | ❌ No | [Mavoric_v0.1.7](https://github.com/Olybear9/Mavoric/releases/download/v0.1.7/Mavoric_v0.1.7.phar)
-v1.0.0 | Janurary 22nd 2020 | ❌ No | [Mavoric_v1.0.0](https://github.com/Olybear9/Mavoric/releases/download/v1.0.0/Mavoric_v1.0.0.phar)
-v1.0.1 | Never | ❌ No | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavoric/releases)~~
-v1.0.2 | Feburary 7th 2020 | ❌ No | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
-v1.0.3 | March 3rd 2020 | ❌ No | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
-v1.0.4 | March 19th 2020 | ❌ No | [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
-v1.0.5 | Unknown | ✔ Yes | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
+v0.0.6 | October 26th 2019 | ✔ Yes | [Mavoric_v0.1.6](https://github.com/Olybear9/Mavoric/releases/download/v0.1.6/Mavoric_v0.1.6.phar)
+v0.0.7 | November 3rd 2019 | ✔ Yes | [Mavoric_v0.1.7](https://github.com/Olybear9/Mavoric/releases/download/v0.1.7/Mavoric_v0.1.7.phar)
+v1.0.0 | Janurary 22nd 2020 | ✔ Yes | [Mavoric_v1.0.0](https://github.com/Olybear9/Mavoric/releases/download/v1.0.0/Mavoric_v1.0.0.phar)
+v1.0.1 | Never | ✔ Yes | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavoric/releases)~~
+v1.0.2 | Feburary 7th 2020 | ✔ Yes | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
+v1.0.3 | March 3rd 2020 | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
+v1.0.4 | March 19th 2020 | ✔ Yes| [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
+v1.0.5 | Not scheduled | ❌ No | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
 
 ### API Versions
 Version | Released | Maintained | Details
 ------- | -------- | ---------- | -------
 v0.0.**X** | June 14th 2019 | ❌ No | Initial release of Mavoric, consists of detection list with poor handling.
 v1.0.**X** | November 3rd 2019 | ✔ Yes | Consists of core improvments for event handling and code improvements.
-v2.0.**X** | Not Complete (2020) | ❌ No | Unknown
