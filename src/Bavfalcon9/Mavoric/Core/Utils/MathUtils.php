@@ -32,4 +32,22 @@ class MathUtils {
     public static function getPercentageFilled(AxisAlignedBB $AABB, Block $block): int {
 
     }
+
+    /**
+     * Gets the circumference for a given radius
+     * @param float $radius - Radius to calculate
+     * @return float
+     */
+    public static function circumference(float $radius): float {
+        return (pi() * ($radius * 2));
+    }
+
+    /**
+     * Gets the radius from a circumference
+     * @param float $circumference - The circumference to calculate
+     * @return float
+     */
+    public static function radiusFromCircumference(float $circumference): float {
+        return ($circumference / (pi() * 2));
+    }
 }

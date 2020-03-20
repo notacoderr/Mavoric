@@ -15,7 +15,7 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Math;
+namespace Bavfalcon9\Mavoric\Core\Utils\Math;
 
 use pocketmine\math\Vector3;
 use pocketmine\math\AxisAlignedBB;
@@ -46,8 +46,7 @@ class Entities {
 
     }
 
-    public static function getEndVector(Entity $seer, $distance = 7)
-    {
+    public static function getEndVector(Entity $seer, $distance = 7) {
         return self::getEyeVector3($seer)->add($seer->getDirectionVector()->multiply($distance));
     }
     
@@ -86,6 +85,11 @@ class Entities {
         return (empty($matches)) ? null : $matches;
     }
 
+    /**
+     * @param Entity $entity - Entity to check
+     * @param Float $area - The area around the entity.
+     * @return Array|Null - All entities near the specified entity.
+     */
     public static function getNearbyEntities(Entity $entity, float $area=1): ?Array {
         $matches = [];
         $level = $entity->getLevel();
@@ -97,6 +101,10 @@ class Entities {
         return (empty($matches)) ? null : $matches;
     }
 
+    /**
+     * Get the vector the entity is facing towards.
+     * @return Vector3|Null - The vector that the entity is facing
+     */
     public static function getDirection(Entity $entity): ?Vector3 {
         $rotX = $entity->getYaw();
         $rotY = $entity->getPitch();

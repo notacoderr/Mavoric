@@ -49,7 +49,7 @@ class Jesus implements Detection {
         if (WaterEntry::isWater($event->getBlocks()[0])) {
             $blockAt = $event->getBlocks()[0];
             $blockAbove = $event->getBlocks()[1];
-            $player->addActionBarMessage("§aIn water");
+            #$player->addActionBarMessage("§aIn water");
             var_dump($AABB->isVectorInside($blockAbove));
             if ($blockAt->collidesWithBB($AABB)) {
                 // collision with water, check air.
@@ -61,7 +61,7 @@ class Jesus implements Detection {
                 } 
             }
         } else {
-            $player->addActionBarMessage("§cNot in water");
+            #$player->addActionBarMessage("§cNot in water");
         }
     }
 

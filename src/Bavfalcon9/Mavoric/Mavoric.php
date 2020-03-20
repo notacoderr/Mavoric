@@ -54,6 +54,7 @@ use Bavfalcon9\Mavoric\Core\Bans\BanHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
 use Bavfalcon9\Mavoric\Core\Handlers\MessageHandler;
+use Bavfalcon9\Mavoric\Core\Handlers\LagHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
 use Bavfalcon9\Mavoric\Core\Handlers\PearlHandler;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
@@ -131,6 +132,8 @@ class Mavoric {
     private $messageHandler;
     /** @var PearlHandler */
     private $pearlHandler;
+    /** @var LagHandler */
+    private $lagHandler;
     /** @var TpsCheck */
     private $tpsCheck;
     /** @var Array[Flag] */
@@ -161,6 +164,8 @@ class Mavoric {
         $this->messageHandler = new MessageHandler($plugin, $this);
         /** Handle thrown pearls */
         $this->pearlHandler = new PearlHandler($plugin);
+        /** Handle lag */
+        $this->lagHandler = new LagHandler($plugin);
         /** Ticks per second check  */
         $this->tpsCheck = new TpsCheck($plugin, $this);
         /** @deprecated Handles bans */
