@@ -46,8 +46,13 @@ class Entities {
 
     }
 
-    public static function isLookingAtAABB(AxisAlignedBB $target, Vector3 $pos): ?Bool {
-        
+    public static function getEndVector(Entity $seer, $distance = 7)
+    {
+        return self::getEyeVector3($seer)->add($seer->getDirectionVector()->multiply($distance));
+    }
+    
+    public static function isLookingAtAABB(Entity $seer, AxisAlignedBB $aabb): ?Bool {
+        return $aabb->calculateIntercept(self::getEyeVector3($seer), self::getEndVector($seer)->add($seer->getDirectionVector()->multiply(7))) !== null;
     }
 
     public static function isLookingAtHead(Entity $seer, Entity $target): ?Bool {
