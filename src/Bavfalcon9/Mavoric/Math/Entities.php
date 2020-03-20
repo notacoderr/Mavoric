@@ -46,7 +46,7 @@ class Entities {
 
     }
 
-    public static function getEndVector(Player $seer, $distance = 7)
+    public static function getEndVector(Entity $seer, $distance = 7)
     {
         return self::getEyeVector3($seer)->add($seer->getDirectionVector()->multiply($distance));
     }
