@@ -66,7 +66,7 @@ class PearlHandler implements Listener {
 
             foreach ($this->throws as &$throw) {
                 if ($throw->getPearlEntityId() === $id) {
-                    $throw->setCompleted(microtime(true));
+                    $throw->setCompleted(microtime(true), $event->getEntity()->getPosition());
                 }
             }
         }

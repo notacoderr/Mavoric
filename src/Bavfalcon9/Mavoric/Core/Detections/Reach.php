@@ -38,12 +38,6 @@ class Reach implements Detection {
     private $mavoric;
     /** @var Main */
     private $plugin;
-    /** @var Array */
-    private $ender_pearls = [];
-    /** @var Array */
-    private $teleported = [];
-    /** @var Array */
-    private $teleportQueue = [];
 
     public function __construct(Mavoric $mavoric) {
         $this->plugin = $mavoric->getPlugin();
@@ -57,29 +51,19 @@ class Reach implements Detection {
         if ($event instanceof PlayerAttack) {
             $damager = $event->getAttacker();
             $entity = $event->getVictim();
-
+            $pearlHandler = $this->mavoric->getPearlHandler();
             $amt = 6;
-            if ($damager->getPing() >= 230) {
-                $amt = $damager->getPing() / 34;
-                if ($damager->getPing() >= 500) {
-                    $amt = $damager->getPing() / 50;
-                }
-            }
+            
+            $throws = [$pearlHandler->getMostRecentThrowFrom($damager->getName()), $pearlHandler->getMostRecentThrowFrom($entity->getName())];
 
-            if ($entity instanceof Player) {
-                if ($entity->getPing() >= 230) {
-                    $amt = $entity->getPing() / 34;
-                    if ($entity->getPing() >= 500) {
-                        $amt = $entity->getPing() / 52;
-                    }
+            if ($throws[0] !== null) {
+                if ($throws[0]->getLandingTime() + 4 <= time()) {
+                    $pos = $throws[0]->getLandingLocation();
+                    
                 }
             }
 
             if ($event->getDistance() >= $amt) {
-                if ($this->pearledAway($entity) === true) return;
-                if ($this->pearledAway($damager) === true) return;
-                if ($this->hasTeleported($entity) === true) return;
-                if ($this->hasTeleported($damager) === true) return;
                 if (!$damager->isCreative()) {
                     $event->issueViolation(Mavoric::CHEATS['Reach']);
                     $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
