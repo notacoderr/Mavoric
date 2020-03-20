@@ -39,7 +39,7 @@ use Bavfalcon9\Mavoric\Core\Detections\FastBreak;
 use Bavfalcon9\Mavoric\Core\Detections\FastEat;
 use Bavfalcon9\Mavoric\Core\Detections\Flight;
 use Bavfalcon9\Mavoric\Core\Detections\Jesus;
-use Bavfalcon9\Mavoric\Core\Detections\JetPack;
+use Bavfalcon9\Mavoric\Core\Detections\Jetpack;
 use Bavfalcon9\Mavoric\Core\Detections\KillAura;
 use Bavfalcon9\Mavoric\Core\Detections\MultiAura;
 use Bavfalcon9\Mavoric\Core\Detections\NoClip;
@@ -188,7 +188,7 @@ class Mavoric {
             new FastBreak($this),
             new Flight($this),
             new Jesus($this),
-            new JetPack($this),
+            new Jetpack($this),
             new MultiAura($this),
             new NoClip($this),
             //new NoDamage($this),
