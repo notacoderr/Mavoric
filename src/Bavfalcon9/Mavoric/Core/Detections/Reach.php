@@ -56,10 +56,14 @@ class Reach implements Detection {
             
             $throws = [$pearlHandler->getMostRecentThrowFrom($damager->getName()), $pearlHandler->getMostRecentThrowFrom($entity->getName())];
 
-            if ($throws[0] !== null) {
-                if ($throws[0]->getLandingTime() + 4 <= time()) {
-                    $pos = $throws[0]->getLandingLocation();
-                    
+            foreach ($throws as $throw) {
+                if ($throw !== null) {
+                    if ($throw->getLandingTime() + 4 <= time()) {
+                        $pos = $throw->getLandingLocation();
+                        if ($throw->getPlayer()->distance($pos) >= 20) {
+                            return;
+                        }
+                    }
                 }
             }
 

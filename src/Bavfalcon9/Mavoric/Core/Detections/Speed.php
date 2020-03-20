@@ -47,43 +47,34 @@ class Speed implements Detection {
         /** @var PlayerMove */
         if ($event instanceof PlayerMove) {
             $player = $event->getPlayer();
-            $to = $event->getTo();
-            $from = $event->getFrom();
-            $distance = abs($to->distance($from));
-            $allowed = 2;
+            $to = clone $event->getTo();
+            $from = clone $event->getFrom();
+
+            // Fix falling
+            $from->y = 0;
+            $to->y = 0;
+
+            $distance = $to->distance($from);
+            $allowed = 0.65;
+
             if ($player->isCreative() || $player->isSpectator()) {
                 return;
             }
+
             if ($player->getEffect(1) !== null) {
+                // Not tested fully, but definitely allows effects.
                 if ($player->getEffect(1)->getEffectLevel() === 1) {
-                    $allowed = 2.3;
+                    $allowed = 0.75;
                 } else {
-                    $allowed = $player->getEffect(1)->getEffectLevel() * 1.6;
+                    $allowed = $player->getEffect(1)->getEffectLevel() * 0.84;
                 }
-            }
-            // fix falling, flying and knockback
-            if ($player->getAllowFlight()) {
-                $allowed = 4;
             }
 
-            if (($from->y > $to->y) && $distance < 6) {
-                return;
-            }
-            if (($from->y < $to->y)  && $distance < 6) {
-                return;
-            }
             if ($distance >= $allowed) {
-                if ($player->getPing() >= 300) {
-                    $distance = round($distance, 2);
-                    #$player->sendMessage('Evaluation failed. Shard: ' . rand(1, 99999));
-                    #$event->issueViolation(Mavoric::CHEATS['Speed']);
-                    return;
-                } else {
-                    $distance = round($distance, 2);
-                    $event->sendAlert('Speed', "Illegal movement, Moved {$distance} blocks too quickly.");
+                    $distance = round($distance, 2) * 100;
+                    $event->sendAlert('Speed', "Illegal movement, Moved too far in a single instance.");
                     $event->issueViolation(Mavoric::CHEATS['Speed']);
                     return;
-                }
             }
         }
     }

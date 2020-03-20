@@ -22,10 +22,9 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerMove;
 use Bavfalcon9\Mavoric\Core\Utils\WaterEntry;
-use pocketmine\math\AxisAlignedBB;
 use pocketmine\Player;
 
-class Jesus implements Detection {
+class JesusOld implements Detection {
     /** @var Mavoric */
     private $mavoric;
     /** @var WaterEntries[] */
@@ -39,30 +38,43 @@ class Jesus implements Detection {
             return;
         }
 
-        // check blatant jesus
+        /** @var Player */
         $player = $event->getPlayer();
+        /** @var Block */
+        $blockAt = $event->getBlockNearPlayer(0, 0, 0);
+        /** @var Block */
+        $blockBelow = $event->getBlockNearPlayer(0, -1, 0);
+        /** @var Block */
+        $blockAbove = $event->getBlockNearPlayer(0, 1, 0);
 
-
-        // check not so blatant jesus
-        $AABB = $player->getBoundingBox();
         
-        if (WaterEntry::isWater($event->getBlocks()[0])) {
-            $blockAt = $event->getBlocks()[0];
-            $blockAbove = $event->getBlocks()[1];
-            $player->addActionBarMessage("§aIn water");
-            var_dump($AABB->isVectorInside($blockAbove));
-            if ($blockAt->collidesWithBB($AABB)) {
-                // collision with water, check air.
-                if ($blockAbove->getId() === 0 && $blockAbove->collidesWithBB($AABB)) {
-                    // collision with air, they are inbetween water and air.
-                    $distanceFromWater = $blockAt->distance($player->getPosition());
+        if (WaterEntry::isWater($blockBelow)) {
+           if (!isset($this->entries[$player->getName()])) {
+               $this->entries[$player->getName()] = new WaterEntry($player);
+           }
 
-                    $player->addActionBarMessage("Distance from water block: $distanceFromWater");
-                } 
-            }
+           $entry = &$this->entries[$player->getName()];
+
+           if ($entry->getExitTime() !== -1) {
+               $this->entries[$player->getName()] = new WaterEntry($player);
+           }
+           
+           if ($blockAbove->getId() === 0 && WaterEntry::isWater($blockBelow) && $entry->getTimeInWater() > 2) {
+                $event->sendAlert('Jesus', "Illegal movement, walking on water for {$entry->getTimeInWater()} seconds.");
+                $event->issueViolation(Mavoric::CHEATS['Jesus']);
+                return;
+           }
         } else {
-            $player->addActionBarMessage("§cNot in water");
+            if (isset($this->entries[$player->getName()])) {
+                $entry = &$this->entries[$player->getName()];
+
+                if ($blockAt->getId() === 0 && $blockAbove->getId() === 0) {
+                    $entry->setExited();
+                }
+            }
         }
+
+        return;
     }
 
     public function isEnabled(): Bool {
