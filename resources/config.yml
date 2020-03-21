@@ -8,6 +8,10 @@ Messages:
   TPS:
     # Whether or not to enable TPS check messages
     enabled: yes
+    # When should staff be messaged about low tps? put something lower than 0 for never
+    warn-below: 17
+    # When should violation (Cheat detections) be temporarily disabled
+    stop-below: 16
   Alerts:
     # Whether or not to disable alerts
     enabled: yes

@@ -68,6 +68,22 @@ class Settings {
     }
 
     /**
+     * Returns the TPS warn value.
+     * @return int
+     */
+    public function getTpsWarnValue(): int {
+        return $this->config->getNested('TPS.warn-below') ?? 17;
+    }
+
+    /**
+     * Returns the TPS stop at value
+     * @return int
+     */
+    public function getTpsStopValue(): int {
+        return $this->config->getNested('TPS.stop-below') ?? 16;
+    }
+
+    /**
      * Updates the settings config
      * @return Bool
      */
