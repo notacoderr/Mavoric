@@ -61,7 +61,7 @@ use Bavfalcon9\Mavoric\Core\Handlers\PearlHandler;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
 use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
-use Bavfalcon9\Mavoric\entity\SpecterInterface;
+use Bavfalcon9\Mavoric\Entity\SpecterInterface;
 
 class Mavoric {
     /** @var Int */
