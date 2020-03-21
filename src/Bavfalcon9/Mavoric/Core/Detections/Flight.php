@@ -26,6 +26,9 @@ use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\player\PlayerMove;
 use pocketmine\Player;
+use pocketmine\block\{
+    Slab, SnowLayer, Stair, Transparent
+};
 /* use pocketmine\math\Facing; uncomment when api 4.0.0 */
 
 class Flight implements Detection {
@@ -59,7 +62,13 @@ class Flight implements Detection {
             }
 
             if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::UP)->getId() === 0) {
+                $blockAtPlayer = LevelUtils::getBlockWhere($player);
+                $blockBelow = LevelUtils::getRelativeBlock($blockAtPlayer, Facing::DOWN);
 
+                // Should fix false alarms when traveling up steps
+                if ($blockBelow instanceof Slab || $blockBelow instanceof Stair || $blockBelow instanceof SnowLayer) {
+                    return;
+                }
                 // fix blantant flight
                 if (MathUtils::getFallDistance($from, $to) === 0) {
                     // They aren't falling
