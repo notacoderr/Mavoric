@@ -129,7 +129,7 @@ class Mavoric {
         $this->lagHandler = new LagHandler($plugin);
         /** Ticks per second check  */
         $this->tpsCheck = new TpsCheck($plugin, $this);
-        /** @deprecated Handles bans */
+        /** Handles bans */
         $this->banManager = new BanHandler($this->plugin->getDataFolder() . 'ban_data');
         /** @deprecated Handles NPC checks. */
         $this->NPC = new NPC($plugin, new SpecterInterface($plugin));
@@ -390,30 +390,6 @@ class Mavoric {
         } else {
             $this->getServer()->broadcastMessage('§4[MAVORIC] A player in your game has been kicked for abusing or hacking.');
         }
-    }
-
-    /**
-     * @param Float $cheat 
-     * @return Bool
-     */
-    public function isSuppressed(Float $cheat): ?Bool {
-        return $this->settings->isSuppressed($this->getCheatString($cheat));
-    }
-
-    /**
-     * @param Flaot $cheat
-     * @return Bool
-     */
-    public function canAutoBan(Float $cheat): ?Bool {
-        return $this->settings->isEnabled('Autoban');
-    }
-
-    /**
-     * @param String $cheat
-     * @return Bool
-     */
-    public function isEnabled(String $cheat): ?Bool {
-        return in_array($cheat, $this->settings->getEnabledCheats());
     }
 
     /**
