@@ -19,8 +19,19 @@ general cheat detection powerfully without a hassle. <br />
 If you use any code present here, please have the code reference this repository.
 
 ## Information
-Mavoric is still currently in development and I can not ensure that you will recieve a 100% bug free experience.
+Mavoric is feature rich, with TPS checks, cheat checks, banwaves, autobans and autokicks to help you stop cheaters. <br />
+Mavoric currently features detections for:
+ - AutoClicker
+ - Flight
+ - Multiaura
+ - Speed
+ - ClickTP
+ - JetPack
+ - HighJump
+
+ Disclaimer: Mavoric is still currently in development and I can not ensure that you will recieve a 100% bug free experience.
 If you have any bugs or suggestions, please feel free to report them on this repository by clicking [here](https://github.com/Olybear9/Mavoric/issues/new).
+
 
 ## History
 Early stages of Mavoric were originally developed for the [OwnagePE](shop.ownagepe.com) network, 
@@ -31,7 +42,6 @@ used on a mass scale to help improve it's overall functionality.
 ## Versions
 This is a list of **public** releases, and with detail about each release and a provided download.
 
-### Official Release Versions
 Version | Released | Completed | Download 
 ------- | ------- | ---------- | --------
 v0.0.6 | October 26th 2019 | ✔ Yes | [Mavoric_v0.1.6](https://github.com/Olybear9/Mavoric/releases/download/v0.1.6/Mavoric_v0.1.6.phar)
@@ -41,7 +51,7 @@ v1.0.1 | Never | ✔ Yes | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavori
 v1.0.2 | Feburary 7th 2020 | ✔ Yes | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
 v1.0.3 | March 3rd 2020 | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
 v1.0.4 | March 19th 2020 | ✔ Yes| [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
-v1.0.5 | Not scheduled | ❌ No | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
+v1.0.5 | ~Scheduled for: March 21st 2020 | ❌ No | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
 
 ### API Versions
 Version | Released | Maintained | Details
