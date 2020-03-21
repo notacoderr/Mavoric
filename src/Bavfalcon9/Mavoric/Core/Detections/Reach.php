@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\{
     MavoricEvent,
     player\PlayerAttack,
@@ -69,7 +70,7 @@ class Reach implements Detection {
 
             if ($event->getDistance() >= $amt) {
                 if (!$damager->isCreative()) {
-                    $event->issueViolation(Mavoric::CHEATS['Reach']);
+                    $event->issueViolation(CheatIdentifiers::CODES['Reach']);
                     $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
                     return;
                 }

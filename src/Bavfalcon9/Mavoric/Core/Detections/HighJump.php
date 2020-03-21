@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
 use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
 use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
@@ -52,7 +53,7 @@ class HighJump implements Detection {
             if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::UP)->getId() === 0) {
                 if (MathUtils::getFallDistance($from, $to) < -0.6754) {
                     $event->sendAlert('HighJump', "Illegal jump, jumped too high.");
-                    $event->issueViolation(Mavoric::CHEATS['HighJump']);
+                    $event->issueViolation(CheatIdentifiers::CODES['HighJump']);
                     $event->cancel(false);
                     return;
                 }

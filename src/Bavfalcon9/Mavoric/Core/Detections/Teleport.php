@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use pocketmine\event\Listener;
 use Bavfalcon9\Mavoric\events\{
     MavoricEvent,
@@ -51,12 +52,12 @@ class Teleport implements Detection {
             if ($player->getPing() >= 300) {
                 $distance = round($distance, 2);
                 $event->sendAlert('Teleport', "Traveled {$distance} blocks in one move");
-                $event->issueViolation(Mavoric::CHEATS['Teleport']);
+                $event->issueViolation(CheatIdentifiers::CODES['Teleport']);
                 return;
             } else {
                 $distance = round($distance, 2);
                 $event->sendAlert('Teleport', "Traveled {$distance} blocks in one move");
-                $event->issueViolation(Mavoric::CHEATS['Teleport']);
+                $event->issueViolation(CheatIdentifiers::CODES['Teleport']);
                 return;
             }
         }

@@ -22,6 +22,7 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerMove;
 use Bavfalcon9\Mavoric\Core\Utils\WaterEntry;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use pocketmine\Player;
 
 class JesusOld implements Detection {
@@ -61,7 +62,7 @@ class JesusOld implements Detection {
            
            if ($blockAbove->getId() === 0 && WaterEntry::isWater($blockBelow) && $entry->getTimeInWater() > 2) {
                 $event->sendAlert('Jesus', "Illegal movement, walking on water for {$entry->getTimeInWater()} seconds.");
-                $event->issueViolation(Mavoric::CHEATS['Jesus']);
+                $event->issueViolation(CheatIdentifiers::CODES['Jesus']);
                 return;
            }
         } else {

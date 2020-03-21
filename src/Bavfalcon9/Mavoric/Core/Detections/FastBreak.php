@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerBreakBlock;
 use pocketmine\event\Listener;
@@ -47,7 +48,7 @@ class FastBreak implements Detection {
         $expectedTime -= 2;
 
         if ($event->getTime() < $expectedTime) {
-            $event->issueViolation(Mavoric::CHEATS['FastBreak']);
+            $event->issueViolation(CheatIdentifiers::CODES['FastBreak']);
             $event->sendAlert('FastBreak', "Broke block {$block->getName()} in {$event->getTime()} seconds when time should be {$expectedTime}");
             return;
         }

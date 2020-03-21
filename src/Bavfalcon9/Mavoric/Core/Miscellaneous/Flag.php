@@ -19,6 +19,7 @@
 namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
 
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 
 class Flag {
     private $player;
@@ -88,7 +89,7 @@ class Flag {
     public function getFlagsByNameAndCount() {
         $newArr = [];
         foreach ($this->flags as $cheat=>$count) {
-            $newArr[Mavoric::getCheatName($cheat)] = $count;
+            $newArr[CheatIdentifiers::getCheatName($cheat)] = $count;
         }
         return $newArr;
     }

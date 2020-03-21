@@ -22,17 +22,55 @@ use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Mavoric;
 
 class Settings {
+    /** @var Config */
     private $config;
-    public const OPTIONS = ['Autoban', 'Banwaves', 'Alerts', 'Suppression'];
+    /** @var String[] */
+    public const OPTIONS = ['Autoban', 'Banwaves', 'Alerts', 'Suppression', 'Messages', 'Cheats'];
 
     public function __construct(Config $config) {
         $this->config = $config;
     }
 
+    /**
+     * Option to get from config
+     * @param String $option - Option to get.
+     * @return Array[]
+     */
+    public function get(String $option): ?Array {
+        if (in_array($option, Settings::OPTIONS)) {
+            return null;
+        } else {
+            return $this->config->get($option);
+        }
+    }
+
+    /**
+     * @return Config
+     */
     public function getConfig(): Config {
         return $this->config;
     }
 
+    /**
+     * Returns a list of enabled cheats
+     * @return String[]
+     */
+    public function getEnabledCheats(): Array {
+        $allCheats = $this->get('Cheats');
+
+        return array_keys(array_map(function ($settings) {
+            if (!isset($settings['disabled'])) {
+                return false;
+            } else {
+                return ($settings['disabled'] === false);
+            }
+        }, $allCheats));
+    }
+
+    /**
+     * Updates the settings config
+     * @return Bool
+     */
     public function update(Config $config): Bool {
         $this->config = $config;
         return true;

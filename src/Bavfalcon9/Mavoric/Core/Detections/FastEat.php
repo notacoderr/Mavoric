@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerConsume;
 use pocketmine\Player;

@@ -22,6 +22,7 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\packet\PacketRecieve;
 use Bavfalcon9\Mavoric\events\player\InventoryTransaction;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use pocketmine\Player;
 use pocketmine\inventory\ArmorInventory;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
@@ -40,7 +41,7 @@ class NoStackItems implements Detection {
         }
 
         if ($event->hasIllegalStackedItem()) {
-            $event->issueViolation(Mavoric::CHEATS['NoStackItems'], 50);
+            $event->issueViolation(CheatIdentifiers::CODES['NoStackItems'], 50);
             $event->sendAlert('NoStackItems', 'Illegal inventory transaction, Stacked non-stackable item.');
         }
     }

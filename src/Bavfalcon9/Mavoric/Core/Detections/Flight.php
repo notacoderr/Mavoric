@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
 use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
 use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
@@ -66,7 +67,7 @@ class Flight implements Detection {
                     // They aren't falling
                     if ($distance > 0.6) {
                         $event->sendAlert('Flight', "Illegal movement, moved in air without falling.");
-                        $event->issueViolation(Mavoric::CHEATS['Flight']);
+                        $event->issueViolation(CheatIdentifiers::CODES['Flight']);
                         $event->cancel(false);
                         return;
                     }
@@ -75,7 +76,7 @@ class Flight implements Detection {
                 // unnatrual falls, this is most likely a result of jetpack
                 if (MathUtils::getFallDistance($from, $to) > 3.4952) {
                     $event->sendAlert('Flight', "Illegal movement, falling too quickly.");
-                    $event->issueViolation(Mavoric::CHEATS['Flight']);
+                    $event->issueViolation(CheatIdentifiers::CODES['Flight']);
                     $event->cancel(false);
                     return;
                 }
@@ -90,7 +91,7 @@ class Flight implements Detection {
                          */
                         if (MathUtils::getFallDistance($from, $to) <= 0) {
                             $event->sendAlert('Flight', "Illegal movement, jumped on air.");
-                            $event->issueViolation(Mavoric::CHEATS['HighJump']);
+                            $event->issueViolation(CheatIdentifiers::CODES['HighJump']);
                             $event->cancel(false);
                             return;
                         }

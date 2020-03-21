@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerMove;
 
@@ -70,7 +71,7 @@ class Speed implements Detection {
             if ($distance >= $allowed) {
                 $distance = round($distance, 2) * 100;
                 $event->sendAlert('Speed', "Illegal movement, Moved too far in a single instance.");
-                $event->issueViolation(Mavoric::CHEATS['Speed']);
+                $event->issueViolation(CheatIdentifiers::CODES['Speed']);
                 return;
             }
         }

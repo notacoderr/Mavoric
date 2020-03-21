@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerClick;
 use Bavfalcon9\Mavoric\events\player\PlayerMove;
@@ -109,7 +110,7 @@ class NoClip implements Detection {
                     return;
                 }
                 
-                $event->issueViolation(Mavoric::CHEATS['NoClip']);
+                $event->issueViolation(CheatIdentifiers::CODES['NoClip']);
                 $event->sendAlert('NoClip', 'Illegal movement, player moved while in a block');
             }
         }

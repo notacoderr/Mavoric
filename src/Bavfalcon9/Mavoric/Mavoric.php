@@ -60,48 +60,10 @@ use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
 use Bavfalcon9\Mavoric\Core\Handlers\PearlHandler;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Settings;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\entity\SpecterInterface;
 
 class Mavoric {
-    public const CHEATS = [
-        'AutoClicker' => 0,
-        'KillAura' => 1,
-        'MultiAura' => 2,
-        'Speed' => 3,
-        'NoClip' => 4,
-        'AntiKb' => 5,
-        'Flight' => 6,
-        'NoSlowdown' => 7,
-        'Criticals' => 8,
-        'Bhop' => 9,
-        'Reach' => 10,
-        'Aimbot' => 11,
-        'AutoArmor' => 12,
-        'AutoSteal' => 13,
-        'AutoSword' => 14,
-        'AutoTool' => 15,
-        'AntiFire' => 16,
-        'AntiSlip' => 17,
-        'NoDamage' => 18,
-        'BackStep' => 19,
-        'FastPlace' => 20,
-        'FastBreak' => 21,
-        'Follow' => 22,
-        'FreeCam' => 23,
-        'FastEat' => 24,
-        'FastLadder' => 25,
-        'GhostReach' => 26,
-        'HighJump' => 27,
-        'Jesus' => 28,
-        'Jetpack' => 29,
-        'NoEffects' => 30,
-        'MenuWalk' => 31,
-        'Spider' => 32,
-        'Timer' => 33,
-        'Teleport' => 34,
-        'NoStackItems' => 35
-    ];
-    
     /** @var Int */
     public const NOTICE = 1;
     /** @var Int */
@@ -112,8 +74,6 @@ class Mavoric {
     public const FATAL = 4;
     /** @var Int */
     public const WARN = 5;
-    /** @var String */
-    public const EPEARL_LOCATION_BAD = self::COLOR . 'c No epearl glitching.';
     /** @var String */
     public const COLOR = '§';
     /** @var String */
@@ -249,48 +209,10 @@ class Mavoric {
     }
 
     /**
-     * @return Array[Detection]
+     * @return Detection[]
      */
-    public function getCheats() : Array {
+    public function getEnabledDetections() : Array {
         return $this->cheats;
-    }
-
-    /**
-     * @var int $number - AntiCheat identification Code
-     * @return String
-     * @deprecated
-     */
-
-    public function getCheat(int $number) : String {
-        return self::getCheatName($number);
-    }
-
-    /**
-     * @var int $number - AntiCheat identification Code
-     * @return String
-     * @deprecated
-     */
-
-    public static function getCheatName(int $number): String {
-        foreach (self::CHEATS as $cheat=>$code) {
-            if ($number === $code) return $cheat;
-        }
-        return 'Unknown';
-    }
-
-    /**
-     * @return int
-     */
-    public static function getCheatFromString(String $name): ?int {
-        return self::CHEATS[$name];
-    }
-
-    /**
-     * @deprecated
-     * @return Boolean?
-     */
-    public function loadChecker(): ?Bool {
-        return false;
     }
 
     /**
@@ -361,7 +283,7 @@ class Mavoric {
     public function alertStaff(Player $player, int $cheat, String $details='Unknown'): void {
         if ($player === null) return;
         $count = $this->getFlag($player)->getTotalViolations();
-        $message = /*self::ARROW . ' ' .*/ '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . self::getCheatName($cheat) . '§8: ';
+        $message = /*self::ARROW . ' ' .*/ '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . CheatIdentifiers::getCheatName($cheat) . '§8: ';
         $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
         $this->messageHandler->queueMessage($message, $appendance);
         $this->postWebhook('alerts', json_encode([
@@ -369,7 +291,7 @@ class Mavoric {
             "embeds" => [
                 [
                     "color" => 0xFFFF00,
-                    "title" => "Alert type: " . self::getCheatName($cheat),
+                    "title" => "Alert type: " . CheatIdentifiers::getCheatName($cheat),
                     "description" => "**Player:** {$player->getName()}\n" . $details . "[V {$count}]"
                 ]
             ]
@@ -475,7 +397,7 @@ class Mavoric {
      * @return Bool
      */
     public function isSuppressed(Float $cheat): ?Bool {
-        return $this->settings->isSuppressed($this->getCheat($cheat));
+        return $this->settings->isSuppressed($this->getCheatString($cheat));
     }
 
     /**
@@ -491,7 +413,7 @@ class Mavoric {
      * @return Bool
      */
     public function isEnabled(String $cheat): ?Bool {
-        return $this->settings->isCheatEnabled(Mavoric::getCheatFromString($cheat));
+        return in_array($cheat, $this->settings->getEnabledCheats());
     }
 
     /**
