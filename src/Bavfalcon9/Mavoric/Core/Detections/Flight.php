@@ -48,15 +48,7 @@ class Flight implements Detection {
             $to = clone $event->getTo();
             $from = clone $event->getFrom();
             $distance = $to->distance($from);
-
-            if ($player->getGamemode() === 1) {
-                return;
-            }
-
-            if ($player->getGamemode() === 3) {
-                return;
-            }
-
+            
             if ($player->getAllowFlight() === true) {
                 return;
             }
