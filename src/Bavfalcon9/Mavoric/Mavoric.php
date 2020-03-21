@@ -141,6 +141,7 @@ class Mavoric {
     }
 
     /** 
+     * Loads up all detections.
      * @return void
      */
     public function loadDetections(): void {
@@ -173,11 +174,11 @@ class Mavoric {
                 $this->plugin->getLogger()->info('[CORE] Disabled detection: ' . $name);
                 continue;
             }
-            if ($this->isEnabled($name)) {
-                $this->plugin->getLogger()->info('Enabled detection: ' . $name);
+            if (in_array($name, $this->settings->getEnabledDetections())) {
+                $this->plugin->getLogger()->info('[CONFIG] Enabled detection: ' . $name);
                 array_push($this->loadedCheats, $cheat);
             } else {
-                $this->plugin->getLogger()->info('Disabled detection: ' . $name);
+                $this->plugin->getLogger()->info('[CONFIG] Disabled detection: ' . $name);
                 continue;
             }
         }
@@ -190,7 +191,12 @@ class Mavoric {
         $this->events[] = $event;
     }
 
-    public function broadcastEvent(MavoricEvent $event) {
+    /**
+     * Broadcasts events to all detection classes.
+     * @param MavoricEvent $event - Event
+     * @return void
+     */
+    public function broadcastEvent(MavoricEvent $event): void {
         foreach ($this->loadedCheats as $cheat) {
             try {
                 $cheat->onEvent($event);
@@ -206,16 +212,21 @@ class Mavoric {
                 $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($ev) . '!' . "\n$e");
             }
         }
+
+        return;
     }
 
     /**
+     * Get an array of all enabled detections.
      * @return Detection[]
      */
-    public function getEnabledDetections() : Array {
+    public function getEnabledDetections(): Array {
         return $this->cheats;
     }
 
     /**
+     * Get a player violation flag
+     * @todo Move this into Flag class.
      * @param Player $p - Player
      * @return Flag
      */

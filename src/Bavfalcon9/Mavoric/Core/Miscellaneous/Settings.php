@@ -55,7 +55,7 @@ class Settings {
      * Returns a list of enabled cheats
      * @return String[]
      */
-    public function getEnabledCheats(): Array {
+    public function getEnabledDetections(): Array {
         $allCheats = $this->get('Cheats');
 
         return array_keys(array_map(function ($settings) {
