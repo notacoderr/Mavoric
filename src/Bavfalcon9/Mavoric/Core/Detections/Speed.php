@@ -32,10 +32,6 @@ use pocketmine\event\player\PlayerMoveEvent;
 class Speed implements Detection {
     /** @var Mavoric */
     private $mavoric;
-    /** @var Array */
-    private $timings = [];
-    /** @var int */
-    private $lastTick = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->mavoric = $mavoric;
