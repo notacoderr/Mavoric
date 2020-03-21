@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Utils;
 
 use pocketmine\block\Block;
 use pocketmine\math\AxisAlignedBB;
+use pocketmine\math\Vector3;
 
 class MathUtils {
 
@@ -49,5 +50,21 @@ class MathUtils {
      */
     public static function radiusFromCircumference(float $circumference): float {
         return ($circumference / (pi() * 2));
+    }
+
+    /**
+     * Gets the total fall distance
+     * @param Vector3 $from - Vector position 1
+     * @param Vector3 $to - Vector position 2
+     * @return Float - Total fall distance
+     */
+    public static function getFallDistance(Vector3 $from, Vector3 $to): float {
+        $from = clone $from;
+        $to = clone $to;
+
+        $fall = $from->y;
+        $fall2 = $to->y;
+
+        return ($fall - $fall2);
     }
 }

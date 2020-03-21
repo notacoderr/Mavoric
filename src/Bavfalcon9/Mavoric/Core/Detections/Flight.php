@@ -20,17 +20,19 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
+use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
+use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
-use Bavfalcon9\Mavoric\Math\PlayerCalculate;
-use pocketmine\event\Listener;
-use pocketmine\utils\TextFormat as TF;
-use pocketmine\event\player\PlayerMoveEvent;
+use Bavfalcon9\Mavoric\Events\player\PlayerMove;
 use pocketmine\Player;
+/* use pocketmine\math\Facing; uncomment when api 4.0.0 */
 
 class Flight implements Detection {
     private $mavoric;
     private $plugin;
     private $checks = [];
+    private $highest = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->plugin = $mavoric->getPlugin();
@@ -38,10 +40,66 @@ class Flight implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        
+        if ($event instanceof PlayerMove) {
+            $player = $event->getPlayer();
+            $to = clone $event->getTo();
+            $from = clone $event->getFrom();
+            $distance = $to->distance($from);
+
+            if ($player->getGamemode() === 1) {
+                return;
+            }
+
+            if ($player->getGamemode() === 3) {
+                return;
+            }
+
+            if ($player->getAllowFlight() === true) {
+                return;
+            }
+
+            if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::UP)->getId() === 0) {
+
+                // fix blantant flight
+                if (MathUtils::getFallDistance($from, $to) === 0) {
+                    // They aren't falling
+                    if ($distance > 0.6) {
+                        $event->sendAlert('Flight', "Illegal movement, moved in air without falling.");
+                        $event->issueViolation(Mavoric::CHEATS['Flight']);
+                        $event->cancel(false);
+                        return;
+                    }
+                }
+
+                // unnatrual falls, this is most likely a result of jetpack
+                if (MathUtils::getFallDistance($from, $to) > 3.4952) {
+                    $event->sendAlert('Flight', "Illegal movement, falling too quickly.");
+                    $event->issueViolation(Mavoric::CHEATS['Flight']);
+                    $event->cancel(false);
+                    return;
+                }
+
+                // air jump
+                if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::DOWN)->getId() === 0) {
+                    $realtive = LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::DOWN);
+                    if (LevelUtils::getRelativeBlock($realtive, FACING::DOWN)->getId() === 0) {
+                        /*
+                         * 0 because anything less than 0 means the fall distance was positive,
+                         * and last time i checked you can't jump on air
+                         */
+                        if (MathUtils::getFallDistance($from, $to) <= 0) {
+                            $event->sendAlert('Flight', "Illegal movement, jumped on air.");
+                            $event->issueViolation(Mavoric::CHEATS['HighJump']);
+                            $event->cancel(false);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

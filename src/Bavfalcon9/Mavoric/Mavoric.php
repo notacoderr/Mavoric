@@ -38,6 +38,7 @@ use Bavfalcon9\Mavoric\Core\Detections\Bhop;
 use Bavfalcon9\Mavoric\Core\Detections\FastBreak;
 use Bavfalcon9\Mavoric\Core\Detections\FastEat;
 use Bavfalcon9\Mavoric\Core\Detections\Flight;
+use Bavfalcon9\Mavoric\Core\Detections\HighJump;
 use Bavfalcon9\Mavoric\Core\Detections\Jesus;
 use Bavfalcon9\Mavoric\Core\Detections\Jetpack;
 use Bavfalcon9\Mavoric\Core\Detections\KillAura;
@@ -192,6 +193,7 @@ class Mavoric {
             new FastEat($this),
             new FastBreak($this),
             new Flight($this),
+            new HighJump($this),
             new Jesus($this),
             new Jetpack($this),
             new MultiAura($this),

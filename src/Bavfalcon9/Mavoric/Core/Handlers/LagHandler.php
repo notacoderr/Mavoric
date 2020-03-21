@@ -48,10 +48,6 @@ class LagHandler implements Listener {
             ];
         }
 
-        if ($event->getPlayer()->isOnline()) {
-            $event->getPlayer()->sendTip((LagHandler::isLaggy($playerName)) ? "§cYou are lagging!" : "§aYou are not lagging");
-        }
-
         self::$status[$playerName]["last"] = microtime(true);
         return;
     }
@@ -76,6 +72,6 @@ class LagHandler implements Listener {
             return null;
         }
 
-        return ($status['last'] + 0.5 <= microtime(true));
+        return ($status['last'] + 0.1 <= microtime(true));
     }
 }
