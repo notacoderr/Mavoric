@@ -54,6 +54,9 @@ class TpsCheck {
         $tps = 20 - $diff;
         $this->ticks[] = $tps;
 
+        if ($tps > $this->mavoric->settings->getTpsWarnValue() && $this->isHalted()) {
+            $this->cancelHalt();
+        }
 
         if ($tps < $this->mavoric->settings->getTpsWarnValue()) {
             if ($this->halted) return;

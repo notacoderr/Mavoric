@@ -22,6 +22,7 @@ use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\Flag;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 
 class MavoricEvent {
     /** @var Mavoric */
@@ -56,7 +57,8 @@ class MavoricEvent {
         /*
         $this->eventData->setCancelled($val);
         $this->isCancelled = $val;
-        return $val;*/
+        return $val;
+        */
     }
 
     /**
@@ -128,7 +130,7 @@ class MavoricEvent {
             return $this->mavoric->getFlag(null);
         }
 
-        if ($this->mavoric->settings->isSuppressed(Mavoric::getCheatName($cheat))) {
+        if ($this->mavoric->settings->isSuppressed(CheatIdentifiers::getCheatName($cheat))) {
             $this->cancel(true);
         }
 
@@ -158,7 +160,7 @@ class MavoricEvent {
         if ($this->mavoric->getTpsCheck()->isHalted()) {
             return false;
         }
-        $cheat = Mavoric::CHEATS[$cheat];
+        $cheat = CheatIdentifiers::CODES[$cheat];
         $this->mavoric->alertStaff($this->player, $cheat, $details);
         return true;
     }

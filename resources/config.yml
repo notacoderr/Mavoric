@@ -5,6 +5,11 @@ Webhooks:
   system: false
 
 Messages:
+  # Message shown to all players on a kick
+  onkick: §4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!'
+  # Message shown to all players on a ban
+  onban: §4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!'
+
   TPS:
     # Whether or not to enable TPS check messages
     enabled: yes
@@ -15,6 +20,10 @@ Messages:
   Alerts:
     # Whether or not to disable alerts
     enabled: yes
+    # Format of alert messages
+    # {player} - Player alert is for
+    # {cheat} - Cheat they violated.
+    format: "§c[MAVORIC]: §r§4{player} §7failed test for§c {cheat}§8:"
 
 Autoban:
   # Should autobans be enabled? (IF THIS IS ENABLED, BANWAVES ARE OVERRIDDEN REGARDLESS IF BANWAVES ARE ENABLED!)

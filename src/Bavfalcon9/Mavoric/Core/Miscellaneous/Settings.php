@@ -18,6 +18,7 @@
 
 namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
 
+use pocketmine\utils\TextFormat;
 use pocketmine\utils\Config;
 use Bavfalcon9\Mavoric\Mavoric;
 
@@ -29,6 +30,19 @@ class Settings {
 
     public function __construct(Config $config) {
         $this->config = $config;
+    }
+
+    /**
+     * Resolve the boiler for a given plate.
+     * @param String $plate - The boiler plate
+     * @param Array $replacements - The replacements for the plate.
+     * @return String
+     */
+    public static function resolveBoiler(String $plate, Array $replacements): String {
+        foreach ($replacements as $search=>$replace) {
+            $plate = str_replace($search, $replace, $plate);
+        }
+        return $plate;
     }
 
     /**
@@ -56,8 +70,7 @@ class Settings {
      * @return String[]
      */
     public function getEnabledDetections(): Array {
-        $allCheats = $this->get('Cheats');
-
+        $allCheats = $this->config->get('Cheats');
         return array_keys(array_map(function ($settings) {
             if (!isset($settings['disabled'])) {
                 return false;
@@ -65,6 +78,39 @@ class Settings {
                 return ($settings['disabled'] === false);
             }
         }, $allCheats));
+    }
+
+    /**
+     * Returns whether AutoBan is enabled
+     * @return Bool
+     */
+
+    public function isAutoBanEnabled(): Bool {
+        return $this->config->getNested('Autoban.enabled') ?? false;
+    }
+
+    /**
+     * Returns whether BanWave is enabled
+     * @return Bool
+     */
+
+    public function isBanWaveEnabled(): Bool {
+        return $this->config->getNested('Autoban.enabled') ?? false;
+    }
+
+    /**
+     * Returns whether a cheat is suppressed or not
+     * @return Bool
+     */
+    public function isSuppressed(String $cheat): Bool {
+        $isEnabled = $this->config->getNested('Suppression.enabled') ?? true;
+        $master = $this->config->getNested('Suppression.all-cheats') ?? true;
+
+        if ($isEnabled) {
+            return false;
+        } else {
+            return ($master === true) ? true : $this->config->getNested("Cheats.$cheat.enabled") ?? $master;
+        }
     }
 
     /**
@@ -81,6 +127,22 @@ class Settings {
      */
     public function getTpsStopValue(): int {
         return $this->config->getNested('TPS.stop-below') ?? 16;
+    }
+
+    /**
+     * Returns the alert boiler plate
+     * @return String
+     */
+    public function getAlertBoiler(): String {
+        $prefix = '§c[MAVORIC]: ';
+        $default = $prefix . '§r§4{player} §7failed test for§c {cheat}§8:';
+        $boiler = $this->config->getNested('Messages.Alerts.format') ?? $default;
+
+        if (strpos(strtolower(TextFormat::clean($boiler), 'mavoric')) === false) {
+            $boiler = $prefix . $boiler;
+        }
+
+        return $boiler;
     }
 
     /**

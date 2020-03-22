@@ -19,7 +19,7 @@ namespace Bavfalcon9\Mavoric\Core\Utils;
 
 class CheatIdentifiers {
     /** @var String=>int[] */
-    public const CHEATS = [
+    public const CODES = [
         'AutoClicker' => 0,
         'KillAura' => 1,
         'MultiAura' => 2,
@@ -63,7 +63,7 @@ class CheatIdentifiers {
      * @return String
      */
     public static function getCheatName(int $number): String {
-        foreach (self::CHEATS as $cheat=>$code) {
+        foreach (self::CODES as $cheat=>$code) {
             if ($number === $code) return $cheat;
         }
         return 'Unknown';
@@ -74,6 +74,6 @@ class CheatIdentifiers {
      * @return String
      */
     public static function getCheatIdentity(String $name): ?int {
-        return self::CHEATS[$name];
+        return self::CODES[$name];
     }
 }

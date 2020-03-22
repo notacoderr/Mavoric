@@ -56,7 +56,6 @@ class Main extends PluginBase {
         /** Mavoric Related */
         $this->mavoric->checkVersion($this->config);
         $this->mavoric->loadDetections();
-        $this->mavoric->loadChecker();
     }
 
     public function onDisable() {

@@ -84,7 +84,7 @@ class Mavoric {
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.5';
+    private $version = '1.0.5-alpha';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -201,7 +201,7 @@ class Mavoric {
             try {
                 $cheat->onEvent($event);
             } catch (Throwable $e) {
-                $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($cheat) . '!' . "\n$e");
+                $this->plugin->getLogger()->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($cheat) . '!' . "\n$e");
             }
         }
 
@@ -209,7 +209,7 @@ class Mavoric {
             try {
                 $ev->onEvent($event);
             } catch (Throwable $e) {
-                $this->plugin->getLogger->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($ev) . '!' . "\n$e");
+                $this->plugin->getLogger()->critical('[MavoricDetection] Event broadcast failed for: ' . get_class($ev) . '!' . "\n$e");
             }
         }
 
@@ -294,7 +294,10 @@ class Mavoric {
     public function alertStaff(Player $player, int $cheat, String $details='Unknown'): void {
         if ($player === null) return;
         $count = $this->getFlag($player)->getTotalViolations();
-        $message = /*self::ARROW . ' ' .*/ '§c[MAVORIC]: §r§4' . $player->getName() . ' §7failed test for §c' . CheatIdentifiers::getCheatName($cheat) . '§8: ';
+        $message = Settings::resolveBoiler($this->settings->getAlertBoiler(), [
+            '{player}' => $player->getName(),
+            '{cheat}' => CheatIdentifiers::getCheatName($cheat)
+        ]);
         $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
         $this->messageHandler->queueMessage($message, $appendance);
         $this->postWebhook('alerts', json_encode([
@@ -347,13 +350,6 @@ class Mavoric {
             MainLogger::getLogger()->info('Mavoric config version does not match plugin version. Should match version: ' . $this->version.', fixing...');
             $this->plugin->saveResource('config.yml', true);
             $new = new Config($this->plugin->getDataFolder(). 'config.yml');
-            /*
-            $old = $config->getAll();
-            foreach ($old as $key=>$val) {
-                $new->set($key, $val);
-            }
-            $new->set('Version', $this->version);
-            $new->save();*/
             $this->settings->update($new);
             MainLogger::getLogger()->info('Mavoric config updated to v' . $this->version.'.');
             MainLogger::getLogger()->critical('Mavoric config overwrote old config to update to v' . $this->version.'!');
@@ -384,22 +380,26 @@ class Mavoric {
      * @return void
      */
     public function issueBan(Player $player, $wave, Array $banData): void {
+        // redo this, its an eyesore
         $player = $player->getName();
         $banList = $this->getServer()->getNameBans();
         $append = (!$wave) ? '' : ' | Wave ' . $wave->getNumber();
-        $configReason = $this->settings->getConfig()->getNested('Autoban.reason') ?? '§4[AC] Illegal client modifications.';
+        $configReason = $this->settings->getReasonFor($banData['reason']) ?? '§4[AC] Illegal client modifications.';
         $type = (!$wave) ? $this->settings->getConfig()->getNested('Autoban.type') : 'ban';
 
         if ($this->getServer()->getPlayer($player)) {
             $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
-            $this->getServer()->getPlayer($player)->close('', $banData['reason'] . $append);
+            $this->getServer()->getPlayer($player)->close('', Settings::resolveBoiler($this->settings->getBanMessage(), [
+                '{player}' => $player,
+                '{reason}' => $configReason 
+            ]));
         }
 
         if (strtolower($type) === 'ban') {
             $banList->addBan($player, '§4'. $banData['reason'] . $append, null, 'Mavoric');
-            $this->getServer()->broadcastMessage('§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!');
+            $this->getServer()->broadcastMessage($this->settings->getConfig()->getNested('Messages.onban'));
         } else {
-            $this->getServer()->broadcastMessage('§4[MAVORIC] A player in your game has been kicked for abusing or hacking.');
+            $this->getServer()->broadcastMessage($this->settings->getConfig()->getNested('Messages.onkick'));
         }
     }
 

@@ -19,6 +19,7 @@
 namespace Bavfalcon9\Mavoric\Tasks;
 use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 use Bavfalcon9\Mavoric\Bavfalcon9\Mavoric\Bans\BanHandler;
 
@@ -39,7 +40,7 @@ class ViolationCheck extends Task {
         $this->mavoric->getPlugin()->reportHandler->checkReports();
         $players = $this->mavoric->getPlugin()->getServer()->getOnlinePlayers();
 
-        if ($this->mavoric->settings->isEnabled('Autoban')) {
+        if ($this->mavoric->settings->isAutoBanEnabled()) {
             $max = $this->mavoric->settings->getConfig()->getNested('Autoban.max-violations') ?? 64;
 
             foreach ($players as $player) {
@@ -47,7 +48,7 @@ class ViolationCheck extends Task {
                 $top = $flag->getMostViolations();
 
                 if ($flag->getTotalViolations() >= $max) {
-                    $reason = $this->mavoric->getCheat($flag->getMostViolations());
+                    $reason = CheatIdentifiers::getCheatName($flag->getMostViolations());
                     $this->mavoric->banManager->saveBan($player->getName(), $flag->clone()->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mavoric->getFlag($player)), 'MAVORIC', $reason);
                     $this->mavoric->issueBan($player, null, $flag->toBanwaveData());
                     continue;
@@ -56,7 +57,7 @@ class ViolationCheck extends Task {
             return;
         }
 
-        if ($this->mavoric->settings->isEnabled('Banwaves')) {
+        if ($this->mavoric->settings->isBanWaveEnabled()) {
             $violations = $this->mavoric->settings->getConfig()->getNested('Banwaves.violations') ?? 54;
             $max = $this->mavoric->settings->getConfig()->getNested('Banwaves.max-violations') ?? 240;
             $waveHandler = $this->mavoric->getWaveHandler();
