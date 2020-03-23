@@ -50,8 +50,9 @@ v1.0.0 | Janurary 22nd 2020 | ✔ Yes | [Mavoric_v1.0.0](https://github.com/Olyb
 v1.0.1 | Never | ✔ Yes | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavoric/releases)~~
 v1.0.2 | Feburary 7th 2020 | ✔ Yes | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
 v1.0.3 | March 3rd 2020 | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
-v1.0.4 | March 19th 2020 | ✔ Yes| [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
-v1.0.5 | ~Scheduled for: March 21st 2020 | ❌ No | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
+v1.0.4 | March 19th 2020 | ✔ Yes | [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
+v1.0.5 | March 23rd 2020 | ✔ Yes | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
+v1.0.6 | Unknown | ❌ No | [Mavoric_v1.0.6](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.6.phar)
 
 ### API Versions
 Version | Released | Maintained | Details
