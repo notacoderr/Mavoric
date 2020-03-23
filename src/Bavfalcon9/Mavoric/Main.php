@@ -64,7 +64,6 @@ class Main extends PluginBase {
             return;
         }
         $this->mavoric->getWaveHandler()->saveAll();
-        $this->getLogger()->notice('Saved Ban Waves');
     }
 
     public function safeDisable() {
