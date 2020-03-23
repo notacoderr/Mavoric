@@ -1,14 +1,13 @@
-Version: 1.0.5 # DO NOT CHANGE THIS!
+# Config version, recommended to not touch this, will cause config to be overwrote
+Version: 1.0.0-beta
 Webhooks:
   # All of the following accept a DISCORDWEBHOOKURL or false.
   alerts: false
   system: false
 
 Messages:
-  # Message shown to all players on a kick
-  onkick: §4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!'
-  # Message shown to all players on a ban
-  onban: §4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!'
+  # Message shown to all players on a ban/kick
+  onban: "§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!"
 
   TPS:
     # Whether or not to enable TPS check messages
@@ -23,7 +22,7 @@ Messages:
     # Format of alert messages
     # {player} - Player alert is for
     # {cheat} - Cheat they violated.
-    format: "§c[MAVORIC]: §r§4{player} §7failed test for§c {cheat}§8:"
+    format: "§c[MAVORIC]: §r§4{player} §7failed test for§c {cheat}§8: "
 
 Autoban:
   # Should autobans be enabled? (IF THIS IS ENABLED, BANWAVES ARE OVERRIDDEN REGARDLESS IF BANWAVES ARE ENABLED!)
@@ -33,7 +32,7 @@ Autoban:
   # After how many violations should a player be banned/kicked? (50-80 is recommended)
   max-violations: 60
   # What should the reason be for a ban? (Note, actual reasons are stored in a database.)
-  ban-reason: §c§l{cheat-reason}
+  ban-reason: "§cError: §l{cheat-reason}"
   # Increment ban times? (If a player has been banned/kicked, go to level 2) This is not implemeneted yet.
   timebans:
     ban-1: 10d
@@ -74,11 +73,11 @@ Cheats:
   AutoArmor:
     disabled: no
     suppress: yes
-    reason: Snake
+    reason: Shielded
   Flight:
     disabled: no
     suppress: yes
-    reason: Eagle
+    reason: HawkEye
   HighJump:
     disabled: no
     suppress: yes
@@ -90,7 +89,7 @@ Cheats:
   Jetpack:
     disabled: no
     suppress: yes
-    reason: BlueJay
+    reason: Electro
   KillAura:
     disabled: no
     suppress: yes
@@ -98,7 +97,11 @@ Cheats:
   MultiAura:
     disabled: no
     suppress: yes
-    reason: Shark
+    reason: Sniper
+  NoStackItems:
+    disabled: yes
+    suppress: yes
+    reason: Juggler
   NoClip:
     disabled: no
     suppress: yes
@@ -116,5 +119,6 @@ Cheats:
     disabled: no
     suppress: yes
     reason: Marlin
+  
   
 

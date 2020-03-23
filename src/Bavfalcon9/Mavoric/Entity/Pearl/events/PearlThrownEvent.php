@@ -16,7 +16,7 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Entity\Pearl\events;
+namespace Bavfalcon9\Mavoric\Entity\Pearl\Events;
 
 use pocketmine\Player;
 use pocketmine\entity\Entity;

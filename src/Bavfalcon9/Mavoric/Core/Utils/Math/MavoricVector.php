@@ -19,7 +19,7 @@ namespace Bavfalcon9\Mavoric\Core\Utils\Math;
 
 use pocketmine\math\Vector3;
 
-class MavoricVector3 extends Vector3 {
+class MavoricVector extends Vector3 {
 
     public function __construct(int $x, int $y, int $z) {
         parent::_construct($x, $y, $z);    

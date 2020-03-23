@@ -49,7 +49,7 @@ class Speed implements Detection {
             $to->y = 0;
 
             $distance = $to->distance($from);
-            $allowed = 0.75;
+            $allowed = 0.9;
 
             if ($player->isCreative() || $player->isSpectator()) {
                 return;
@@ -58,7 +58,7 @@ class Speed implements Detection {
             if ($player->getEffect(1) !== null) {
                 // Not tested fully, but definitely allows effects.
                 if ($player->getEffect(1)->getEffectLevel() === 0) {
-                    $allowed = 0.80;
+                    $allowed = 0.9;
                 } else {
                     $allowed = $player->getEffect(1)->getEffectLevel() * 0.75;
                 }

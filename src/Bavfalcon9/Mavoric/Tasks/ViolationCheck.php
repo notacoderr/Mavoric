@@ -50,7 +50,7 @@ class ViolationCheck extends Task {
                 if ($flag->getTotalViolations() >= $max) {
                     $reason = CheatIdentifiers::getCheatName($flag->getMostViolations());
                     $this->mavoric->banManager->saveBan($player->getName(), $flag->clone()->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->mavoric->getFlag($player)), 'MAVORIC', $reason);
-                    $this->mavoric->issueBan($player, null, $flag->toBanwaveData());
+                    $this->mavoric->issueBan($player, $flag->toBanwaveData());
                     continue;
                 }
             }
@@ -74,7 +74,6 @@ class ViolationCheck extends Task {
 
                 $flag = $this->mavoric->getFlag($player);
                 $top = $flag->getMostViolations();
-                $this->mavoric->getCheatName($top);
 
                 if ($flag->getTotalViolations() >= $violations) {
                     $flags = $flag->getFlagsByNameAndCount();
@@ -87,7 +86,7 @@ class ViolationCheck extends Task {
                 if ($flag->getTotalViolations() >= $max) {
                     $flags = $flag->getFlagsByNameAndCount();
                     $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
-                    $this->mavoric->issueBan($player, $currentWave, $data);
+                    $this->mavoric->issueBan($player, $data);
                 }
             }
 

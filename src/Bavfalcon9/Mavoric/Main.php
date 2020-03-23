@@ -29,7 +29,7 @@ use pocketmine\entity\Entity;
 use pocketmine\Player;
 use pocketmine\Server;
 
-use Bavfalcon9\Mavoric\entity\Pearl\EnderPearl;
+use Bavfalcon9\Mavoric\Entity\Pearl\EnderPearl;
 use Bavfalcon9\Mavoric\Command\{
     alert, mban, mreport, banwave
 };
@@ -43,6 +43,7 @@ class Main extends PluginBase {
     
     public function onEnable() {
         $this->saveResource('config.yml');
+        $this->saveResource('assets/context.txt', true);
         $this->mavoric = new Mavoric($this);
         $this->reportHandler = new ReportHandler($this->mavoric, $this);
 

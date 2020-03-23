@@ -71,13 +71,13 @@ class Settings {
      */
     public function getEnabledDetections(): Array {
         $allCheats = $this->config->get('Cheats');
-        return array_keys(array_map(function ($settings) {
+        return array_keys(array_filter($allCheats, function ($settings) {
             if (!isset($settings['disabled'])) {
                 return false;
             } else {
                 return ($settings['disabled'] === false);
             }
-        }, $allCheats));
+        }));
     }
 
     /**
@@ -106,7 +106,7 @@ class Settings {
         $isEnabled = $this->config->getNested('Suppression.enabled') ?? true;
         $master = $this->config->getNested('Suppression.all-cheats') ?? true;
 
-        if ($isEnabled) {
+        if (!$isEnabled) {
             return false;
         } else {
             return ($master === true) ? true : $this->config->getNested("Cheats.$cheat.enabled") ?? $master;
@@ -135,14 +135,50 @@ class Settings {
      */
     public function getAlertBoiler(): String {
         $prefix = '§c[MAVORIC]: ';
-        $default = $prefix . '§r§4{player} §7failed test for§c {cheat}§8:';
+        $default = $prefix . '§r§4{player} §7failed test for§c {cheat}§8: ';
         $boiler = $this->config->getNested('Messages.Alerts.format') ?? $default;
 
-        if (strpos(strtolower(TextFormat::clean($boiler), 'mavoric')) === false) {
+        if (strpos(strtolower(TextFormat::clean($boiler)), 'mavoric') === false) {
             $boiler = $prefix . $boiler;
         }
 
         return $boiler;
+    }
+
+    /**
+     * Get the reason for a cheat
+     * @return String
+     */
+    public function getCheatReason(String $cheat): String {
+        if (!in_array($cheat, $this->getEnabledDetections())) {
+            return md5(microtime(true));
+        } else {
+            return $this->config->getNested("Cheats.$cheat.reason") ?? md5(microtime(true));
+        }
+    }
+
+    /**
+     * Get the ban type
+     * @return String
+     */
+    public function getBanType(): String {
+        return $this->config->getNested('Autoban.type') ?? 'ban';
+    }
+
+    /**
+     * Get the ban reason for a player
+     * @return String
+     */
+    public function getBanReason(): String {
+        return $this->config->getNested('Autoban.ban-reason') ?? '§cError: §l{cheat-reason}';
+    }
+
+    /**
+     * Get the ban message to broadcast in chat
+     * @return String
+     */
+    public function getBanMessage(): String {
+        return $this->config->getNested('Messages.onban') ?? '§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!';
     }
 
     /**

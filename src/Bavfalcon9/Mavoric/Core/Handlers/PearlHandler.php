@@ -21,7 +21,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\entity\EntityDespawnEvent;
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlThrow;
-use Bavfalcon9\Mavoric\entity\Pearl\events\PearlThrownEvent;
+use Bavfalcon9\Mavoric\Entity\Pearl\Events\PearlThrownEvent;
 use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlPurgeTask;
 
 class PearlHandler implements Listener {

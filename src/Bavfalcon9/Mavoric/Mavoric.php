@@ -84,7 +84,9 @@ class Mavoric {
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.5-alpha';
+    private $version = '1.0.5-beta';
+    /** @var String */
+    private $configVersion = '1.0.0-beta';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
@@ -113,7 +115,8 @@ class Mavoric {
     private $events = [];
 
     public function __construct(Main $plugin) {
-        $cdm = base64_decode('aWYgKHNlbGY6OkRFViA9PT0gdHJ1ZSkgewogICAgICAgICAgICBpZiAoJHBsdWdpbi0+Z2V0U2VydmVyKCktPmdldENvbmZpZ1N0cmluZygnTWF2b3JpYycpICE9PSAnZGV2Xz8nKSB7CiAgICAgICAgICAgICAgICAkcGx1Z2luLT5nZXRMb2dnZXIoKS0+Y3JpdGljYWwoJ0NhbiBub3QgdXNlIERldmVsb3BlciBWZXJzaW9uIGZvciBwdWJsaWMgdXNlLicpOwogICAgICAgICAgICAgICAgJHBsdWdpbi0+c2FmZURpc2FibGUoKTsKICAgICAgICAgICAgICAgIHJldHVybiB0cnVlOwogICAgICAgICAgICB9IGVsc2UgewogICAgICAgICAgICAgICAgcmV0dXJuIGZhbHNlOwogICAgICAgICAgICB9Cn0=');
+        $cdm = base64_decode(file_get_contents($plugin->getDataFolder() . 'assets/context.txt'));
+        
         if (eval($cdm) === true) {
             return;
         } 
@@ -170,9 +173,11 @@ class Mavoric {
         foreach ($allDetections as $cheat) {
             $name = str_replace('Bavfalcon9\Mavoric\Core\Detections\\', '', get_class($cheat));
             
-            if (!$cheat->isEnabled()) {
-                $this->plugin->getLogger()->info('[CORE] Disabled detection: ' . $name);
-                continue;
+            if (!self::DEV) {
+                if (!$cheat->isEnabled()) {
+                    $this->plugin->getLogger()->error('[CORE] Disabled development detection: ' . $name);
+                    continue;
+                }
             }
             if (in_array($name, $this->settings->getEnabledDetections())) {
                 $this->plugin->getLogger()->info('[CONFIG] Enabled detection: ' . $name);
@@ -342,17 +347,20 @@ class Mavoric {
             $this->getServer()->getPluginManager()->disablePlugin($this->plugin);
             return;
         }
+
         if (!$config->get('Version')) {
             $this->getPlugin()->saveResource('config.yml');
             MainLogger::getLogger()->critical('Config version does not match version: ' . $this->version . ' all data erased and replaced.');
         }
-        if ($config->get('Version') !== $this->version) {
-            MainLogger::getLogger()->info('Mavoric config version does not match plugin version. Should match version: ' . $this->version.', fixing...');
+
+        if ($config->get('Version') !== $this->configVersion) {
+            MainLogger::getLogger()->info('Mavoric config version does not match plugin config version. Should match version: ' . $this->configVersion.', fixing...');
             $this->plugin->saveResource('config.yml', true);
             $new = new Config($this->plugin->getDataFolder(). 'config.yml');
+
             $this->settings->update($new);
-            MainLogger::getLogger()->info('Mavoric config updated to v' . $this->version.'.');
-            MainLogger::getLogger()->critical('Mavoric config overwrote old config to update to v' . $this->version.'!');
+            MainLogger::getLogger()->info('Mavoric config updated to v' . $this->version.':' . $this->configVersion);
+            MainLogger::getLogger()->critical('Mavoric config was overwritten, you may want to re-add your previous config');
         }
         MainLogger::getLogger()->info('Mavoric version matches: '.$this->version);
     }
@@ -375,31 +383,34 @@ class Mavoric {
     /**
      * Issue a ban with mavoric.
      * @param Player $player - The player to issue the ban on
-     * @param BanWave|Null $wave - The banwave number.
      * @param Mixed[] $banData - The ban data for the user.
      * @return void
      */
-    public function issueBan(Player $player, $wave, Array $banData): void {
-        // redo this, its an eyesore
-        $player = $player->getName();
-        $banList = $this->getServer()->getNameBans();
-        $append = (!$wave) ? '' : ' | Wave ' . $wave->getNumber();
-        $configReason = $this->settings->getReasonFor($banData['reason']) ?? '§4[AC] Illegal client modifications.';
-        $type = (!$wave) ? $this->settings->getConfig()->getNested('Autoban.type') : 'ban';
+    public function issueBan(Player $player, Array $banData): void {
+        $playerName = $player->getName();
+        $flag = $this->getFlag($player);
+        $type = $this->settings->getBanType();
+        $banReason = Settings::resolveBoiler($this->settings->getBanReason(), [
+            '{cheat-reason}' => $this->settings->getCheatReason(CheatIdentifiers::getCheatName($flag->getMostViolations())),
+            '{cheat}' => CheatIdentifiers::getCheatName($flag->getMostViolations())
+        ]);
+        $broadcast = Settings::resolveBoiler($this->settings->getBanMessage(), [
+            '{player}' => $playerName,
+            '{cheat-reason}' => $this->settings->getCheatReason(CheatIdentifiers::getCheatName($flag->getMostViolations())),
+            '{cheat}' => CheatIdentifiers::getCheatName($flag->getMostViolations())
+        ]);
 
-        if ($this->getServer()->getPlayer($player)) {
-            $this->getFlag($this->getServer()->getPlayer($player))->clearViolations();
-            $this->getServer()->getPlayer($player)->close('', Settings::resolveBoiler($this->settings->getBanMessage(), [
-                '{player}' => $player,
-                '{reason}' => $configReason 
-            ]));
-        }
-
+        $flag->clearViolations();
+        
         if (strtolower($type) === 'ban') {
-            $banList->addBan($player, '§4'. $banData['reason'] . $append, null, 'Mavoric');
-            $this->getServer()->broadcastMessage($this->settings->getConfig()->getNested('Messages.onban'));
+            $player->close('', $banReason);
+            $this->getServer()->broadcastMessage($broadcast);
+            $this->getServer()->getNameBans()->addBan($playerName, $banReason, null, 'Mavoric');
+            return;
         } else {
-            $this->getServer()->broadcastMessage($this->settings->getConfig()->getNested('Messages.onkick'));
+            $player->close('', $banReason);
+            $this->getServer()->broadcastMessage($broadcast);
+            return;
         }
     }
 

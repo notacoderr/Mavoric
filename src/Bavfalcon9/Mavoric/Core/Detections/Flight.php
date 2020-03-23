@@ -20,12 +20,14 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\PlayerCalculate;
 use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
 use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
 use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\player\PlayerMove;
+use pocketmine\level\Position;
 use pocketmine\Player;
 use pocketmine\block\{
     Slab, SnowLayer, Stair, Transparent
@@ -58,17 +60,14 @@ class Flight implements Detection {
                 $blockAtPlayer = LevelUtils::getBlockWhere($player);
                 $blockBelow = LevelUtils::getRelativeBlock($blockAtPlayer, Facing::DOWN);
 
-                // Should fix false alarms when traveling up steps
                 if ($blockBelow instanceof Slab || $blockBelow instanceof Stair || $blockBelow instanceof SnowLayer) {
                     return;
                 }
-                // fix blantant flight
+
                 if (MathUtils::getFallDistance($from, $to) === 0) {
-                    // They aren't falling
                     if ($distance > 0.6) {
                         $event->sendAlert('Flight', "Illegal movement, moved in air without falling.");
                         $event->issueViolation(CheatIdentifiers::CODES['Flight']);
-                        $event->cancel(false);
                         return;
                     }
                 }
@@ -77,7 +76,6 @@ class Flight implements Detection {
                 if (MathUtils::getFallDistance($from, $to) > 3.4952) {
                     $event->sendAlert('Flight', "Illegal movement, falling too quickly.");
                     $event->issueViolation(CheatIdentifiers::CODES['Flight']);
-                    $event->cancel(false);
                     return;
                 }
 
@@ -85,13 +83,26 @@ class Flight implements Detection {
                 if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::DOWN)->getId() === 0) {
                     $realtive = LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::DOWN);
                     if (LevelUtils::getRelativeBlock($realtive, FACING::DOWN)->getId() === 0) {
+                        $square = PlayerCalculate::getSurroundings($player);
+
+                        // I hate this as much as you do ._.
+                        if ($player->getInAirTicks() <= 40) {
+                            return;
+                        }
+
+                        foreach ($square as $point) {
+                            if ($point->getId() !== 0) {
+                                return;
+                            }
+                        }
+
                         /*
                          * 0 because anything less than 0 means the fall distance was positive,
                          * and last time i checked you can't jump on air
                          */
                         if (MathUtils::getFallDistance($from, $to) <= 0) {
                             $event->sendAlert('Flight', "Illegal movement, jumped on air.");
-                            $event->issueViolation(CheatIdentifiers::CODES['HighJump']);
+                            $event->issueViolation(CheatIdentifiers::CODES['Flight']);
                             $event->cancel(false);
                             return;
                         }
@@ -102,6 +113,6 @@ class Flight implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return true;
+        return false;
     }
 }

@@ -52,13 +52,9 @@ class MavoricEvent {
             return false;
         }
         
-        // Disable suppression on dev versions
-        return false;
-        /*
         $this->eventData->setCancelled($val);
         $this->isCancelled = $val;
         return $val;
-        */
     }
 
     /**
