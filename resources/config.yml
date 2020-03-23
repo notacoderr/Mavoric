@@ -1,5 +1,5 @@
 # Config version, recommended to not touch this, will cause config to be overwrote
-Version: 1.0.0-beta
+Version: 1.0.0
 Webhooks:
   # All of the following accept a DISCORDWEBHOOKURL or false.
   alerts: false

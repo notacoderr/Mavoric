@@ -79,14 +79,14 @@ class Mavoric {
     /** @var String */
     public const ARROW = '→';
     /** @var Bool */
-    public const DEV = true;
+    public const DEV = false;
 
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.5-beta';
+    private $version = '1.0.5';
     /** @var String */
-    private $configVersion = '1.0.0-beta';
+    private $configVersion = '1.0.0';
     /** @var Main */
     private $plugin;
     /** @var BanHandler */
