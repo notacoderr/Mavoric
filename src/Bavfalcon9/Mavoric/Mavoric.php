@@ -115,11 +115,13 @@ class Mavoric {
     private $events = [];
 
     public function __construct(Main $plugin) {
-        $cdm = base64_decode(file_get_contents($plugin->getDataFolder() . 'assets/context.txt'));
-        
-        if (eval($cdm) === true) {
-            return;
-        } 
+        /** 
+          * $cdm = base64_decode(file_get_contents($plugin->getDataFolder() . 'assets/context.txt'));
+          * 
+          * if (eval($cdm) === true) {
+          *     return;
+          * } 
+          **/
         /** Plugin Cache */
         $this->plugin = $plugin;
         /** Plugin config */
