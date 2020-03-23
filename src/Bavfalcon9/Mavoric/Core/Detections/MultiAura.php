@@ -68,6 +68,6 @@ class MultiAura implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }
