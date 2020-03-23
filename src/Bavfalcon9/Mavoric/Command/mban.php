@@ -18,13 +18,15 @@
 
 namespace Bavfalcon9\Mavoric\Command;
 
+use pocketmine\plugin\Plugin;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 
-class mban extends Command {
+class mban extends Command implements PluginIdentifiableCommand {
     private $pl;
 
     public function __construct($pl) {
@@ -81,5 +83,9 @@ class mban extends Command {
         $time = explode('.', $dnt[1])[0];
         $timezone = $arr['timezone'];
         return "$date at $time [$timezone]";
+    }
+
+    public function getPlugin(): Plugin {
+        return $this->pl;
     }
 }
