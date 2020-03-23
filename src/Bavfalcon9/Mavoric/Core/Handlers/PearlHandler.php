@@ -119,7 +119,7 @@ class PearlHandler implements Listener {
                 continue;
             }
 
-            if ($recent->getThrownTime() > $throw->getThrowTime()) {
+            if ($recent->getThrownTime() > $throw->getThrownTime()) {
                 $recent = $throw;
                 continue;
             }

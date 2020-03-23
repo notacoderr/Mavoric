@@ -178,7 +178,12 @@ class Mavoric {
                     $this->plugin->getLogger()->error('[CORE] Disabled development detection: ' . $name);
                     continue;
                 }
+            } else {
+                if (!$cheat->isEnabled()) {
+                    $this->plugin->getLogger()->warning('[CORE] Allowed loading of development detection: ' . $name . ' due to devmode.');
+                }
             }
+
             if (in_array($name, $this->settings->getEnabledDetections())) {
                 $this->plugin->getLogger()->info('[CONFIG] Enabled detection: ' . $name);
                 array_push($this->loadedCheats, $cheat);

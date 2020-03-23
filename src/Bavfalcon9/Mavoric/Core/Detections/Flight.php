@@ -72,7 +72,7 @@ class Flight implements Detection {
                     }
                 }
 
-                // unnatrual falls, this is most likely a result of jetpack
+                // unnatural falls, this is most likely a result of jetpack or fast fall
                 if (MathUtils::getFallDistance($from, $to) > 3.4952) {
                     $event->sendAlert('Flight', "Illegal movement, falling too quickly.");
                     $event->issueViolation(CheatIdentifiers::CODES['Flight']);
@@ -86,7 +86,7 @@ class Flight implements Detection {
                         $square = PlayerCalculate::getSurroundings($player);
 
                         // I hate this as much as you do ._.
-                        if ($player->getInAirTicks() <= 40) {
+                        if ($player->getInAirTicks() <= 20) {
                             return;
                         }
 
@@ -103,7 +103,6 @@ class Flight implements Detection {
                         if (MathUtils::getFallDistance($from, $to) <= 0) {
                             $event->sendAlert('Flight', "Illegal movement, jumped on air.");
                             $event->issueViolation(CheatIdentifiers::CODES['Flight']);
-                            $event->cancel(false);
                             return;
                         }
                     }
@@ -113,6 +112,6 @@ class Flight implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

@@ -109,7 +109,7 @@ class Settings {
         if (!$isEnabled) {
             return false;
         } else {
-            return ($master === true) ? true : $this->config->getNested("Cheats.$cheat.enabled") ?? $master;
+            return ($master === true) ? true : $this->config->getNested("Cheats.$cheat.suppress") ?? $master;
         }
     }
 
@@ -179,6 +179,14 @@ class Settings {
      */
     public function getBanMessage(): String {
         return $this->config->getNested('Messages.onban') ?? '§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!';
+    }
+
+    /**
+     * Gets the message for a bad pearl or "Epearl Glitching"
+     * @return String
+     */
+    public function getBadPearlMessage(): String {
+        return $this->config->getNested('Messages.onpearl') ?? '§cEpearl glitch detected. Reverted movement.';
     }
 
     /**

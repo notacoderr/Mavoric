@@ -8,7 +8,9 @@ Webhooks:
 Messages:
   # Message shown to all players on a ban/kick
   onban: "§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!"
-
+  # Message shown to player who epearl glitches
+  onpearl: "§cEpearl glitch detected. Reverted movement."
+  
   TPS:
     # Whether or not to enable TPS check messages
     enabled: yes
