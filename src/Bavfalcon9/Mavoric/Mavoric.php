@@ -79,12 +79,12 @@ class Mavoric {
     /** @var String */
     public const ARROW = '→';
     /** @var Bool */
-    public const DEV = false;
+    public const DEV = true;
 
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.5';
+    private $version = '1.0.6';
     /** @var String */
     private $configVersion = '1.0.0';
     /** @var Main */
