@@ -43,7 +43,7 @@ class Main extends PluginBase {
     
     public function onEnable() {
         $this->saveResource('config.yml');
-        $this->saveResource('assets/context.txt', true);
+        //$this->saveResource('assets/context.txt', true);
         $this->mavoric = new Mavoric($this);
         $this->reportHandler = new ReportHandler($this->mavoric, $this);
 

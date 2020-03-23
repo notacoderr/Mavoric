@@ -18,15 +18,17 @@
 
 namespace Bavfalcon9\Mavoric\Command;
 
+use pocketmine\plugin\Plugin;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 
-class alert extends Command {
+class alert extends Command implements PluginIdentifiableCommand {
     private $pl;
     private $mavoric;
 
@@ -134,5 +136,9 @@ class alert extends Command {
 
         $sender->sendMessage($this->usageMessage);
         return false;
+    }
+
+    public function getPlugin(): Plugin {
+        return $this->pl;
     }
 }

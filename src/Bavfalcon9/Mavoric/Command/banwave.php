@@ -17,14 +17,16 @@
  */
 namespace Bavfalcon9\Mavoric\Command;
 
+use pocketmine\plugin\Plugin;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 
-class banwave extends Command {
+class banwave extends Command implements PluginIdentifiableCommand {
     private $pl;
 
     public function __construct($pl) {
@@ -78,6 +80,9 @@ class banwave extends Command {
             $this->pl->mavoric->issueWaveBan($selectedWave);
             return true;
         }
-        
+    }
+
+    public function getPlugin(): Plugin {
+        return $this->pl;
     }
 }

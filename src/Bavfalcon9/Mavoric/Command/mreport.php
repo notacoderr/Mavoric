@@ -16,15 +16,18 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 namespace Bavfalcon9\Mavoric\Command;
+
+use pocketmine\plugin\Plugin;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatTranslation;
 use Bavfalcon9\Mavoric\Mavoric;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
+use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 
-class mreport extends Command {
+class mreport extends Command implements PluginIdentifiableCommand {
     private $pl;
     private $plugin;
 
@@ -93,6 +96,10 @@ class mreport extends Command {
         }
 
         return true;
+    }
+
+    public function getPlugin(): Plugin {
+        return $this->pl;
     }
 
     private function getNames(Array $cheats) {
