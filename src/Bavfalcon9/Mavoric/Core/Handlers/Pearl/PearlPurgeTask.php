@@ -16,12 +16,20 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\entity;
+namespace Bavfalcon9\Mavoric\Core\Handlers\Pearl;
 
-use pocketmine\network\mcpe\protocol\LoginPacket;
+use pocketmine\scheduler\Task;
+use Bavfalcon9\Mavoric\Core\Handlers\PearlHandler;
 
-class LoginPk extends LoginPacket {
-    public function decodeAdditional() {
-        /** Empty because no need to decode any additional info. */
+class PearlPurgeTask extends Task {
+    /** @var PearlHandler */
+    private $handler;
+
+    public function __construct(PearlHandler $handler) {
+        $this->handler = $handler;
+    }
+
+    public function onRun(int $tick) {
+        $this->handler->purge();
     }
 }

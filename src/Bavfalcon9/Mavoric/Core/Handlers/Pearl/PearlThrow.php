@@ -18,6 +18,7 @@
 namespace Bavfalcon9\Mavoric\Core\Handlers\Pearl;
 
 use pocketmine\Player;
+use pocketmine\level\Position;
 
 class PearlThrow {
     /** @var Player */
@@ -28,12 +29,15 @@ class PearlThrow {
     private $completedAt;
     /** @var int */
     private $boundId;
+    /** @var Position|Null */
+    private $landingLocation;
     
     public function __construct(Player $player, int $boundId, int $thrown = null) {
         $this->player = $player;
         $this->thrownAt = $thrown ?? microtime(true);
         $this->completedAt = -1;
         $this->boundId = $boundId;
+        $this->landingLocation = null;
     }
 
     /**
@@ -56,6 +60,30 @@ class PearlThrow {
         }
     }
 
+    /** 
+     * Gets the time the pearl landed at (-1 if still in air)
+     * @return int - The time the pearl landed.
+     */
+    public function getLandingTime(): int {
+        return $this->completedAt;
+    }
+
+    /**
+     * Gets the location where the pearl landed.
+     * @return Position|Null
+     */
+    public function getLandingLocation(): ?Position {
+        return $this->landingLocation;
+    }
+
+    /**
+     * Gets the time the pearl was thrown
+     * @return int - The time the pearl was thrown
+     */
+    public function getThrownTime(): int {
+        return $this->thrownAt;
+    }
+
     /**
      * Gets whether the throw has been completed.
      * @return Bool - Whether or not the pearl has landed.
@@ -67,10 +95,12 @@ class PearlThrow {
     /**
      * Sets the time that the pearl landed.
      * @param int $time - The time the pearl landed.
+     * @param Position $position - Where the pearl landed
      * @return void
      */
-    public function setCompleted(int $time): void {
+    public function setCompleted(int $time, Position $position): void {
         $this->completedAt = $time;
+        $this->landingLocation = $position;
         return;
     }
 

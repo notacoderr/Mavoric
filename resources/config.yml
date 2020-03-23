@@ -1,8 +1,30 @@
-Version: 1.0.4 # DO NOT CHANGE THIS!
+# Config version, recommended to not touch this, will cause config to be overwrote
+Version: 1.0.0
 Webhooks:
   # All of the following accept a DISCORDWEBHOOKURL or false.
   alerts: false
   system: false
+
+Messages:
+  # Message shown to all players on a ban/kick
+  onban: "§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!"
+  # Message shown to player who epearl glitches
+  onpearl: "§cEpearl glitch detected. Reverted movement."
+  
+  TPS:
+    # Whether or not to enable TPS check messages
+    enabled: yes
+    # When should staff be messaged about low tps? put something lower than 0 for never
+    warn-below: 17
+    # When should violation (Cheat detections) be temporarily disabled
+    stop-below: 16
+  Alerts:
+    # Whether or not to disable alerts
+    enabled: yes
+    # Format of alert messages
+    # {player} - Player alert is for
+    # {cheat} - Cheat they violated.
+    format: "§c[MAVORIC]: §r§4{player} §7failed test for§c {cheat}§8: "
 
 Autoban:
   # Should autobans be enabled? (IF THIS IS ENABLED, BANWAVES ARE OVERRIDDEN REGARDLESS IF BANWAVES ARE ENABLED!)
@@ -12,7 +34,7 @@ Autoban:
   # After how many violations should a player be banned/kicked? (50-80 is recommended)
   max-violations: 60
   # What should the reason be for a ban? (Note, actual reasons are stored in a database.)
-  ban-reason: §4Illegal client modifications.
+  ban-reason: "§cError: §l{cheat-reason}"
   # Increment ban times? (If a player has been banned/kicked, go to level 2) This is not implemeneted yet.
   timebans:
     ban-1: 10d
@@ -41,17 +63,64 @@ Alerts:
 Suppression:
   # Should mavoric suppression be enabled?
   enabled: yes
-  # Should all cheats be suppressed?
+  # Should all cheats be suppressed? (Master Override)
   all-cheats: yes
-  # If the master override is off, provide the cheats that should be suppressed.
-  cheats:
-    - KillAura
-    - Speed
-    - AutoClicker
-    - Reach
 
 Cheats:
-  # list of disabled cheats.
-  disabled: []
+  # list of cheat settings
+  AutoClicker:
+    disabled: no
+    suppress: yes
+    reason: HummingBird
+  AutoArmor:
+    disabled: no
+    suppress: yes
+    reason: Shielded
+  Flight:
+    disabled: no
+    suppress: yes
+    reason: HawkEye
+  HighJump:
+    disabled: no
+    suppress: yes
+    reason: BlueBird
+  Jesus:
+    disabled: no
+    suppress: yes
+    reason: Strider
+  Jetpack:
+    disabled: no
+    suppress: yes
+    reason: Electro
+  KillAura:
+    disabled: no
+    suppress: yes
+    reason: Lion
+  MultiAura:
+    disabled: no
+    suppress: yes
+    reason: Sniper
+  NoStackItems:
+    disabled: yes
+    suppress: yes
+    reason: Juggler
+  NoClip:
+    disabled: no
+    suppress: yes
+    reason: WoodPecker
+  Reach:
+    set-max: no
+    disabled: no
+    suppress: yes
+    reason: Gibbon
+  Speed:
+    disabled: no
+    suppress: yes
+    reason: Cheetah
+  Teleport:
+    disabled: no
+    suppress: yes
+    reason: Marlin
+  
   
 

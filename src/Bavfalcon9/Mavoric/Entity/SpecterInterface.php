@@ -21,7 +21,7 @@
  * Author: https://github.com/falkirks/Specter
  */
 
-namespace Bavfalcon9\Mavoric\entity;
+namespace Bavfalcon9\Mavoric\Entity;
 
 
 use Bavfalcon9\Mavoric\Main;
@@ -138,7 +138,7 @@ class SpecterInterface implements SourceInterface{
                     break;
                 case MovePlayerPacket::class:
                     /** @var MovePlayerPacket $packet */
-                    $eid = $packet->entityRuntimeId;
+                    $eid = $packet->EntityRuntimeId;
                     if($eid === $player->getId() && $player->isAlive() && $player->spawned === true && $player->getForceMovement() !== null){
                         $packet->mode = MovePlayerPacket::MODE_NORMAL;
                         $packet->yaw += 25; //FIXME little hacky
@@ -201,7 +201,7 @@ class SpecterInterface implements SourceInterface{
             $pk->clientUUID = UUID::fromData($address, $port, $username)->toString();
             $pk->clientId = 1;
             $pk->xuid = "mavoricCI-antiCheat-1ce92dnasld9al";
-            $pk->identityPublicKey = "mavorasdficCI-antiCasdfheat-1ceasdf92dnasld9alde";
+            $pk->idEntityPublicKey = "mavorasdficCI-antiCasdfheat-1ceasdf92dnasld9alde";
             $pk->clientData["SkinId"] = "Specter";
             $pk->clientData["DeviceOS"] = 1;
             $pk->clientData["ThirdPartyName"] = 'Mavoric';
@@ -213,7 +213,7 @@ class SpecterInterface implements SourceInterface{
             $pk->skipVerification = true;
             $this->sendPacket($player, $pk);
             $pk = new SetLocalPlayerAsInitializedPacket();
-            $pk->entityRuntimeId = $player->getId();
+            $pk->EntityRuntimeId = $player->getId();
             $this->sendPacket($player, $pk);
             return true;
         }else{

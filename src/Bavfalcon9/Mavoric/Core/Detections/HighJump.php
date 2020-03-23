@@ -21,14 +21,19 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
+use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
+use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
+use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
-use Bavfalcon9\Mavoric\events\player\PlayerConsume;
+use Bavfalcon9\Mavoric\Events\player\PlayerMove;
 use pocketmine\Player;
-use pocketmine\utils\TextFormat as TF;
+/* use pocketmine\math\Facing; uncomment when api 4.0.0 */
 
-class FastEat implements Detection {
+class HighJump implements Detection {
     private $mavoric;
     private $plugin;
+    private $checks = [];
+    private $highest = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->plugin = $mavoric->getPlugin();
@@ -36,14 +41,24 @@ class FastEat implements Detection {
     }
 
     public function onEvent(MavoricEvent $event): void {
-        if (!$event instanceof PlayerConsume) {
-            return;
-        }
+        if ($event instanceof PlayerMove) {
+            $player = $event->getPlayer();
+            $to = $event->getTo();
+            $from = $event->getFrom();
 
-        /**
-         * ToDo: redo this.
-         */
-        $player = $event->getPlayer();
+            if ($player->getAllowFlight() === true) {
+                return;
+            }
+
+            if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::UP)->getId() === 0) {
+                if (MathUtils::getFallDistance($from, $to) < -0.6854) {
+                    $event->sendAlert('HighJump', "Illegal jump, jumped too high.");
+                    $event->issueViolation(CheatIdentifiers::CODES['HighJump']);
+                    $event->cancel(false);
+                    return;
+                }
+            }
+        }
     }
 
     public function isEnabled(): Bool {

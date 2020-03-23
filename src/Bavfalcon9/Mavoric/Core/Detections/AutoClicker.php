@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerClick;
 use Bavfalcon9\Mavoric\events\player\PlayerAttack;
@@ -80,12 +81,12 @@ class AutoClicker implements Detection {
 
         // AntiCheat checks
         if ($cps >= 100) {
-            $event->issueViolation(Mavoric::CHEATS['AutoClicker'], 900);
+            $event->issueViolation(CheatIdentifiers::CODES['AutoClicker'], 900);
             $event->sendAlert('AutoClicker', 'Interacted too quickly with ' . $cps . ' clicks per second');
             $event->getPlayer()->close('', 'Fragmented packet');
         }
         if ($cps >= $amount) {
-            $event->issueViolation(Mavoric::CHEATS['AutoClicker']);
+            $event->issueViolation(CheatIdentifiers::CODES['AutoClicker']);
             $event->sendAlert('AutoClicker', 'Interacted too quickly with ' . $cps . ' clicks per second');
         }
     }

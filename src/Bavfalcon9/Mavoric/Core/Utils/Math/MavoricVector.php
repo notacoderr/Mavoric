@@ -15,34 +15,24 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Core\Utils\Math;
 
-/**
- * DISCLAIMER: This code was not written by me, all credit goes to author.
- * Author: https://github.com/falkirks/Specter
- */
-
-namespace Bavfalcon9\Mavoric\entity;
 use pocketmine\math\Vector3;
-use pocketmine\network\mcpe\PlayerNetworkSessionAdapter;
-use pocketmine\network\SourceInterface;
-use pocketmine\Player;
 
-class SpecterPlayer extends Player {
-    public $spec_needRespawn = false;
-    private $forceMovement;
-    public function __construct(SourceInterface $interface, $ip, $port){
-        parent::__construct($interface, $ip, $port);
+class MavoricVector extends Vector3 {
+
+    public function __construct(int $x, int $y, int $z) {
+        parent::_construct($x, $y, $z);    
     }
+
     /**
-     * @return Vector3
+     * Draws and returns a line.
+     * @param Vector3 $vector - The vector to draw the line to
+     * @return Vector3[] - Array of all positions in the line
      */
-    public function getForceMovement(){
-        return $this->forceMovement;
-    }
-	/**
-	 * @return PlayerNetworkSessionAdapter
-	 */
-    public function getSessionAdapter() {
-    	return $this->sessionAdapter;
+    public function drawLineTo(Vector3 $vector): Array {
+        // y = mx+b
+        $vector = clone $vector;
+
     }
 }

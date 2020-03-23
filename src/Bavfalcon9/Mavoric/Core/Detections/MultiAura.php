@@ -25,6 +25,7 @@ use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerAttack;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 
 class MultiAura implements Detection {
     private $mavoric;
@@ -49,7 +50,7 @@ class MultiAura implements Detection {
             if (!in_array($victim->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $victim->getName());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.20) >= time()) {
                 $inTime = time() - ($multiAura['time']);
-                $event->issueViolation(Mavoric::CHEATS['MultiAura']);
+                $event->issueViolation(CheatIdentifiers::CODES['MultiAura']);
                 $event->sendAlert('MultiAura', 'Illegal attack, hit ' . sizeof($multiAura['targets']) . ' entities in ' . $inTime . ' seconds');
             }
             if (($multiAura['time'] + 0.25) <= time()) {
@@ -67,6 +68,6 @@ class MultiAura implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

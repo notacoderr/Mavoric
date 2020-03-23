@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use pocketmine\event\Listener;
 use Bavfalcon9\Mavoric\events\{
     MavoricEvent,
@@ -51,12 +52,12 @@ class Jetpack implements Detection {
                 if ($player->getPing() >= 300) {
                     $distance = round($distance, 2);
                     $event->sendAlert('Jetpack', "Illegal movement, jetpack detected with {$distance} blocks in few moves.");
-                    $event->issueViolation(Mavoric::CHEATS['Jetpack']);
+                    $event->issueViolation(CheatIdentifiers::CODES['Jetpack']);
                     return;
                 } else {
                     $distance = round($distance, 2);
                     $event->sendAlert('Jetpack', "Illegal movement, jetpack detected with {$distance} blocks in few moves.");
-                    $event->issueViolation(Mavoric::CHEATS['Jetpack']);
+                    $event->issueViolation(CheatIdentifiers::CODES['Jetpack']);
                     return;
                 }
             }

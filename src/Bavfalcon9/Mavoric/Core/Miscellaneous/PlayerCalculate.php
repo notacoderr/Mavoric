@@ -43,7 +43,7 @@ class PlayerCalculate {
 
     }
 
-    public static function getSurroundings(Player $player) : Array {
+    public static function getSurroundings(Player $player, int $amount = 1) : Array {
         $x = $player->getX();
         $y = $player->getY();
         $z = $player->getZ();

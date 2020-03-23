@@ -20,24 +20,18 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\events\{
-    MavoricEvent,
-    player\PlayerMove
-};
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
+use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\events\player\PlayerMove;
 
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 
 use pocketmine\event\player\PlayerMoveEvent;
 
-// to complete....
 class Speed implements Detection {
     /** @var Mavoric */
     private $mavoric;
-    /** @var Array */
-    private $timings = [];
-    /** @var int */
-    private $lastTick = 0;
 
     public function __construct(Mavoric $mavoric) {
         $this->mavoric = $mavoric;
@@ -47,48 +41,41 @@ class Speed implements Detection {
         /** @var PlayerMove */
         if ($event instanceof PlayerMove) {
             $player = $event->getPlayer();
-            $to = $event->getTo();
-            $from = $event->getFrom();
-            $distance = abs($to->distance($from));
-            $allowed = 2;
+            $to = clone $event->getTo();
+            $from = clone $event->getFrom();
+
+            // Fix falling
+            $from->y = 0;
+            $to->y = 0;
+
+            $distance = $to->distance($from);
+            $allowed = 0.8;
+
+            // .9 is way to lenient for the allowed movements
+
             if ($player->isCreative() || $player->isSpectator()) {
                 return;
             }
+
             if ($player->getEffect(1) !== null) {
-                if ($player->getEffect(1)->getEffectLevel() === 1) {
-                    $allowed = 2.3;
+                // Not tested fully, but definitely allows effects.
+                if ($player->getEffect(1)->getEffectLevel() === 0) {
+                    $allowed = 0.8;
                 } else {
-                    $allowed = $player->getEffect(1)->getEffectLevel() * 1.6;
+                    $allowed = $player->getEffect(1)->getEffectLevel() * 0.75;
                 }
-            }
-            // fix falling, flying and knockback
-            if ($player->getAllowFlight()) {
-                $allowed = 4;
             }
 
-            if (($from->y > $to->y) && $distance < 6) {
-                return;
-            }
-            if (($from->y < $to->y)  && $distance < 6) {
-                return;
-            }
             if ($distance >= $allowed) {
-                if ($player->getPing() >= 300) {
-                    $distance = round($distance, 2);
-                    #$player->sendMessage('Evaluation failed. Shard: ' . rand(1, 99999));
-                    #$event->issueViolation(Mavoric::CHEATS['Speed']);
-                    return;
-                } else {
-                    $distance = round($distance, 2);
-                    $event->sendAlert('Speed', "Illegal movement, Moved {$distance} blocks too quickly.");
-                    $event->issueViolation(Mavoric::CHEATS['Speed']);
-                    return;
-                }
+                $distance = round($distance, 2) * 100;
+                $event->sendAlert('Speed', "Illegal movement, Moved too far in a single instance.");
+                $event->issueViolation(CheatIdentifiers::CODES['Speed']);
+                return;
             }
         }
     }
 
     public function isEnabled(): Bool {
-        return true;
+        return false;
     }
 }

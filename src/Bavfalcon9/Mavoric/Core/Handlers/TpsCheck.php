@@ -54,44 +54,20 @@ class TpsCheck {
         $tps = 20 - $diff;
         $this->ticks[] = $tps;
 
-        if ($tps >= 19.5) {
-            /* server running at 20 tps */
-            if ($this->halted) {
-                $this->cancelHalt();
-            }
-            return;
+        if ($tps > $this->mavoric->settings->getTpsWarnValue() && $this->isHalted()) {
+            $this->cancelHalt();
         }
 
-        if ($tps < 19.5 && $tps >= 19)  {
-            // 19 TPS
-            if ($this->halted) {
-                $this->cancelHalt();
-            }
-
-            $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
-            return;
+        if ($tps < $this->mavoric->settings->getTpsWarnValue()) {
+            if ($this->halted) return;
+            $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running lower than usual! TPS: ' . $tps);
         }
 
-        if ($tps <= 18.5 && $tps > 17) {
-            // 18 tps
-            if ($this->halted) {
-                $this->cancelHalt();
-            }
-
-            $this->mavoric->messageStaff(Mavoric::WARN, 'Server running slower than usual, at ' . $tps . ' ticks per second.');
+        if ($tps <= $this->mavoric->settings->getTpsStopValue()) {
+            if ($this->halted) return;
+            $this->setHalted($tps);
+            $this->mavoric->messageStaff(Mavoric::FATAL, 'Pausing detections. A message will be prompted when detections are re-enabled.');
             return;
-        } 
-
-        if ($tps < 17) {
-            if ($tps <= 16) {
-                if ($this->halted) return;
-                $this->setHalted($tps);
-                $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running very slow! TPS: ' . $tps);
-                $this->mavoric->messageStaff(Mavoric::FATAL, 'Pausing detections. A message will be prompted when detections are re-enabled.');
-                return;
-            } else {
-                $this->mavoric->messageStaff(Mavoric::FATAL, 'Server running very slow! TPS: ' . $tps);
-            }
         }
     }
 

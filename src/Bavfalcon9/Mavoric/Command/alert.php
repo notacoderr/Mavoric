@@ -24,7 +24,7 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Core\misc\Classes\CheatPercentile;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 
 class alert extends Command {
     private $pl;

@@ -21,7 +21,7 @@
  * Author: https://github.com/falkirks/Specter
  */
 
-namespace Bavfalcon9\Mavoric\entity;
+namespace Bavfalcon9\Mavoric\Entity;
 use pocketmine\Server;
 use specter\Specter;
 

@@ -48,7 +48,7 @@ class UpdateTask extends Task {
         $this->lastFetch = $result;
     }
 
-    public function onCompleteion() {
+    public function onCompletion() {
         if (!$this->lastFetch) {
             $this->mavoric->messageStaff('update', null, 'Could not check for updates.');
             return;

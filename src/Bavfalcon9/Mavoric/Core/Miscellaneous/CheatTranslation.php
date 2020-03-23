@@ -17,6 +17,7 @@
  */
 namespace Bavfalcon9\Mavoric\Core\Miscellaneous;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 
 class CheatTranslation {
 
@@ -34,7 +35,7 @@ class CheatTranslation {
 
     public static function TranslateCheat(String $cheat): ?float {
         $cheat = self::findExactCheat($cheat);
-        return (!$cheat) ? null : Mavoric::getCheatFromString($cheat);
+        return (!$cheat) ? null : CheatIdentifiers::getCheatFromString($cheat);
     }
 
     public static function findExactCheat(String $cheat): ?String {

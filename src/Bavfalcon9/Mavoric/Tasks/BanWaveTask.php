@@ -31,6 +31,7 @@ class BanWaveTask extends Task {
     private $bans = [];
     /** @var int */
     private $index = 0;
+    
     public function __construct(Mavoric $mavoric, BanWave $wave) {
         $this->mavoric = $mavoric;
         $this->banWave = $wave;
