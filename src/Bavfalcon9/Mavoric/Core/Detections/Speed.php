@@ -49,7 +49,7 @@ class Speed implements Detection {
             $to->y = 0;
 
             $distance = $to->distance($from);
-            $allowed = 0.75;
+            $allowed = 0.8;
 
             // .9 is way to lenient for the allowed movements
 

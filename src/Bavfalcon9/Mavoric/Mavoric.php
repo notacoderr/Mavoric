@@ -309,17 +309,18 @@ class Mavoric {
             '{cheat}' => CheatIdentifiers::getCheatName($cheat)
         ]);
         $appendance = '§f' . $details . ' §r§8[§7V §f' . $count . '§8]';
-        $this->messageHandler->queueMessage($message, $appendance);
-        $this->postWebhook('alerts', json_encode([
-            "username" => "[Alert] {$player->getName()}",
-            "embeds" => [
-                [
-                    "color" => 0xFFFF00,
-                    "title" => "Alert type: " . CheatIdentifiers::getCheatName($cheat),
-                    "description" => "**Player:** {$player->getName()}\n" . $details . "[V {$count}]"
+        if ($this->messageHandler->queueMessage($message, $appendance)) {
+            $this->postWebhook('alerts', json_encode([
+                "username" => "[Alert] {$player->getName()}",
+                "embeds" => [
+                    [
+                        "color" => 0xFFFF00,
+                        "title" => "Alert type: " . CheatIdentifiers::getCheatName($cheat),
+                        "description" => "**Player:** {$player->getName()}\n" . $details . "[V {$count}]"
+                    ]
                 ]
-            ]
-        ]));
+            ]));
+        }
     }
 
     /**
