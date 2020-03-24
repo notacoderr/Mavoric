@@ -81,10 +81,17 @@ class Settings {
     }
 
     /**
+     * Returns whether or not tps check is enabled
+     * @return Bool
+     */
+    public function isTpsCheckEnabled(): Bool {
+        return $this->config->getNested('TPS.enabled') ?? true;
+    }
+
+    /**
      * Returns whether AutoBan is enabled
      * @return Bool
      */
-
     public function isAutoBanEnabled(): Bool {
         return $this->config->getNested('Autoban.enabled') ?? false;
     }
@@ -93,7 +100,6 @@ class Settings {
      * Returns whether BanWave is enabled
      * @return Bool
      */
-
     public function isBanWaveEnabled(): Bool {
         return $this->config->getNested('Autoban.enabled') ?? false;
     }
