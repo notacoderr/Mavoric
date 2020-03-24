@@ -65,3 +65,4 @@ Version | Released | Maintained | Details
 ------- | -------- | ---------- | -------
 v0.0.**X** | June 14th 2019 | ❌ No | Initial release of Mavoric, consists of detection list with poor handling.
 v1.0.**X** | November 3rd 2019 | ✔ Yes | Consists of core improvments for event handling and code improvements.
+v2.0.**X** | ❌ No | ❌ Planned | Consists of core changes which provide cheat modulation.

@@ -161,6 +161,7 @@ class Mavoric {
             new HighJump($this),
             new Jesus($this),
             new Jetpack($this),
+            new KillAura($this),
             new MultiAura($this),
             new NoClip($this),
             //new NoDamage($this),

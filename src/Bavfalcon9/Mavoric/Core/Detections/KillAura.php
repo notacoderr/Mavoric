@@ -20,15 +20,17 @@ namespace Bavfalcon9\Mavoric\Core\Detections;
 
 use Bavfalcon9\Mavoric\Main;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\events\MavoricEvent;
-use Bavfalcon9\Mavoric\events\player\PlayerAttack;
+use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
+use Bavfalcon9\Mavoric\Events\MavoricEvent;
+use Bavfalcon9\Mavoric\Events\player\PlayerAttack;
+use Bavfalcon9\Mavoric\Events\packet\PacketRecieve;
+use Bavfalcon9\Mavoric\Events\player\PlayerMove;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\math\Vector3;
-
-// To complete
+use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
 
 class KillAura implements Detection {
     private $mavoric;
@@ -37,14 +39,49 @@ class KillAura implements Detection {
         $this->mavoric = $mavoric;
     }
 
-    public function onEvent(MavoricEvent $event) {
-        if (!$event instanceof PlayerAttack) return;
+    public function onEvent(MavoricEvent $event): void {
+        /** @var PlayerAttack */
+        if ($event instanceof PlayerAttack) {
+            $victim = $event->getVictim();
+            $damager = $event->getAttacker();
 
-        $victim = $event->getVictim();
-        $damager = $event->getAttacker();
+            $AABB = $victim->getBoundingBox();
+            $eyes = new Vector3();
+        }
 
-        $AABB = $victim->getBoundingBox();
-        $eyes = new Vector3();
+        /** @var PlayerMove */
+        if ($event instanceof PlayerMove) {
+            // Snap check
+            $before = clone $event->getFrom();
+            $after =  clone $event->getTo();
+
+            $diff = MathUtils::getDifferenceFrom360($before->getYaw(), $after->getYaw());
+            
+            $before->y = 0;
+            $after->y = 0;
+
+            if (floor($before->distance($after)) === 0) {
+                // do nothing
+                // get last attack and check entity ids
+                return;
+            }
+
+            if ($diff >= 100) {
+                //$event->sendAlert('KillAura', 'Illegal head movement ' . $event->getPlayer()->getName() . ' moved their head too quickly.');
+            }
+        }
+
+        /** @var PacketRecieve */
+        if ($event instanceof PacketRecieve) {
+            $packet = $event->getPacket();
+            if ($packet instanceof InventoryTransactionPacket) {
+                $type = $packet->transactionType;
+                if ($type === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY) {
+                    # Entity runtime id's
+
+                }
+            } 
+        }
     }
 
     public function isEnabled(): Bool {

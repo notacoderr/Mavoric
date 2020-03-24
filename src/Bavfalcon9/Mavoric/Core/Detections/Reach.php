@@ -30,7 +30,7 @@ use Bavfalcon9\Mavoric\events\{
 };
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
-
+use pocketmine\entity\Human;
 use pocketmine\Player;
 use pocketmine\Server;
 
@@ -55,7 +55,11 @@ class Reach implements Detection {
             $pearlHandler = $this->mavoric->getPearlHandler();
             $amt = 6;
             
-            $throws = [$pearlHandler->getMostRecentThrowFrom($damager->getName()), $pearlHandler->getMostRecentThrowFrom($entity->getName())];
+            $throws = [$pearlHandler->getMostRecentThrowFrom($damager->getName())];
+
+            if ($entity instanceof Player) {
+                $throws[] = $pearlHandler->getMostRecentThrowFrom($entity->getName());
+            }
 
             foreach ($throws as $throw) {
                 if ($throw !== null) {
@@ -71,8 +75,14 @@ class Reach implements Detection {
             if ($event->getDistance() >= $amt) {
                 if (!$damager->isCreative()) {
                     $event->issueViolation(CheatIdentifiers::CODES['Reach']);
-                    $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
-                    return;
+                    
+                    if ($entity instanceof Human) {
+                        $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
+                        return;
+                    } else {
+                        $event->sendAlert('Reach', 'Illegal hit while attacking dead entity ' . $entity->getId() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
+                        return;      
+                    }
                 }
             }
         }
