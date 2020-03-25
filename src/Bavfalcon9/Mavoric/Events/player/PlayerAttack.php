@@ -42,24 +42,44 @@ class PlayerAttack extends MavoricEvent {
         $this->projectile = $projectile;
     }
 
+    /**
+     * Get the player who attacked the entity
+     * @return Player
+     */
     public function getAttacker(): ?Player {
         return $this->attacker;
     }
 
+    /**
+     * Get the entity that was attacked by the player
+     * @return Entity
+     */
     public function getVictim(): ?Entity {
         return $this->victim;
     }
 
+    /**
+     * Gets the distance between both of the entities
+     * @return float
+     */
     public function getDistance(): float {
         $pos1 = $this->attacker->getPosition() ?? new Vector3(0,0,0);
         $pos2 = $this->victim->getPosition() ?? new Vector3(0,0,0);
         return $pos1->distance($pos2);
     }
 
+    /**
+     * Gets whether or not the event is player on player.
+     * @return Bool
+     */
     public function isPlayerToPlayer(): Bool {
         return $this->victim instanceof Player;
     }
 
+    /**
+     * Gets whether or not the entity was attacked by a projectile
+     * @return Bool
+     */
     public function isProjectile(): Bool {
         return $this->projectile;
     }

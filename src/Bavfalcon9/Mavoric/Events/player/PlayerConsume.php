@@ -38,6 +38,10 @@ class PlayerConsume extends MavoricEvent {
         $this->item = $item;
     }
 
+    /**
+     * Get the item that was consumed
+     * @return Item|Null
+     */
     public function getItem(): ?Item {
         return $this->item;
     }

@@ -43,25 +43,45 @@ class PlayerBreakBlock extends MavoricEvent {
         $this->timeTaken = $timeTaken;
     }
 
+    /**
+     * Get the item used to break the block (alias for getusedtool)
+     * @return Item|Null
+     */
     public function getItem(): ?Item {
         return $this->getUsedTool();
     }
 
+    /**
+     * Get the item used to break the block
+     * @return Item|Null
+     */
     public function getUsedTool(): ?Item {
         $inventory = $this->player->getInventory();
         return $inventory->getItemInHand();
     }
 
+    /**
+     * Gets the distance between the broken block and the player
+     * @return float
+     */
     public function getDistance(): float {
         $pos1 = $this->player->getPosition() ?? new Vector3(0,0,0);
         $pos2 = $this->block->asVector3() ?? new Vector3(0,0,0);
         return $pos1->distance($pos2);
     }
 
+    /**
+     * Gets the block broken (if any)
+     * @return Block
+     */
     public function getBlock(): Block {
         return $this->block;
     }
 
+    /**
+     * Gets the time taken to break the block
+     * @return int
+     */
     public function getTime(): int {
         return $this->timeTaken;
     }

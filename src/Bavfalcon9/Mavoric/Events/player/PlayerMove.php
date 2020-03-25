@@ -42,26 +42,49 @@ class PlayerMove extends MavoricEvent {
         $this->to = $to;
     }
 
+    /**
+     * To Do
+     */
     public function isTeleport(): Bool {
         return false;
     }
 
+    /**
+     * Get whether or not the player moved
+     * @return Bool
+     */
     public function isMoved(): Bool {
         return !$this->getDistance() === 0;
     }
 
+    /**
+     * Get the distance the player moved
+     * @return float
+     */
     public function getDistance(): float {
         return $this->from->distance($this->to);
     }
 
+    /**
+     * Get the vector before the player starting moving
+     * @return Vector3|Null
+     */
     public function getFrom(): ?Vector3 {
         return $this->from;
     } 
 
+    /**
+     * Get the vector after the player started moving
+     * @return Vector3|Null
+     */
     public function getTo(): ?Vector3 {
         return $this->to;
     }
 
+    /**
+     * Gets the next air block relative to the player
+     * @return Vector3
+     */
     public function getNextAirBlock(): Vector3 {
         $level = $this->player->getLevel();
         $pos = $this->player->getPosition();
@@ -81,6 +104,10 @@ class PlayerMove extends MavoricEvent {
         return $pos;
     }
 
+    /**
+     * Gets the next solid block relative to the player (Y-AXIS)
+     * @return Block
+     */
     public function getFirstSolidBlock(): Block {
         $level = $this->player->getLevel();
         $pos = $this->player->getPosition();
@@ -96,11 +123,19 @@ class PlayerMove extends MavoricEvent {
         return $level->getBlock($this->player);
     }
 
+    /**
+     * Gets a block near the player
+     * @return Block|Null
+     */
     public function getBlockNearPlayer(int $x = 0, int $y = 0, int $z = 0): ?Block {
         $near = new Vector3($this->player->x + $x, $this->player->y + $y, $this->player->z + $z);
         return $this->player->getLevel()->getBlock($near);
     }
 
+    /**
+     * Get blocks near player (AT, ABOVE)
+     * @return Block[]
+     */
     public function getBlocks(): Array {
         $player = $this->player;
         return [
