@@ -60,7 +60,7 @@ class KillAura implements Detection {
             $before->y = 0;
             $after->y = 0;
 
-            if (floor($before->distance($after)) === 0) {
+            if (floor($before->distance($after)) < 1) {
                 // do nothing
                 // get last attack and check entity ids
                 return;

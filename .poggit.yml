@@ -2,7 +2,9 @@
 build-by-default: true
 branches:
 - stable
+- master
 projects:
   Mavoric:
     path: ""
+    logo: "resources/assets/mavoric_black_and_white.png"
 ...

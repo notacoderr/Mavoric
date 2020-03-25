@@ -23,18 +23,21 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\events\player\PlayerMove;
-
+use Bavfalcon9\Mavoric\Events\packet\PacketRecieve;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
-
+use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\event\player\PlayerMoveEvent;
 
 class Speed implements Detection {
     /** @var Mavoric */
     private $mavoric;
+    /** @var String=>int[] */
+    private $lastTime;
 
     public function __construct(Mavoric $mavoric) {
         $this->mavoric = $mavoric;
+        $this->lastTime = [];
     }
 
     public function onEvent(MavoricEvent $event): void {
@@ -43,6 +46,7 @@ class Speed implements Detection {
             $player = $event->getPlayer();
             $to = clone $event->getTo();
             $from = clone $event->getFrom();
+            $lastTime = (isset($this->lastTime[$player->getName()])) ? $this->lastTime[$player->getName()] : -1;
 
             // Fix falling
             $from->y = 0;
@@ -66,11 +70,24 @@ class Speed implements Detection {
                 }
             }
 
+            // if the last MOVE packet sent was sent more than 2 secs ago
+            if (microtime(true) >= $lastTime + 2) return;
+
             if ($distance >= $allowed) {
                 $distance = round($distance, 2) * 100;
                 $event->sendAlert('Speed', "Illegal movement, Moved too far in a single instance.");
                 $event->issueViolation(CheatIdentifiers::CODES['Speed']);
                 return;
+            }
+        }
+
+        /** @var PacketRecieve */
+        if ($event instanceof PacketRecieve) {
+            $pk = $event->getPacket();
+            $player = $event->getPlayer();
+
+            if ($pk instanceof MovePlayerPacket) {
+                $this->lastTime[$player->getName()] = microtime(true);
             }
         }
     }

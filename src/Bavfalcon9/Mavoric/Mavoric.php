@@ -54,6 +54,7 @@ use Bavfalcon9\Mavoric\Core\Detections\Timer;
 use Bavfalcon9\Mavoric\Core\Bans\BanHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
+use Bavfalcon9\Mavoric\Core\Handlers\AttackHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\LagHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
@@ -89,6 +90,8 @@ class Mavoric {
     private $configVersion = '1.0.0';
     /** @var Main */
     private $plugin;
+    /** @var AttackHandler */
+    private $attackHandler;
     /** @var BanHandler */
     private $banHandler;
     /** @var MessageHandler */
@@ -125,6 +128,8 @@ class Mavoric {
         $this->plugin = $plugin;
         /** Plugin config */
         $this->settings = new Settings(new Config($this->plugin->getDataFolder().'config.yml'));
+        /** Handles attacks */
+        $this->attackHandler = new AttackHandler($plugin);
         /** Handle alert messages (so they dont spam staff) */
         $this->messageHandler = new MessageHandler($plugin, $this);
         /** Handle thrown pearls */

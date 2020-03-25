@@ -46,12 +46,12 @@ class HighJump implements Detection {
             $to = $event->getTo();
             $from = $event->getFrom();
 
-            if ($player->getAllowFlight() === true) {
-                return;
-            }
+            /**
+             * To do: Check effects for jumpboost
+             */
 
             if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::UP)->getId() === 0) {
-                if (MathUtils::getFallDistance($from, $to) < -0.6854) {
+                if (MathUtils::getFallDistance($from, $to) < -0.7854) {
                     $event->sendAlert('HighJump', "Illegal jump, jumped too high.");
                     $event->issueViolation(CheatIdentifiers::CODES['HighJump']);
                     $event->cancel(false);
@@ -62,6 +62,6 @@ class HighJump implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }
