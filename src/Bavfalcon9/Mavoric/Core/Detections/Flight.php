@@ -75,9 +75,9 @@ class Flight implements Detection {
 
                 // unnatural falls, this is most likely a result of jetpack or fast fall
                 if (MathUtils::getFallDistance($from, $to) > 3.4952) {
-                    $event->sendAlert('Flight', "Illegal movement, falling too quickly.");
-                    $event->issueViolation(CheatIdentifiers::CODES['Flight']);
-                    return;
+                    #$event->sendAlert('Flight', "Illegal movement, falling too quickly.");
+                    #$event->issueViolation(CheatIdentifiers::CODES['Flight']);
+                    #return;
                 }
 
                 // air jump

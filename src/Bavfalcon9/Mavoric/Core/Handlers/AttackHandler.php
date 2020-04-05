@@ -62,19 +62,20 @@ class AttackHandler implements Listener {
         foreach (self::$attacks as $damager=>$attacks) {
             foreach ($attacks as $attack) {
                 if ($attack['entity'] === $id) {
-                    if (!$recent) {
+                    if ($recent === null) {
                         $recent = [
                             'time' => $attack['time'],
                             'id' => $damager,
                             'player' => $attack['player']
                         ];
-                    }
-                    if ($recent['time'] < $attacks['time']) {
+                        continue;
+                    } else if ($recent['time'] < $attack['time']) {
                         $recent = [
                             'time' => $attack['time'],
                             'id' => $damager,
                             'player' => $attack['player']
-                        ];      
+                        ];     
+                        continue; 
                     }
                 }
             }
@@ -128,12 +129,16 @@ class AttackHandler implements Listener {
     private function purgeOld(): void {
         foreach (self::$attacks as $damager=>$attacks) {
             foreach ($attacks as $index=>$attack) {
+                if (!isset(self::$attacks[$damager])) {
+                    return;
+                }
                 if ($attack['time'] + 2 <= microtime(true)) {
                     array_splice(self::$attacks[$damager], $index);
                 }
 
                 if (empty(self::$attacks[$damager])) {
                     unset(self::$attacks[$damager]);
+                    break;
                 }
             }
         }

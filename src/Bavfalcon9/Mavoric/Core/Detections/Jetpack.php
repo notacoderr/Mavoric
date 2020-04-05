@@ -48,7 +48,7 @@ class Jetpack implements Detection {
             $to = $event->getTo();
             $from = $event->getFrom();
             $distance = abs($to->distance($from));
-            if ($distance >= 1) {
+            if ($distance >= 2.5) {
                 if ($player->getPing() >= 300) {
                     $distance = round($distance, 2);
                     $event->sendAlert('Jetpack', "Illegal movement, jetpack detected with {$distance} blocks in few moves.");

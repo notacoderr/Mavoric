@@ -32,8 +32,6 @@ use pocketmine\{
     Server
 };
 
-/* API CHANGE (Player) */
-
 class Bhop implements Listener {
     private $mavoric;
     private $plugin;

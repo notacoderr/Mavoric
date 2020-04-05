@@ -53,20 +53,20 @@ class Speed implements Detection {
             $to->y = 0;
 
             $distance = $to->distance($from);
-            $allowed = 0.8;
+            $allowed = 0.82567;
 
             // .9 is way to lenient for the allowed movements
 
-            if ($player->isCreative() || $player->isSpectator()) {
+            if ($player->isCreative() || $player->isSpectator() || $player->getAllowFlight()) {
                 return;
             }
 
             if ($player->getEffect(1) !== null) {
                 // Not tested fully, but definitely allows effects.
                 if ($player->getEffect(1)->getEffectLevel() === 0) {
-                    $allowed = 0.8;
+                    $allowed = 0.82567;
                 } else {
-                    $allowed = $player->getEffect(1)->getEffectLevel() * 0.75;
+                    $allowed = $player->getEffect(1)->getEffectLevel() * 0.45;
                 }
             }
 
@@ -93,6 +93,6 @@ class Speed implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }
