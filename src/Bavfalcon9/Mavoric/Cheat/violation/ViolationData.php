@@ -55,6 +55,14 @@ class ViolationData {
     }
 
     /**
+     * Gets the highest level of violations for all cheat
+     * @return int - Cheat number
+     */
+    public function getHighestLevelByCheat(): int {
+        
+    }
+
+    /**
      * Clears the violation data
      * @return int
      */
