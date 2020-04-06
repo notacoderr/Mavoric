@@ -79,4 +79,41 @@ class Cheats {
     /** @var int */
     public const FASTEAT = 1;
 
+    /**
+     * @return Array[]
+     */
+    public static function generateMap(): Array {
+        return [
+            self::CHESTAURA => 0,
+            self::KILLAURA => 0,
+            self::MULTIAURA => 0,
+            self::AUTOCLICK => 0,
+            self::AUTOARMOR => 0,
+            self::AUTOSOUP => 0,
+            self::AUTOAIM => 0,
+            self::REACH => 0,
+            self::HITBOX => 0,
+            self::VELOCITY => 0,
+            self::SPEED => 0,
+            self::TIMER => 0,
+            self::FLIGHT => 0,
+            self::HIGHJUMP => 0,
+            self::FREECAM => 0,
+            self::GLIDE => 0,
+            self::STEP => 0,
+            self::WATERWALK => 0,
+            self::SCAFFOLD => 0,
+            self::DERP => 0,
+            self::NOSTUCK => 0,
+            self::NOVOID => 0,
+            self::NOSLIP => 0,
+            self::NOSLOWDOWN => 0,
+            self::NOCLIP => 0,
+            self::NOWEB => 0,
+            self::NOFALL => 0,
+            self::NOSWING => 0,
+            self::NUKER => 0,
+            self::FASTEAT => 0
+        ];
+    }
 }

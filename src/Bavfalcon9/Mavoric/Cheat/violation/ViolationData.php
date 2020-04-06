@@ -17,11 +17,15 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat\violation;
 
+use Bavfalcon9\Mavoric\Cheat\Cheats;
+
 class ViolationData {
     /** @var Array[] */
-    private $levels = [
-        
-    ];
+    private $levels;
+
+    public function __construct() {
+        $this->levels = Cheats::generateMap();
+    }
 
     /**
      * Gets the violation level (how probable it is they're)
@@ -46,8 +50,8 @@ class ViolationData {
      * @param int $amount - How much to deincrement
      * @return int
      */
-    public function deincrementLevel(int $amount): int {
-        return $this->level -= $amount;
+    public function deincrementLevel(int $cheat, int $amount): int {
+        return $this->levels[$cheat] -= $amount;
     }
 
     /**
@@ -55,7 +59,7 @@ class ViolationData {
      * @return int
      */
     public function clear(): int {
-        return $this->level = 0;
+        return $this->levels = Cheats::generateMap();
     }
 
 }
