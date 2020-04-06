@@ -19,6 +19,7 @@
 
 namespace Bavfalcon9\Mavoric\Utils;
 
+use pocketmine\entity\Entity;
 use pocketmine\player\Player;
 use pocketmine\Server;
 

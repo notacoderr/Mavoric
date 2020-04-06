@@ -80,6 +80,7 @@ class Cheats {
     public const FASTEAT = 1;
 
     /**
+     * Generates a cheat map.
      * @return Array[]
      */
     public static function generateMap(): Array {

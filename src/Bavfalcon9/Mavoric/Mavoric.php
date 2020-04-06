@@ -15,11 +15,9 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-
-
 namespace Bavfalcon9\Mavoric;
 
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 
 class Mavoric {
