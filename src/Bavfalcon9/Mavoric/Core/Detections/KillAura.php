@@ -25,6 +25,8 @@ use Bavfalcon9\Mavoric\Events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\player\PlayerAttack;
 use Bavfalcon9\Mavoric\Events\packet\PacketRecieve;
 use Bavfalcon9\Mavoric\Events\player\PlayerMove;
+use Bavfalcon9\Mavoric\Core\Handlers\AttackHandler;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
@@ -60,14 +62,26 @@ class KillAura implements Detection {
             $before->y = 0;
             $after->y = 0;
 
-            if (floor($before->distance($after)) < 1) {
-                // do nothing
-                // get last attack and check entity ids
-                return;
-            }
+            /**
+              if (floor($before->distance($after)) < 1) {
+                   // do nothing
+                   // get last attack and check entity ids
+                   return;
+              }
+             */
 
             if ($diff >= 100) {
-                //$event->sendAlert('KillAura', 'Illegal head movement ' . $event->getPlayer()->getName() . ' moved their head too quickly.');
+                $lastAttack = AttackHandler::getLastAttack($event->getPlayer()->getId());
+                if ($lastAttack === null) {
+                    return;
+                } else {
+                    if ($lastAttack['time'] + 0.5 > microtime(true)) {
+                        return;
+                    } else {
+                        $event->issueViolation(CheatIdentifiers::CODES['KillAura']);
+                        $event->sendAlert('KillAura', 'Illegal head movement and attack ' . $event->getPlayer()->getName() . ' moved their head too quickly.');
+                    }
+                }
             }
         }
 
@@ -78,13 +92,13 @@ class KillAura implements Detection {
                 $type = $packet->transactionType;
                 if ($type === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY) {
                     # Entity runtime id's
-
+                    return; // check this later
                 }
             } 
         }
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

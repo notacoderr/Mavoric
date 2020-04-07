@@ -26,6 +26,7 @@ use pocketmine\utils\TextFormat as TF;
 use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 
 class alert extends Command implements PluginIdentifiableCommand {
@@ -71,14 +72,14 @@ class alert extends Command implements PluginIdentifiableCommand {
                 $sender->sendMessage('§c§lError: §r§c' . '§cPlayer does not have any violations detected.');
                 return true;
             } else {
-                $cheat = $this->pl->mavoric->getCheat($flag->getMostViolations());
+                $cheat = CheatIdentifiers::getCheatName($flag->getMostViolations());
                 $flags = $flag->getFlagsByNameAndCount();
                 $currentWave = $this->pl->mavoric->getWaveHandler()->getCurrentWave();
                 $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
                 $this->pl->mavoric->messageStaff(Mavoric::NOTICE, $sender->getName() . ' confirmed violations for: ' . $player->getName() . ' and added them to wave ' . $currentWave->getNumber());
                 $this->pl->mavoric->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->pl->mavoric->getFlag($player)), $sender->getName(), $cheat);
-                $this->pl->mavoric->issueBan($player, $currentWave, $data);
-                $sender->sendMessage('§aIssued ban for user and added to recent wave.');
+                $this->pl->mavoric->issueBan($player, $currentWave, $data, true);
+                $sender->sendMessage('§aIssued ban for user.');
                 return true;
             }
         }

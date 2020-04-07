@@ -18,7 +18,8 @@
 
 namespace Bavfalcon9\Mavoric\Core\Handlers;
 
-use Bavfalcon9\Mavoric\misc\Classes\CheatPercentile;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
+use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatPercentile;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Main;
 use pocketmine\Player;
@@ -71,13 +72,13 @@ class ReportHandler {
                     continue;
                 }
                 $flag = $this->mavoric->getFlag($p);
-                $this->mavoric->banManager->saveBan($player, $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($flag), 'MAVORIC [Report]', Mavoric::getCheatName($flag->getMostViolations()));
-                $this->mavoric->ban($p, Mavoric::getCheatName($flag->getMostViolations()));
+                $this->mavoric->banManager->saveBan($player, $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($flag), 'MAVORIC [Report]', CheatIdentifiers::getCheatName($flag->getMostViolations()));
+                $this->mavoric->issueBan($p, $flag->toBanwaveData(), true);
                 foreach ($report['reporters'] as $reporter) {
                     $reporter = $this->plugin->getServer()->getPlayer($reporter);
                     if ($reporter === null) continue;
                     else {
-                        $reporter->sendMessage('§a[MAVORIC-REPORT] A cheater you reported has been banned, thanks for reporting!');
+                        $reporter->sendMessage('§a[REPORT] A cheater you reported has been banned, thanks for reporting!');
                         continue;
                     }
                 }
@@ -97,7 +98,7 @@ class ReportHandler {
         $player = $this->plugin->getServer()->getPlayer($player);
         if (!$player) return false;
         $flag = $this->mavoric->getFlag($player);
-        if ($flag->getTotalViolations() >= 20) return true;
+        if ($flag->getTotalViolations() >= ($online + 15)) return true;
         else return false;
     }
 

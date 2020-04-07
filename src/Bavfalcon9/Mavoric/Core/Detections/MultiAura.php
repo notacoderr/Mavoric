@@ -45,8 +45,8 @@ class MultiAura implements Detection {
 
         if (isset($this->queue[$damager->getId()])) {
             $multiAura = $this->queue[$damager->getId()];
-            $distance = $damager->getPosition()->distance($victim->getPosition());
-            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
+            $distance = $damager->distance($victim);
+            if ($distance[0] <= 1.5) return;
             if (!in_array($victim->getId(), $multiAura['targets'])) array_push($this->queue[$damager->getId()]['targets'], $victim->getId());    
             if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.20) >= microtime(true)) {
                 $inTime = microtime(true) - ($multiAura['time']);

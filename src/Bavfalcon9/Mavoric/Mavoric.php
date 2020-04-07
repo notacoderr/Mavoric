@@ -397,9 +397,10 @@ class Mavoric {
      * Issue a ban with mavoric.
      * @param Player $player - The player to issue the ban on
      * @param Mixed[] $banData - The ban data for the user.
+     * @param Bool $force - Whether or not to actually ban
      * @return void
      */
-    public function issueBan(Player $player, Array $banData): void {
+    public function issueBan(Player $player, Array $banData, Bool $force = false): void {
         $playerName = $player->getName();
         $flag = $this->getFlag($player);
         $type = $this->settings->getBanType();
@@ -413,6 +414,9 @@ class Mavoric {
             '{cheat}' => CheatIdentifiers::getCheatName($flag->getMostViolations())
         ]);
 
+        if ($force) {
+            $type = 'ban';
+        }
         $flag->clearViolations();
         
         if (strtolower($type) === 'ban') {
