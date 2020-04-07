@@ -55,8 +55,8 @@ class Reach implements Detection {
             $pearlHandler = $this->mavoric->getPearlHandler();
             $amt = 6;
             
-            if ($damager->getPing() >= 300 || ($entity instanceof Human && $entity->getPing() >= 300)) {
-                $highest = ($damager->getPing() > ($entity instanceof Human) ? $entity->getPing() : -1) ? $damager->getPing() : $entity->getPing();
+            if ($damager->getPing() >= 300 || ($entity instanceof Player && $entity->getPing() >= 300)) {
+                $highest = ($damager->getPing() > ($entity instanceof Player) ? $entity->getPing() : -1) ? $damager->getPing() : $entity->getPing();
                 $amt += ($highest * 0.004);
             }
 
@@ -68,7 +68,7 @@ class Reach implements Detection {
 
             foreach ($throws as $throw) {
                 if ($throw !== null) {
-                    if (!$throw->isCompleted()) {
+                    if (!$throw->getLandingLocation()) {
                         return;
                     }
                     if ($throw->getLandingTime() + 4 <= time()) {

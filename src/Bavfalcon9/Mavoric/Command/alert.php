@@ -78,7 +78,7 @@ class alert extends Command implements PluginIdentifiableCommand {
                 $data = $currentWave->addPlayer($player->getName(), '§4[AC] Illegal Client Modifications or Abuse.', $flags, $flag->getTotalViolations());
                 $this->pl->mavoric->messageStaff(Mavoric::NOTICE, $sender->getName() . ' confirmed violations for: ' . $player->getName() . ' and added them to wave ' . $currentWave->getNumber());
                 $this->pl->mavoric->banManager->saveBan($player->getName(), $flag->getFlagsByNameAndCount(), CheatPercentile::getPercentile($this->pl->mavoric->getFlag($player)), $sender->getName(), $cheat);
-                $this->pl->mavoric->issueBan($player, $currentWave, $data, true);
+                $this->pl->mavoric->issueBan($player, $data, true);
                 $sender->sendMessage('§aIssued ban for user.');
                 return true;
             }

@@ -33,7 +33,15 @@ use pocketmine\Player;
 use pocketmine\Server;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
-
+/**
+ * To note:
+ * - Horion: 
+ *   Checks nearest entity starting from where the player stands.
+ *   This behavior is not randomized making it easier to detect.
+ *   Head snaps, movement is not smooth.
+ *   Horion prefers hitting behind the player before hitting infront of the player
+ * - 
+ */
 class KillAura implements Detection {
     private $mavoric;
 
