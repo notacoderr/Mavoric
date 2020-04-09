@@ -45,4 +45,24 @@ class ViolationHandler {
             }
         }
     }
+
+    /**
+     * Clears violation data for a player
+     * @param PlayerResolvable $player - Player
+     * @return Bool
+     */
+    public function clearViolationData(PlayerResolvable $player): Bool {
+        $player = $player->getPlayer();
+
+        if (!$player) {
+            return false;
+        } else {
+            if (!isset($this->data[$player->getName()])) {
+                return false;
+            } else {
+                unset($this->data[$player->getName()]);
+                return true;
+            }
+        }
+    }
 }

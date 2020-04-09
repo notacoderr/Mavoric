@@ -15,18 +15,33 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric;
+namespace Bavfalcon9\Mavoric\Cheat;
 
-use pocketmine\player\Player;
-use pocketmine\Server;
+abstract class Cheat {
+    /**
+     * Whether or not the cheat detection is enabled
+     */
+    abstract public function isEnabled(): Bool;
 
-use Bavfalcon9\Mavoric\Cheat\CheatManager;
+    /**
+     * Get the category of the cheat
+     */
+    abstract public function getType(): String;
 
-class Mavoric {
-    /** @var CheatManager */
-    private $cheatManager;
+    /**
+     * Get the API to use
+     *
+     * abstract public function getAPI(): int;
+     */
 
-    public function __construct(Main $plugin) {
-        $this->cheatManager = new CheatManager($plugin, true);
-    }
+    /**
+     * Gets the cheat id.
+     */
+    abstract public function getId(): int;
+
+    /**
+     * Gets the name of the cheat
+     */
+    abstract public function getName(): String;
+
 }

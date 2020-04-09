@@ -17,7 +17,9 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat;
 
-class Cheats {
+use Bavfalcon9\Mavoric\Cheat\Combat\Reach;
+
+class CheatManager {
     /** @var int */
     public const CHESTAURA = 1;
     /** @var int */
@@ -79,6 +81,12 @@ class Cheats {
     /** @var int */
     public const FASTEAT = 1;
 
+    /** @var Loader */
+    private $plugin;
+
+    /** @var Cheat[] */
+    private $cheats;
+
     /**
      * Generates a cheat map.
      * @return Array[]
@@ -116,5 +124,38 @@ class Cheats {
             self::NUKER => 0,
             self::FASTEAT => 0
         ];
+    }
+
+    /**
+     * @param Loader $loader
+     */
+    public function __construct(Loader $loader, Bool $autoRegister = false) {
+        $this->plugin = $loader;
+
+        if ($autoRegister) {
+            $this->registerAll();
+        }
+    }
+
+    /**
+     * Registers all cheats
+     */
+    public function registerAll(): void {
+        $this->cheats[] = new Reach();
+
+        foreach ($this->cheats as $cheat) {
+            if ($cheat::API === null) {
+                unset($cheat);
+                // failed to lad due to no api
+            } else if (!is_numeric($cheat::API) || $cheat::API < 1) {
+                unset($cheat);
+            } else {
+                if ($cheat::API === 1) {
+                    // old API
+                } else {
+                    // new API
+                }
+            }
+        }
     }
 }

@@ -15,18 +15,43 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric;
+namespace Bavfalcon9\Mavoric\Cheat\Combat;
 
-use pocketmine\player\Player;
-use pocketmine\Server;
-
+use pocketmine\event\Listener;
+use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
-class Mavoric {
-    /** @var CheatManager */
-    private $cheatManager;
-
-    public function __construct(Main $plugin) {
-        $this->cheatManager = new CheatManager($plugin, true);
+class Reach extends Cheat implements Listener {
+    /**
+     * Whether or not the cheat is enabled
+     * @return Bool
+     */
+    public function isEnabled(): Bool {
+        return true;
     }
+
+    /**
+     * Gets the type of cheat
+     * @return String
+     */
+    public function getType(): String {
+        return 'Combat';
+    }
+
+    /**
+     * Get the id of the cheat
+     * @return int
+     */
+    public function getId(): int {
+        return CheatManager::REACH;
+    }
+
+    /**
+     * Gets the cheat name
+     * @return String
+     */
+    public function getName(): String {
+        return 'Reach';
+    }
+    
 }

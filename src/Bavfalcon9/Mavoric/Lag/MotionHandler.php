@@ -15,18 +15,26 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric;
+
+namespace Bavfalcon9\Mavoric\Lag;
 
 use pocketmine\player\Player;
-use pocketmine\Server;
 
-use Bavfalcon9\Mavoric\Cheat\CheatManager;
+/**
+ * Attempts to sequentilize packets, and makes lag more java like
+ */
+class MotionHandler {
+    /** @var Player[] */
+    private $motions;
 
-class Mavoric {
-    /** @var CheatManager */
-    private $cheatManager;
+    public function __construct() {
+        $this->motions = [];
+    }
 
-    public function __construct(Main $plugin) {
-        $this->cheatManager = new CheatManager($plugin, true);
+    /**
+     * @return Void
+     */
+    public function handlePacket(): void {
+        $this->motions[] = 'l0l';
     }
 }

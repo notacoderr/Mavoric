@@ -58,8 +58,15 @@ class ViolationData {
      * Gets the highest level of violations for all cheat
      * @return int - Cheat number
      */
-    public function getHighestLevelByCheat(): int {
-        
+    public function getHighestLevelByCheat(): ?int {
+        $highest = null;
+        foreach ($this->levels as $cheat) {
+            if ($highest === null || $highest < $cheat) {
+                $highest = $cheat;
+            }
+        }
+
+        return $highest;
     }
 
     /**
