@@ -15,7 +15,7 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Cheat\violation;
+namespace Bavfalcon9\Mavoric\Cheat\Violation;
 
 use Bavfalcon9\Mavoric\Cheat\Cheats;
 

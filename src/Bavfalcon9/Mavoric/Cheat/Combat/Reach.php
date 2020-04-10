@@ -53,5 +53,4 @@ class Reach extends Cheat implements Listener {
     public function getName(): String {
         return 'Reach';
     }
-    
 }
