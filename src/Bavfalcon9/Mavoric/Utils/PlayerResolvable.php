@@ -20,7 +20,7 @@
 namespace Bavfalcon9\Mavoric\Utils;
 
 use pocketmine\entity\Entity;
-use pocketmine\player\Player;
+use pocketmine\Player;
 use pocketmine\Server;
 
 class PlayerResolvable {
@@ -39,12 +39,11 @@ class PlayerResolvable {
         $server = Server::getInstance();
 
         if ($this->search instanceof Player) {
-            // we need to make sure they are still online.
-            return $server->getPlayer($this->search->getName());
+            return $server->getPlayerExact($this->search->getName());
         }
 
         if (is_string($this->search)) {
-            return $server->getPlayer($this->search);
+            return $server->getPlayerExact($this->search);
         }
 
         return null;

@@ -17,31 +17,61 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat;
 
-abstract class Cheat {
-    /**
-     * Whether or not the cheat detection is enabled
-     */
-    abstract public function isEnabled(): Bool;
+use Bavfalcon9\Mavoric\Mavoric;
+use pocketmine\event\Listener;
+
+class Cheat implements Listener {
+    /** @var Mavorc */
+    protected $mavoric;
+    /** @var string */
+    private $name;
+    /** @var string */
+    private $type;
+    /** @var int */
+    private $id;
+    /** @var bool */
+    private $enabled;
+    /** @var string[] */
+    private static $registered = [];
+
+    public function __construct(Mavoric $mavoric, string $name, string $type, int $id, bool $enabled = true) {
+        $this->mavoric = $mavoric;
+        $this->name = $name;
+        $this->type = $type;
+        $this->id = $id;
+        $this->enabled = $enabled;
+        self::$registered[] = $name;
+    }
 
     /**
-     * Get the category of the cheat
+     * Gets the cheat name
+     * @return String
      */
-    abstract public function getType(): String;
+    public function getName(): string {
+        return $this->name;
+    }
 
     /**
-     * Get the API to use
-     *
-     * abstract public function getAPI(): int;
+     * Gets the type of cheat
+     * @return String
      */
+    public function getType(): string {
+        return $this->type;
+    }
 
     /**
-     * Gets the cheat id.
+     * Get the id of the cheat
+     * @return int
      */
-    abstract public function getId(): int;
+    public function getId(): int {
+        return $this->id;
+    }
 
     /**
-     * Gets the name of the cheat
+     * Whether or not the cheat is enabled
+     * @return Bool
      */
-    abstract public function getName(): String;
-
+    public function isEnabled(): bool {
+        return $this->enabled;
+    }
 }

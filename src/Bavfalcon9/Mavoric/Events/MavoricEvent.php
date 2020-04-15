@@ -16,25 +16,19 @@
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
 
-namespace Bavfalcon9\Mavoric\Lag;
+namespace Bavfalcon9\Mavoric;
 
-use pocketmine\player\Player;
+use pocketmine\event\Event;
+use Bavfalcon9\Mavoric\Mavoric;
 
-/**
- * Attempts to sequentilize packets, and makes lag more java like
- */
-class MotionHandler {
-    /** @var Player[] */
-    private $motions;
+class MavoricEvent extends Event {
+    /** @var Mavoric */
+    private $mavoric;
+    /** @var ViolationHandler */
+    protected $violationHandler;
 
-    public function __construct() {
-        $this->motions = [];
-    }
-
-    /**
-     * @return Void
-     */
-    public function handlePacket(): void {
-        $this->motions[] = 'l0l';
+    public function __construct(Mavoric $mavoric) {
+        $this->mavoric = $mavoric;
+        $this->violationHandler = $mavoric->getViolationHandler();
     }
 }

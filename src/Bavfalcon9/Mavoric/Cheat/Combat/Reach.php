@@ -17,40 +17,32 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat\Combat;
 
+use pocketmine\Player;
 use pocketmine\event\Listener;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
-class Reach extends Cheat implements Listener {
-    /**
-     * Whether or not the cheat is enabled
-     * @return Bool
-     */
-    public function isEnabled(): Bool {
-        return true;
+class Reach extends Cheat {
+    public function __construct(Mavoric $mavoric) {
+        parent::__construct($mavoric, 'Reach', 'Combat', 1, true);
     }
 
     /**
-     * Gets the type of cheat
-     * @return String
+     * Called when a entity is damaged by an entity
      */
-    public function getType(): String {
-        return 'Combat';
-    }
+    public function onAttack(EntityDamageByEntityEvent $ev): void {
+        $damager = $ev->getDamager();
+        $damaged = $ev->getEntity();
 
-    /**
-     * Get the id of the cheat
-     * @return int
-     */
-    public function getId(): int {
-        return CheatManager::REACH;
-    }
+        if (!($damager instanceof Player)) return;
 
-    /**
-     * Gets the cheat name
-     * @return String
-     */
-    public function getName(): String {
-        return 'Reach';
-    }
+        $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.002) : 6;
+        
+        if ($damager->distance($damaged) > $allowed) {
+            $violations = $this->mavoric->getViolationDataFor($damager);
+            $violations->incrementLevel($this->getName());
+        }
+    }    
 }

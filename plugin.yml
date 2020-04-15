@@ -2,6 +2,6 @@ name: Mavoric
 main: Bavfalcon9\Mavoric\Loader
 version: 2.0.0
 api:
-  - 4.0.0
+  - 3.0.0
 load: POSTWORLD
 author: Bavfalcon9

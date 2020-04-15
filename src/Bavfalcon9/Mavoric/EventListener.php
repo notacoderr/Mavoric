@@ -15,25 +15,17 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-
 namespace Bavfalcon9\Mavoric;
 
-use pocketmine\plugin\PluginBase;
+use pocketmine\event\Listener;
+use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
 
-class Loader extends PluginBase {
-    /** @var Mavoric */
-    private $mavoric;
-    
-
-    public function onEnable(): void {
-        $this->mavoric = new Mavoric($this);
+class EventListener implements Listener {
+    public function __construct(Loader $plugin) {
+        $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
     }
 
-    public function onDisable(): void {
-        $this->mavoric->disable();
-    }
-
-    public function getMavoric(): Mavoric {
-        return $this->mavoric;
+    public function onViolationChange(ViolationChangeEvent $ev): void {
+        $ev->getPlayer()->sendTip('[VL ' . ($ev->getCurrent() + $ev->getAmount()) . ']');
     }
 }

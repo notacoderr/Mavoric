@@ -17,41 +17,70 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat\Violation;
 
-use Bavfalcon9\Mavoric\Cheat\Cheats;
+use pocketmine\Player;
+use Bavfalcon9\Mavoric\Cheat\Cheat;
+use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
 
 class ViolationData {
     /** @var Array[] */
     private $levels;
+    /** @var Player */
+    private $player;
 
-    public function __construct() {
-        $this->levels = Cheats::generateMap();
+    public function __construct(Player $player) {
+        $this->levels = [];
+        $this->player = $player;
     }
 
     /**
-     * Gets the violation level (how probable it is they're)
-     * @return Int
+     * Gets the violation level for a given cheat
+     * @return string
      */
-    public function getLevel(int $cheat): ?int {
-        return $this->levels[$cheat];
+    public function getLevel(string $cheat): ?int {
+        return (!isset($levels[$cheat])) ? 0 : $this->levels[$cheat];
     }
 
     /**
      * Increments the violation level
-     * @param int $cheat - Cheat to increment
+     * @param string $cheat - Cheat to increment
      * @param int $amount - How much to increment
      * @return Int
      */
-    public function incrementLevel(int $cheat, int $amount): ?int {
-        return $this->levels[$cheat] += $amount;
+    public function incrementLevel(string $cheat, int $amount = 1): ?int {
+        if (!isset($this->levels[$cheat])) {
+            echo "cheat created\n";
+            $this->levels[$cheat] = 0;
+        }
+        $ev = new ViolationChangeEvent($this->player, $cheat, $amount, $this->levels[$cheat], true);
+        $ev->call();
+
+        if ($ev->isCancelled() === true) {
+            return null;
+        } else {
+            $this->levels[$cheat] += $ev->getAmount();
+            return $this->levels[$cheat];
+        }
     }
 
     /** 
-     * Removes a violation level
+     * Deincrements a violation level
+     * @param string $cheat - Cheat to deincrement
      * @param int $amount - How much to deincrement
      * @return int
      */
-    public function deincrementLevel(int $cheat, int $amount): int {
-        return $this->levels[$cheat] -= $amount;
+    public function deincrementLevel(string $cheat, int $amount = 1): int {
+        if (!isset($this->levels[$cheat])) {
+            $this->levels[$cheat] = 0;
+        }
+        $ev = new ViolationChangeEvent($this->player, $cheat, $amount, $this->levels[$cheat], false);
+        $ev->call();
+
+        if ($ev->isCancelled() === true) {
+            return null;
+        } else {
+            $this->levels[$cheat] -= $ev->getAmount();
+            return $this->levels[$cheat];
+        }
     }
 
     /**
@@ -70,11 +99,24 @@ class ViolationData {
     }
 
     /**
+     * Gets a percentage of probability of cheating with the current data
+     * @return float
+     */
+    public function getCheatProbability(): float {
+        $amount = count($this->levels);
+        $probable = 0;
+
+        if ($amount > 3) {
+
+        }
+    }
+
+    /**
      * Clears the violation data
      * @return int
      */
     public function clear(): int {
-        return $this->levels = Cheats::generateMap();
+        return $this->levels = [];
     }
 
 }

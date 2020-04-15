@@ -15,25 +15,29 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Cheat;
 
-namespace Bavfalcon9\Mavoric;
+use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Loader;
 
-use pocketmine\plugin\PluginBase;
+abstract class CheatModule {
+    /**
+     * Whether or not the module is enabled
+     */
+    abstract public function isEnabled(): bool;
 
-class Loader extends PluginBase {
-    /** @var Mavoric */
-    private $mavoric;
-    
+    /**
+     * Gets the list of cheats in a module
+     */
+    abstract public function getAll(): array;
 
-    public function onEnable(): void {
-        $this->mavoric = new Mavoric($this);
-    }
+    /**
+     * Called when mavoric is loaded or module is enabled
+     */
+    abstract public function registerAll(Mavoric $mavoric, Loader $plugin, array $disabled): void;
 
-    public function onDisable(): void {
-        $this->mavoric->disable();
-    }
-
-    public function getMavoric(): Mavoric {
-        return $this->mavoric;
-    }
+    /**
+     * Called when mavoric is unloaded or module is disabled
+     */
+    abstract public function unregisterAll(Mavoric $mavoric, Loader $plugin): void;
 }

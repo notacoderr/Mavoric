@@ -17,16 +17,40 @@
  */
 namespace Bavfalcon9\Mavoric;
 
-use pocketmine\player\Player;
+use pocketmine\Player;
 use pocketmine\Server;
-
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
+use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 
 class Mavoric {
     /** @var CheatManager */
     private $cheatManager;
+    /** @var EventListener */
+    private $eventListener;
+    /** @var ViolationData[] */
+    private $violations = [];
 
-    public function __construct(Main $plugin) {
-        $this->cheatManager = new CheatManager($plugin, true);
+    public function __construct(Loader $plugin) {
+        $this->cheatManager = new CheatManager($this, $plugin, true);
+        $this->eventListener = new EventListener($plugin);
+        $this->violations = [];
+    }
+
+    /**
+     * Unloads all modules and commands.
+     * @return void
+     */
+    public function disable(): void {
+        $this->cheatManager->disableModules();
+    }
+
+    public function getViolationDataFor(Player $player): ?ViolationData {
+        if (!$player) return null;
+
+        if (!isset($this->violations[$player->getName()])) {
+            $this->violations[$player->getName()] = new ViolationData($player);
+        }
+
+        return $this->violations[$player->getName()];
     }
 }
