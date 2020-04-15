@@ -5,3 +5,7 @@ api:
   - 3.0.0
 load: POSTWORLD
 author: Bavfalcon9
+permissions: 
+  mavoric.alerts:
+    default: op
+    description: "Allow usage of /alerts and the ability to see alerts."

@@ -21,11 +21,20 @@ use pocketmine\event\Listener;
 use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
 
 class EventListener implements Listener {
-    public function __construct(Loader $plugin) {
+    /** @var Mavoric */
+    private $mavoric;
+    /** @var Loader */
+    private $plugin;
+
+    public function __construct(Mavoric $mavoric, Loader $plugin) {
+        $this->mavoric = $mavoric;
+        $this->plugin = $plugin;
         $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
     }
 
     public function onViolationChange(ViolationChangeEvent $ev): void {
-        $ev->getPlayer()->sendTip('[VL ' . ($ev->getCurrent() + $ev->getAmount()) . ']');
+        $violation = $ev->getViolation();
+        $cNotifier = $this->mavoric->getCheckNotifier();
+        $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7detected for §c{$ev->getCheat()}", "§8[§7{$violation->getCheatProbability()}§f%§8]");
     }
 }

@@ -37,12 +37,17 @@ class Reach extends Cheat {
         $damaged = $ev->getEntity();
 
         if (!($damager instanceof Player)) return;
-
+        if ($damager->isCreative()) return;
+        
         $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.002) : 6;
         
         if ($damager->distance($damaged) > $allowed) {
-            $violations = $this->mavoric->getViolationDataFor($damager);
-            $violations->incrementLevel($this->getName());
+            $this->increment($damager->getName(), 1);
+            
+            if ($this->getViolation($damager->getName()) % 5 === 0) {
+                $violations = $this->mavoric->getViolationDataFor($damager);
+                $violations->incrementLevel($this->getName());
+            }
         }
     }    
 }

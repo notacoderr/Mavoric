@@ -33,7 +33,7 @@ class ViolationData {
     }
 
     /**
-     * Gets the violation level for a given cheat
+     * Gets the violation level for a given cheat or player
      * @return string
      */
     public function getLevel(string $cheat): ?int {
@@ -41,17 +41,16 @@ class ViolationData {
     }
 
     /**
-     * Increments the violation level
-     * @param string $cheat - Cheat to increment
+     * Increments the violation level for the given cheat or player
+     * @param string $cheat - Cheat/Player to increment
      * @param int $amount - How much to increment
      * @return Int
      */
     public function incrementLevel(string $cheat, int $amount = 1): ?int {
         if (!isset($this->levels[$cheat])) {
-            echo "cheat created\n";
             $this->levels[$cheat] = 0;
         }
-        $ev = new ViolationChangeEvent($this->player, $cheat, $amount, $this->levels[$cheat], true);
+        $ev = new ViolationChangeEvent($this->player, $cheat, $amount, $this->levels[$cheat], $this, true);
         $ev->call();
 
         if ($ev->isCancelled() === true) {
@@ -72,7 +71,7 @@ class ViolationData {
         if (!isset($this->levels[$cheat])) {
             $this->levels[$cheat] = 0;
         }
-        $ev = new ViolationChangeEvent($this->player, $cheat, $amount, $this->levels[$cheat], false);
+        $ev = new ViolationChangeEvent($this->player, $cheat, $amount, $this->levels[$cheat], $this, false);
         $ev->call();
 
         if ($ev->isCancelled() === true) {
@@ -104,11 +103,13 @@ class ViolationData {
      */
     public function getCheatProbability(): float {
         $amount = count($this->levels);
-        $probable = 0;
+        $probable = $amount * 2;
 
-        if ($amount > 3) {
-
+        foreach ($this->levels as $cheat) {
+            $probable += ($cheat / 2);
         }
+
+        return ($probable >= 100) ? 100 : $probable;
     }
 
     /**

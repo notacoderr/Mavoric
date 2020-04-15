@@ -18,6 +18,7 @@
 namespace Bavfalcon9\Mavoric\Cheat\Combat;
 
 use Bavfalcon9\Mavoric\Cheat\Combat\Reach;
+use Bavfalcon9\Mavoric\Cheat\Combat\MultiAura;
 use Bavfalcon9\Mavoric\Cheat\CheatModule;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Loader;
@@ -39,7 +40,7 @@ class CombatModule extends CheatModule {
      * Gets the list of cheats in a module
      */
     public function getAll(): array {
-        
+        return $this->cheats;
     }
 
     /**
@@ -47,9 +48,11 @@ class CombatModule extends CheatModule {
      */
     public function registerAll(Mavoric $mavoric, Loader $plugin, array $disabled): void {
         $this->cheats[] = new Reach($mavoric);
+        $this->cheats[] = new MultiAura($mavoric);
 
         foreach ($this->cheats as $cheat) {
             $plugin->getServer()->getPluginManager()->registerEvents($cheat, $plugin);
+            $plugin->getLogger()->debug("Cheat: " . $cheat->getName() . " registered");
         }
     }
 

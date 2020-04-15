@@ -23,7 +23,6 @@ use pocketmine\plugin\PluginBase;
 class Loader extends PluginBase {
     /** @var Mavoric */
     private $mavoric;
-    
 
     public function onEnable(): void {
         $this->mavoric = new Mavoric($this);

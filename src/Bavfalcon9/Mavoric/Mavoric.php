@@ -19,10 +19,15 @@ namespace Bavfalcon9\Mavoric;
 
 use pocketmine\Player;
 use pocketmine\Server;
+use Bavfalcon9\Mavoric\Utils\Notifier;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 
 class Mavoric {
+    /** @var Notifier */
+    private $verboseNotifier;
+    /** @var Notifier */
+    private $checkNotifier;
     /** @var CheatManager */
     private $cheatManager;
     /** @var EventListener */
@@ -32,7 +37,9 @@ class Mavoric {
 
     public function __construct(Loader $plugin) {
         $this->cheatManager = new CheatManager($this, $plugin, true);
-        $this->eventListener = new EventListener($plugin);
+        $this->eventListener = new EventListener($this, $plugin);
+        $this->verboseNotifier = new Notifier($this, $plugin);
+        $this->checkNotifier = new Notifier($this, $plugin);
         $this->violations = [];
     }
 
@@ -44,6 +51,9 @@ class Mavoric {
         $this->cheatManager->disableModules();
     }
 
+    /**
+     * Gets the violation level data for a player
+     */
     public function getViolationDataFor(Player $player): ?ViolationData {
         if (!$player) return null;
 
@@ -52,5 +62,21 @@ class Mavoric {
         }
 
         return $this->violations[$player->getName()];
+    }
+
+    /**
+     * Gets the check notifier
+     * @return Notifier
+     */
+    public function getCheckNotifier(): Notifier {
+        return $this->checkNotifier;
+    }
+
+    /**
+     * Gets the verbose notifier
+     * @return Notifier
+     */
+    public function getVerboseNotifier(): Notifier {
+        return $this->verboseNotifier;
     }
 }

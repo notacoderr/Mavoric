@@ -22,6 +22,7 @@ use pocketmine\event\Event;
 use pocketmine\event\Cancellable;
 use pocketmine\Player;
 use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 
 /**
  * Called when a violation is either removed or added to a player.
@@ -35,14 +36,17 @@ class ViolationChangeEvent extends Event implements Cancellable {
     private $amount;
     /** @var int */
     private $current;
+    /** @var ViolationData */
+    private $vData;
     /** @var bool */
     private $increased;
 
-    public function __construct(Player $player, string $cheat, int $amount, int $current, bool $increased = true) {
+    public function __construct(Player $player, string $cheat, int $amount, int $current, ViolationData $vData, bool $increased = true) {
         $this->player = $player;
         $this->cheat = $cheat;
         $this->amount = $amount;
         $this->current = $current;
+        $this->vData = $vData;
         $this->increased = $increased;
     }
 
@@ -55,10 +59,10 @@ class ViolationChangeEvent extends Event implements Cancellable {
     }
 
     /**
-     * Gets the cheat number changed
+     * Gets the cheat string changed
      * @return string
      */
-    public function getCheat(): int {
+    public function getCheat(): string {
         return $this->cheat;
     }
 
@@ -76,6 +80,14 @@ class ViolationChangeEvent extends Event implements Cancellable {
      */
     public function getCurrent(): int {
         return $this->current;
+    }
+
+    /**
+     * Gets the violation data class
+     * @return ViolationData
+     */
+    public function getViolation(): ViolationData {
+        return $this->vData;
     }
 
     /**
