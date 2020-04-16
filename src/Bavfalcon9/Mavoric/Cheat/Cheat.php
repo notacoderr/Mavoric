@@ -18,6 +18,7 @@
 namespace Bavfalcon9\Mavoric\Cheat;
 
 use pocketmine\Player;
+use pocketmine\Server;
 use pocketmine\event\Event;
 use pocketmine\event\Listener;
 use Bavfalcon9\Mavoric\Mavoric;
@@ -126,5 +127,9 @@ class Cheat implements Listener {
         /** for now this is always true */
         $event->setCancelled(true);
         return;
+    }
+
+    public function getServer(): Server {
+        return Server::getInstance();
     }
 }

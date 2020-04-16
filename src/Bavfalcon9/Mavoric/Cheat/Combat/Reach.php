@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Cheat\Combat;
 use pocketmine\Player;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
@@ -37,6 +38,7 @@ class Reach extends Cheat {
         $damaged = $ev->getEntity();
 
         if (!($damager instanceof Player)) return;
+        if ($ev instanceof EntityDamageByChildEntityEvent) return;
         if ($damager->isCreative()) return;
         
         $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.002) : 6;
@@ -44,7 +46,7 @@ class Reach extends Cheat {
         if ($damager->distance($damaged) > $allowed) {
             $this->increment($damager->getName(), 1);
             
-            if ($this->getViolation($damager->getName()) % 5 === 0) {
+            if ($this->getViolation($damager->getName()) % 3 === 0) {
                 $violations = $this->mavoric->getViolationDataFor($damager);
                 $violations->incrementLevel($this->getName());
             }

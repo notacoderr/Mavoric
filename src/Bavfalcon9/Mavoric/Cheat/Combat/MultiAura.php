@@ -20,7 +20,6 @@ namespace Bavfalcon9\Mavoric\Cheat\Combat;
 use pocketmine\Player;
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\entity\EntityDamageByChildEntityEvent;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
@@ -42,7 +41,6 @@ class MultiAura extends Cheat {
         $damaged = $ev->getEntity();
 
         if (!($damager instanceof Player)) return;
-        if ($ev instanceof EntityDamageByChildEntityEvent) return;
         if (isset($this->attacks[$damager->getName()]) && $this->attacks[$damager->getName()]["time"] + 0.25 <= microtime(true)) {
             unset($this->attacks[$damager->getName()]);
             return;
@@ -62,7 +60,7 @@ class MultiAura extends Cheat {
         if (count($unique) >= 4) {
             $this->increment($damager->getName(), 1);
             
-            if ($this->getViolation($damager->getName()) % 5 === 0) {
+            if ($this->getViolation($damager->getName()) % 2 === 0) {
                 $violations = $this->mavoric->getViolationDataFor($damager);
                 $violations->incrementLevel($this->getName());
             }

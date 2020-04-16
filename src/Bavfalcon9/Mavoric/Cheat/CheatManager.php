@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric\Cheat;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Loader;
 use Bavfalcon9\Mavoric\Cheat\Combat\CombatModule;
+use Bavfalcon9\Mavoric\Cheat\Movement\MovementModule;
 
 class CheatManager {
     /** @var Loader */
@@ -53,6 +54,7 @@ class CheatManager {
             return;
         } else {
             $this->modules[] = new CombatModule();
+            $this->modules[] = new MovementModule();
             $this->registered = true;
             foreach ($this->modules as $module) {
                 $module->registerAll($this->mavoric, $this->plugin, []);

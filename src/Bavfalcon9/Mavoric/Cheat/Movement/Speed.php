@@ -3,7 +3,7 @@
  *      __  __                       _      
  *     |  \/  |                     (_)     
  *     | \  / | __ ___   _____  _ __ _  ___ 
- *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |\/| |/ _` \ \ / / _ \| "__| |/ __|
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
@@ -15,25 +15,25 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Cheat\Movement;
 
-namespace Bavfalcon9\Mavoric;
+use pocketmine\Player;
+use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerMoveEvent;
+use Bavfalcon9\Mavoric\Mavoric;
+use Bavfalcon9\Mavoric\Cheat\Cheat;
+use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
-use pocketmine\plugin\PluginBase;
-use pocketmine\entity\Living;
-
-class Loader extends PluginBase {
-    /** @var Mavoric */
-    private $mavoric;
-
-    public function onEnable(): void {
-        $this->mavoric = new Mavoric($this);
+class Speed extends Cheat {
+    public function __construct(Mavoric $mavoric) {
+        parent::__construct($mavoric, "Speed", "Movement", 3, true);
     }
 
-    public function onDisable(): void {
-        $this->mavoric->disable();
-    }
-
-    public function getMavoric(): Mavoric {
-        return $this->mavoric;
+    /**
+     * Called when a entity moves
+     */
+    public function onMove(PlayerMoveEvent $ev): void {
+        $player = $ev->getPlayer();
+        
     }
 }
