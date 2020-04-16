@@ -32,7 +32,7 @@ class Velocity extends Cheat {
     private $processing;
 
     public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, 'Velocity', 'Movement', 4, true);
+        parent::__construct($mavoric, 'Velocity', 'Movement', 4, false);
         $this->moveTimes = [];
         $this->processing = [];
     }
