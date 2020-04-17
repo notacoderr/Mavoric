@@ -56,10 +56,12 @@ class MultiAura extends Cheat {
         array_push($this->attacks[$damager->getName()]["hits"], $damaged);
         $attack = &$this->attacks[$damager->getName()];
         $unique = array_unique($attack["hits"]);
-
+        
         if (count($unique) >= 4) {
             $this->increment($damager->getName(), 1);
-            
+            $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
+            $notifier = $this->mavoric->getVerboseNotifier();
+            $notifier->notify($msg, "§8(§7Entity-§b{$damaged->getId()}§7, §7UniqueHits-§b".count($unique)."§7, Ping-§b{$damager->getPing()}§8)");
             if ($this->getViolation($damager->getName()) % 2 === 0) {
                 $violations = $this->mavoric->getViolationDataFor($damager);
                 $violations->incrementLevel($this->getName());
@@ -67,7 +69,7 @@ class MultiAura extends Cheat {
             return;
         }
 
-        if (count($attack["hits"]) >= 10) {
+        if (count($attack["hits"]) >= 6) {
             $lastEntity = $damager;
             foreach ($attack["hits"] as $entity) {
                 if ($lastEntity === $damager) {
@@ -75,7 +77,9 @@ class MultiAura extends Cheat {
                 }
                 if ($entity->distance($lastEntity) >= 2) {
                     $this->increment($damager->getName(), 1);
-                    
+                    $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
+                    $notifier = $this->mavoric->getVerboseNotifier();
+                    $notifier->notify($msg, "§8(§7Entity-§b{$damaged->getId()}§7, §7Hits-§b".count($attack['hits'])."§7, Ping-§b{$damager->getPing()}§8)");
                     if ($this->getViolation($damager->getName()) % 5 === 0) {
                         $violations = $this->mavoric->getViolationDataFor($damager);
                         $violations->incrementLevel($this->getName());

@@ -42,7 +42,11 @@ class Velocity extends Cheat {
      */
     public function onVelocity(PlayerVelocityEvent $ev): void {
         $player = $ev->getPlayer();
-        $this->moveTimes[$player->getName()] = $player->asVector3()->y + $ev->getDirection();
+        $this->moveTimes[$player->getName()] = [
+            "last" => $ev->getDirection(),
+            "tick" => $this->getServer()->getTick(),
+            "moves" => 0
+        ];
     }
 
     public function onPlayerMove(PlayerMoveEvent $ev): void {
@@ -51,15 +55,33 @@ class Velocity extends Cheat {
         if (!isset($this->moveTimes[$player->getName()])) return;
         if ($ev->isCancelled()) return;
 
+        $this->moveTimes[$player->getName()]["moves"]++;
         $session = $this->moveTimes[$player->getName()];
-
-        if ($ev->getTo()->getY() < $session) {
-            $this->increment($player->getName(), 1);
-            $violations = $this->mavoric->getViolationDataFor($player);
-            $violations->incrementLevel($this->getName(), 10);
+        $maxTick = ($player->getPing() / 50) + 5;
+        $elapsed = $this->getServer()->getTick() - $session['tick'];
+        $to = clone $ev->getTo();
+        $to->x = 0;
+        $to->z = 0;
+        $from = clone $ev->getFrom();
+        $from->x = 0;
+        $from->z = 0;
+        $diff = $to->distance($from);
+        
+        if ($player->getInAirTicks() >= $maxTick) {
+            unset($this->moveTimes[$player->getName()]);
+            return;
         }
 
+        if ($diff < ($session['last'] * 0.99)) {
+            if ($maxTick >= $elapsed || $session["moves"] >= 5) {
+                $this->increment($player->getName(), 1);
+                #$violations = $this->mavoric->getViolationDataFor($player);
+                #$violations->incrementLevel($this->getName(), 10);
+                $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
+                $notifier = $this->mavoric->getVerboseNotifier();
+                $notifier->notify($msg, "§8(§7Expected-§b".($session['last'] * 0.99)."§7, §7Actual-§b".$diff."§7, Ticks-§b{$elapsed}§7, MaxTicks-§b{$maxTick}§7, Ping-§b{$player->getPing()}§8)");
+            }
+        }
         unset($this->moveTimes[$player->getName()]);
-        unset($this->processing[$player->getName()]);
     }
 }

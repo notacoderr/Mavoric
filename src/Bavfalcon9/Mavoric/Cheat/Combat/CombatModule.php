@@ -17,6 +17,7 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat\Combat;
 
+use Bavfalcon9\Mavoric\Cheat\Combat\Autoclicker;
 use Bavfalcon9\Mavoric\Cheat\Combat\Reach;
 use Bavfalcon9\Mavoric\Cheat\Combat\MultiAura;
 use Bavfalcon9\Mavoric\Cheat\CheatModule;
@@ -47,6 +48,7 @@ class CombatModule extends CheatModule {
      * Called when mavoric is loaded
      */
     public function registerAll(Mavoric $mavoric, Loader $plugin, array $disabled): void {
+        $this->cheats[] = new Autoclicker($mavoric);
         $this->cheats[] = new Reach($mavoric);
         $this->cheats[] = new MultiAura($mavoric);
 

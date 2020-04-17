@@ -20,6 +20,7 @@ namespace Bavfalcon9\Mavoric;
 
 use pocketmine\plugin\PluginBase;
 use pocketmine\entity\Living;
+use Bavfalcon9\Mavoric\Command\Alerts;
 
 class Loader extends PluginBase {
     /** @var Mavoric */
@@ -27,6 +28,11 @@ class Loader extends PluginBase {
 
     public function onEnable(): void {
         $this->mavoric = new Mavoric($this);
+        
+        $commandMap = $this->getServer()->getCommandMap();
+        $commandMap->registerAll('Mavoric', [
+            new Alerts($this, $this->mavoric)
+        ]);
     }
 
     public function onDisable(): void {

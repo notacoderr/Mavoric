@@ -22,6 +22,7 @@ use pocketmine\event\Listener;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\player\PlayerJoinEvent;
 use Bavfalcon9\Mavoric\Events\Player\PlayerVelocityEvent;
 use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
 
@@ -38,6 +39,11 @@ class EventListener implements Listener {
         $this->plugin = $plugin;
         $this->kbSession = [];
         $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
+    }
+
+    public function onJoin(PlayerJoinEvent $ev): void {
+        $player = $ev->getPlayer();
+        $this->mavoric->getVerboseNotifier()->addIgnored($player->getName());
     }
 
     /**
