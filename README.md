@@ -16,6 +16,9 @@
   </p>
 </div>
 
+# NOTICE
+This version of mavoric is no longer being maintained. This was my first attempt at an anticheat, which was actually started when I first started developing. I understand this version is poor in design which is why im working on [v2.0.0 which you can find here.](https://github.com/Olybear9/Mavoric/tree/v2.0.0). Sorry for the inconvienence in the meantime :(
+
 ## Description
 Mavoric is a plugin designed to enforce the generic functions of MC:BE. Mavoric is designed to execute and enforce 
 general cheat detection powerfully without a hassle. <br />
