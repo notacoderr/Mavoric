@@ -30,10 +30,12 @@ use Bavfalcon9\Mavoric\Cheat\CheatManager;
 class Autoclicker extends Cheat {
     /** @var int[] */
     private $cps;
+    private $constant;
 
     public function __construct(Mavoric $mavoric) {
         parent::__construct($mavoric, "Autoclicker", "Combat", 3, true);
         $this->cps = [];
+        $this->constant = [];
     }
 
     /**
@@ -85,5 +87,37 @@ class Autoclicker extends Cheat {
                 $violations->incrementLevel($this->getName());
             }
         }
+        
+        if($cps >= 15){
+            if($player->getPing() >= 250) return;
+            if(!isset($this->constant[$player->getName()])) $this->constant[$player->getName()] = [];
+            array_push($this->constant[$player->getName()], $cps);
+            if(count($this->constant[$player->getName()]) === 10){
+                if($this->testConstant($this->constant[$player->getName()], $cps) === true){
+                    $this->increment($player->getName(), 1);
+                    $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
+                    $notifier = $this->mavoric->getVerboseNotifier();
+                    $notifier->notify($msg, "§8(§7CPS-§b{$cps}§7, Ping-§b{$player->getPing()}§8)");
+                    if ($this->getViolation($player->getName()) % 2 === 0) {
+                        $violations = $this->mavoric->getViolationDataFor($player);
+                        $violations->incrementLevel($this->getName());
+                    }
+                }
+            }
+        }
     }
+    
+    private function testConstant(array $clicks, int $cps){
+        $added = (int) array_sum($clicks);
+        $values = (int) count($clicks);
+        $average = round($added / $values, 0, PHP_ROUND_HALF_UP);
+        /* you can add some stuff like i did here if you want to
+        if($this->getPlugin()->debug === true) print_r($average . "\n"); */
+        if($average === $cps){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
 }
