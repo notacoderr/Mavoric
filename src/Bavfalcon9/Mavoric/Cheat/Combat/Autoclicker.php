@@ -88,7 +88,7 @@ class Autoclicker extends Cheat {
             }
         }
         
-        if($cps >= 15){
+        if($cps >= 12){
             if($player->getPing() >= 250) return;
             if(!isset($this->constant[$player->getName()])) $this->constant[$player->getName()] = [];
             array_push($this->constant[$player->getName()], $cps);
@@ -108,12 +108,7 @@ class Autoclicker extends Cheat {
     }
     
     private function testConstant(array $clicks, int $cps){
-        $added = (int) array_sum($clicks);
-        $values = (int) count($clicks);
-        $average = round($added / $values, 0, PHP_ROUND_HALF_UP);
-        /* you can add some stuff like i did here if you want to
-        if($this->getPlugin()->debug === true) print_r($average . "\n"); */
-        if($average === $cps){
+        if(count(array_unique($clicks)) === 1 && end($clicks) === $cps){
             return true;
         } else {
             return false;
