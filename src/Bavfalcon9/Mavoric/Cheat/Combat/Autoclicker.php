@@ -92,7 +92,7 @@ class Autoclicker extends Cheat {
             if($player->getPing() >= 250) return;
             if(!isset($this->constant[$player->getName()])) $this->constant[$player->getName()] = [];
             array_push($this->constant[$player->getName()], $cps);
-            if(count($this->constant[$player->getName()]) === 25){
+            if(count($this->constant[$player->getName()]) === 15){
                 if($this->testConstant($this->constant[$player->getName()], $cps) === true){
                     $this->increment($player->getName(), 1);
                     $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
