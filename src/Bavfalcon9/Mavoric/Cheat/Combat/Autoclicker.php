@@ -87,32 +87,7 @@ class Autoclicker extends Cheat {
                 $violations->incrementLevel($this->getName());
             }
         }
-        
-        if($cps >= 4){
-            if($player->getPing() >= 250) return;
-            if(!isset($this->constant[$player->getName()])) $this->constant[$player->getName()] = [];
-            array_push($this->constant[$player->getName()], $cps);
-            if(count($this->constant[$player->getName()]) === 15){
-                if($this->testConstant($this->constant[$player->getName()], $cps) === true){
-                    $this->increment($player->getName(), 1);
-                    $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
-                    $notifier = $this->mavoric->getVerboseNotifier();
-                    $notifier->notify($msg, "§8(§7CPS-§b{$cps}§7, Ping-§b{$player->getPing()}§8)");
-                    if ($this->getViolation($player->getName()) % 2 === 0) {
-                        $violations = $this->mavoric->getViolationDataFor($player);
-                        $violations->incrementLevel($this->getName());
-                    }
-                }
-            }
-        }
-    }
-    
-    private function testConstant(array $clicks, int $cps){
-        if(count(array_unique($clicks)) === 1 && end($clicks) === $cps){
-            return true;
-        } else {
-            return false;
-        }
+       
     }
     
 }
