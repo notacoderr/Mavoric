@@ -4,27 +4,29 @@ Webhooks:
   # All of the following accept a DISCORDWEBHOOKURL or false.
   alerts: false
   system: false
-
+Server:
+  # Whether or not to forcefully update player ping, please note the methods for this 
+  enable-force-ping: yes
 Messages:
   # Message shown to all players on a ban/kick
   onban: "§4[MAVORIC] A player has been removed from your game for abusing or hacking. Thanks for reporting them!"
   # Message shown to player who epearl glitches
   onpearl: "§cEpearl glitch detected. Reverted movement."
   
-  TPS:
-    # Whether or not to enable TPS check messages
-    enabled: yes
-    # When should staff be messaged about low tps? put something lower than 0 for never
-    warn-below: 17
-    # When should violation (Cheat detections) be temporarily disabled
-    stop-below: 16
-  Alerts:
-    # Whether or not to disable alerts
-    enabled: yes
-    # Format of alert messages
-    # {player} - Player alert is for
-    # {cheat} - Cheat they violated.
-    format: "§c[MAVORIC]: §r§4{player} §7failed test for§c {cheat}§8: "
+TPS:
+  # Whether or not to enable TPS check messages
+  enabled: yes
+  # When should staff be messaged about low tps? put something lower than 0 for never
+  warn-below: 17
+  # When should violation (Cheat detections) be temporarily disabled
+  stop-below: 16
+Alerts:
+  # Whether or not to disable alerts
+  enabled: yes
+  # Format of alert messages
+  # {player} - Player alert is for
+  # {cheat} - Cheat they violated.
+  format: "§c[MAVORIC]: §r§4{player} §7failed test for§c {cheat}§8: "
 
 Autoban:
   # Should autobans be enabled? (IF THIS IS ENABLED, BANWAVES ARE OVERRIDDEN REGARDLESS IF BANWAVES ARE ENABLED!)

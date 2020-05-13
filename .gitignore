@@ -3,3 +3,7 @@ Tests/*
 Compiled/*
 Tools/*
 .idea/*
+
+# other
+resources/assets/uknd.txt
+SpeedTest.php

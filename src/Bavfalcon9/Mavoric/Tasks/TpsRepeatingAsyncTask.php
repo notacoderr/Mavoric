@@ -15,29 +15,20 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Cheat;
+namespace Bavfalcon9\Mavoric\Tasks;
 
-use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Loader;
+use Bavfalcon9\Mavoric\Utils\TpsCheck;
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
-abstract class CheatModule {
-    /**
-     * Whether or not the module is enabled
-     */
-    abstract public function isEnabled(): bool;
+class TpsRepeatingAsyncTask extends Task {
+    private $tps;
+    public function __construct(TpsCheck $tps) {
+        $this->tps = $tps;
+    }
 
-    /**
-     * Gets the list of cheats in a module
-     */
-    abstract public function getAll(): array;
-
-    /**
-     * Called when mavoric is loaded or module is enabled
-     */
-    abstract public function registerAll(Mavoric $mavoric, Loader $plugin, array $disabled): void;
-
-    /**
-     * Called when mavoric is unloaded or module is disabled
-     */
-    abstract public function unregisterAll(Mavoric $mavoric, Loader $plugin): void;
+    public function onRun(int $tick) {
+        $this->tps->runAsyncTask();
+    }
 }

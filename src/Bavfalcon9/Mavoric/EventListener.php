@@ -23,8 +23,13 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use Bavfalcon9\Mavoric\Events\Player\PlayerVelocityEvent;
+use Bavfalcon9\Mavoric\Events\Player\PlayerClickEvent;
 use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
+use Bavfalcon9\Mavoric\Tasks\KickTask;
 
 class EventListener implements Listener {
     /** @var Mavoric */
@@ -47,60 +52,65 @@ class EventListener implements Listener {
     }
 
     /**
-     * Notifies staff about violation level
+     * Notifies staff about violation level (Non-verbose)
      */
     public function onViolationChange(ViolationChangeEvent $ev): void {
+        if ($this->mavoric->tpsCheck->isHalted()) {
+            return;
+        }
         $violation = $ev->getViolation();
-        $cNotifier = $this->mavoric->getCheckNotifier();
-        $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7detected for §c{$ev->getCheat()}", "§8[§7{$violation->getCheatProbability()}§f% | §7VL §f{$ev->getCurrent()}§8]");
-    }
 
-    /**
-     * Calls the knockback event, we can check packets to see if the player is being respective to them
-     */
-    public function onAttackEntity(EntityDamageByEntityEvent $ev): void {
-        $damager = $ev->getDamager();
-        $victim = $ev->getEntity();
-
-        if (!($victim instanceof Player)) return;
-        if ($ev->isCancelled()) return;
-
-        $knockback = $ev->getKnockBack();
-        $this->kbSession[$victim->getId()] = [microtime(true), $knockback];
-    }
-
-    /**
-     * The server sends this to the client we can check this for kb
-     */
-    public function onMotion(EntityMotionEvent $ev): void {
-        $entity = $ev->getEntity();
-        // we're not gonna bother checking non-player entities, saves ticktime
-        // clean this up and move to 
-        if (!($entity instanceof Player)) return;
-        if (!isset($this->kbSession[$entity->getId()])) return;
-
-        $session = $this->kbSession[$entity->getId()];
-
-        if ($session[0] + 1 < microtime(true)) {
-            unset($this->kbSession[$entity->getId()]);
+        if ($violation->getLastAdditionFromNow() >= 2 && $violation->getViolationCountSum() <= 3) {
+            $this->mavoric->getViolationDataFor($ev->getPlayer()->getName())->clear();
             return;
         }
 
-        $motion = $ev->getVector();
-        $previousVector = $entity;
-        $base = $motion->y;
+        $cNotifier = $this->mavoric->getCheckNotifier();
+        $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7detected for §c{$ev->getCheat()}", "§8[§7{$violation->getCheatProbability()}§f% | §7VL §f{$ev->getCurrent()}§8]");
 
-        $event = new PlayerVelocityEvent($entity, $motion, 0, 0, $base);
-        $event->call();
-
-        if ($event->isCancelled()) {
-            $ev->setCancelled(true);
+        if ($violation->getIncrementsInPastSecond() >= 20) {
+            $this->kickPlayer($ev->getPlayer(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been banned for: " . $violation->getMostDetectedCheat(), "");
+            $banList = $this->plugin->getServer()->getNameBans();
+            $banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new \DateTime("+7 Day"), 'Mavoric');
+            return; 
         }
-        unset($this->kbSession[$entity->getId()]);
-        return;
+        if ($violation->getViolationCountSum() % 50 === 0 && $violation->getViolationCountSum() >= 50) {
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7is most likely cheating.", "");
+            return;
+        } 
+        if ($violation->getViolationCountSum() % 80 === 0 && $violation->getViolationCountSum() >= 80) {
+            $this->kickPlayer($ev->getPlayer(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been banned for cheating.", "");
+            $banList = $this->plugin->getServer()->getNameBans();
+            $banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new \DateTime("+7 Day"), 'Mavoric');
+            return;
+        }
     }
 
-    public function onPlayerMove(PlayerMoveEvent $ev): void {
-        $player = $ev->getPlayer();
+    /**
+     * @param DataPacketReceiveEvent $ev
+     */
+    public function onClickCheck(DataPacketReceiveEvent $ev): void {
+        if ($ev->getPacket()::NETWORK_ID === InventoryTransactionPacket::NETWORK_ID) {
+            if ($ev->getPacket()->transactionType === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY) {
+                $event = new PlayerClickEvent($ev->getPlayer());
+                $event->call();
+            }
+        } else if ($ev->getPacket()::NETWORK_ID === LevelSoundEventPacket::NETWORK_ID) {
+            if ($ev->getPacket()->sound === LevelSoundEventPacket::SOUND_ATTACK_NODAMAGE) {
+                $event = new PlayerClickEvent($ev->getPlayer());
+                $event->call();
+            }
+        } 
+    }
+
+    /**
+     * Kick a player from the server
+     * @param Player $p - Player to kick
+     * @param string $reason - Reason to kick
+     */
+    public function kickPlayer(Player $p, string $reason = 'Cheating'): void {
+        $this->plugin->getScheduler()->scheduleDelayedTask(new KickTask($p, $reason), 20);
     }
 }
