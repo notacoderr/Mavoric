@@ -18,6 +18,7 @@
 namespace Bavfalcon9\Mavoric\Cheat\Violation;
 
 use pocketmine\Player;
+use pocketmine\Server;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
 
@@ -26,10 +27,16 @@ class ViolationData {
     private $levels;
     /** @var Player */
     private $player;
+    /** @var string */
+    private $playerName;
+    /** @var int */
+    private $lastAddition;
 
     public function __construct(Player $player) {
         $this->levels = [];
         $this->player = $player;
+        $this->playerName = $player->getName();
+        $this->lastAddition = -1;
     }
 
     /**
@@ -47,6 +54,7 @@ class ViolationData {
      * @return Int
      */
     public function incrementLevel(string $cheat, int $amount = 1): ?int {
+        $this->lastAddition = \microtime(true);
         if (!isset($this->levels[$cheat])) {
             $this->levels[$cheat] = 0;
         }
@@ -68,6 +76,7 @@ class ViolationData {
      * @return int
      */
     public function deincrementLevel(string $cheat, int $amount = 1): int {
+        $this->lastAddition = \microtime(true);
         if (!isset($this->levels[$cheat])) {
             $this->levels[$cheat] = 0;
         }
@@ -83,7 +92,15 @@ class ViolationData {
     }
 
     /**
-     * Gets the highest level of violations for all cheat
+     * Gets the sum of all cheat violations
+     * @return int|null
+     */
+    public function getViolationCountSum(): int {
+        return array_sum(array_values($this->levels));
+    }
+
+    /**
+     * Gets the highest level of violations for all cheats
      * @return int - Cheat number
      */
     public function getHighestLevelByCheat(): ?int {
@@ -113,11 +130,41 @@ class ViolationData {
     }
 
     /**
+     * Gets the last time a violation tick was added to the given data
+     * @return int
+     */
+    public function getLastAdditionTime(): int {
+        return $this->lastAddition;
+    }
+
+    /**
+     * Gets the difference from when last time a violation tick was added to now.
+     * @return int
+     */
+    public function getLastAdditionFromNow(): int {
+        return (microtime(true) - $this->lastAddition);
+    }
+
+    /**
      * Clears the violation data
      * @return int
      */
     public function clear(): int {
         return $this->levels = [];
+    }
+
+    /**
+     * Forces the player variable to be updated.
+     */
+    public function forceUpdateStoredPlayer(): ViolationData {
+        $server = Server::getInstance();
+        $player = $server->getPlayerExact($this->playerName);
+
+        if ($player !== null) {
+            $this->player = $player;
+        }
+
+        return $this;
     }
 
 }

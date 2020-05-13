@@ -47,12 +47,34 @@ class EventListener implements Listener {
     }
 
     /**
-     * Notifies staff about violation level
+     * Notifies staff about violation level (Non-verbose)
      */
     public function onViolationChange(ViolationChangeEvent $ev): void {
+        if ($this->mavoric->tpsCheck->isHalted()) {
+            //$cNotifier = $this->mavoric->getCheckNotifier();
+            //$cNotifier->notify('§4[MAVORIC]§4: §cVIOLATIONS HALTED DUE TO LOW TPS: ', '');
+            return;
+        }
         $violation = $ev->getViolation();
+
+        if ($violation->getLastAdditionFromNow() >= 2 && $violation->getViolationCountSum() <= 3) {
+            $this->mavoric->getViolationDataFor($ev->getPlayer())->clear();
+            return;
+        }
+
         $cNotifier = $this->mavoric->getCheckNotifier();
         $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7detected for §c{$ev->getCheat()}", "§8[§7{$violation->getCheatProbability()}§f% | §7VL §f{$ev->getCurrent()}§8]");
+
+        if ($violation->getViolationCountSum() % 50 === 0 && $violation->getViolationCountSum() >= 50) {
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7is most likely cheating.", "");
+        } 
+        if ($violation->getViolationCountSum() % 80 === 0 && $violation->getViolationCountSum() >= 80) {
+            $ev->getPlayer()->close('', '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been autobanned for cheating.", "");
+            $banList = $this->plugin->getServer()->getNameBans();
+            #$banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new DateTime("+7 Day"), 'Mavoric');
+            return;
+        }
     }
 
     /**
@@ -75,7 +97,7 @@ class EventListener implements Listener {
     public function onMotion(EntityMotionEvent $ev): void {
         $entity = $ev->getEntity();
         // we're not gonna bother checking non-player entities, saves ticktime
-        // clean this up and move to 
+        // clean this up and move to velocity check itself
         if (!($entity instanceof Player)) return;
         if (!isset($this->kbSession[$entity->getId()])) return;
 
@@ -88,9 +110,10 @@ class EventListener implements Listener {
 
         $motion = $ev->getVector();
         $previousVector = $entity;
+        $vertical = abs($motion->y - $previousVector->y);
         $base = $motion->y;
 
-        $event = new PlayerVelocityEvent($entity, $motion, 0, 0, $base);
+        $event = new PlayerVelocityEvent($entity, $motion, 0, $vertical, $base);
         $event->call();
 
         if ($event->isCancelled()) {

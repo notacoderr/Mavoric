@@ -26,6 +26,9 @@ class Loader extends PluginBase {
     /** @var Mavoric */
     private $mavoric;
 
+    /**
+     * 
+     */
     public function onEnable(): void {
         $this->mavoric = new Mavoric($this);
         
@@ -35,11 +38,24 @@ class Loader extends PluginBase {
         ]);
     }
 
+    /**
+     * 
+     */
     public function onDisable(): void {
         $this->mavoric->disable();
     }
 
+    /**
+     * 
+     */
     public function getMavoric(): Mavoric {
         return $this->mavoric;
+    }
+
+    /**
+     * 
+     */
+    public function getFilePath(): string {
+        return $this->getFile();
     }
 }

@@ -41,12 +41,12 @@ class Reach extends Cheat {
         if ($ev instanceof EntityDamageByChildEntityEvent) return;
         if ($damager->isCreative()) return;
         
-        $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.003) : 6;
+        $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.003) : 6.2;
         
         if ($damager->distance($damaged) > $allowed) {
             $this->increment($damager->getName(), 1);
-            
-            if ($this->getViolation($damager->getName()) % 3 === 0) {
+            $this->suppress($ev);
+            if ($this->getViolation($damager->getName()) % 4 === 0) {
                 $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
                 $violations = $this->mavoric->getViolationDataFor($damager);
                 $violations->incrementLevel($this->getName());

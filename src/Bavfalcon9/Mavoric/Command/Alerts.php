@@ -36,6 +36,7 @@ class Alerts extends Command implements PluginIdentifiableCommand {
         $this->mavoric = $mavoric;
         $this->description = "Toggle alerts.";
         $this->usageMessage = "/alerts <on/off/detailed>";
+        $this->setAliases(['alert']);
         $this->setPermission("mavoric.alerts");
     }
 

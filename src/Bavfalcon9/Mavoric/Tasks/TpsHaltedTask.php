@@ -15,19 +15,22 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Cheat\Movement;
+namespace Bavfalcon9\Mavoric\Tasks;
 
-use pocketmine\Player;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
+use Bavfalcon9\Mavoric\Utils\TpsCheck;
 use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Cheat\Cheat;
-use Bavfalcon9\Mavoric\Cheat\CheatManager;
-use Bavfalcon9\Mavoric\Events\Player\PlayerVelocityEvent;
+use Bavfalcon9\Mavoric\Main;
+use pocketmine\scheduler\Task;
+use pocketmine\scheduler\AsyncTask;
+use pocketmine\Server;
 
-class Velocity extends Cheat {
-    public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, 'Velocity', 'Movement', 4, false);
+class TpsHaltedTask extends Task {
+    private $tps;
+    public function __construct(TpsCheck $tps) {
+        $this->tps = $tps;
+    }
+
+    public function onRun(int $tick) {
+        $this->tps->cancelHalt();
     }
 }

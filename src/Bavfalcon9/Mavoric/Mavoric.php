@@ -20,10 +20,13 @@ namespace Bavfalcon9\Mavoric;
 use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Utils\Notifier;
+use Bavfalcon9\Mavoric\Utils\TpsCheck;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 
 class Mavoric {
+    /** @var TpsCheck */
+    public $tpsCheck;
     /** @var Notifier */
     private $verboseNotifier;
     /** @var Notifier */
@@ -33,14 +36,22 @@ class Mavoric {
     /** @var EventListener */
     private $eventListener;
     /** @var ViolationData[] */
-    private $violations = [];
+    private $violations;
 
     public function __construct(Loader $plugin) {
-        $this->cheatManager = new CheatManager($this, $plugin, true);
-        $this->eventListener = new EventListener($this, $plugin);
+        $this->tpsCheck = new TpsCheck($plugin, $this);
         $this->verboseNotifier = new Notifier($this, $plugin);
         $this->checkNotifier = new Notifier($this, $plugin);
+        $this->cheatManager = new CheatManager($this, $plugin, true);
+        $this->eventListener = new EventListener($this, $plugin);
         $this->violations = [];
+    }
+
+    /**
+     * Temporary function to post tick to tpscheck
+     */
+    public function postTick(int $tick) {
+        $this->tpsCheck->postTick($tick);
     }
 
     /**
@@ -61,7 +72,7 @@ class Mavoric {
             $this->violations[$player->getName()] = new ViolationData($player);
         }
 
-        return $this->violations[$player->getName()];
+        return $this->violations[$player->getName()]->forceUpdateStoredPlayer();
     }
 
     /**

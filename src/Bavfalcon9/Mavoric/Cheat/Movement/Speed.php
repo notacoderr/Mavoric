@@ -19,21 +19,16 @@ namespace Bavfalcon9\Mavoric\Cheat\Movement;
 
 use pocketmine\Player;
 use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerMoveEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
 class Speed extends Cheat {
     public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, "Speed", "Movement", 3, true);
+        parent::__construct($mavoric, "Speed", "Movement", 3, false);
     }
 
-    /**
-     * Called when a entity moves
-     */
-    public function onMove(PlayerMoveEvent $ev): void {
-        $player = $ev->getPlayer();
-        
-    }
+    
 }

@@ -37,7 +37,7 @@ class Autoclicker extends Cheat {
     }
 
     /**
-     * @return void
+     * @param DataPacketReceiveEvent $ev
      */
     public function onClickCheck(DataPacketReceiveEvent $ev): void {
         if ($ev->getPacket()::NETWORK_ID === InventoryTransactionPacket::NETWORK_ID) {
@@ -71,8 +71,9 @@ class Autoclicker extends Cheat {
             $notifier->notify($msg, "§8(§7CPS-§b".$cps."§7, Ping-§b{$player->getPing()}§8)");
             if ($this->getViolation($player->getName()) % 2 === 0) {
                 $violations = $this->mavoric->getViolationDataFor($player);
-                $violations->incrementLevel($this->getName());
+                $violations->incrementLevel($this->getName(), 100);
             }
+            return;
         }
 
         if ($cps >= 22) {

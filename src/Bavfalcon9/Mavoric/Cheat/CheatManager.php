@@ -23,11 +23,15 @@ use Bavfalcon9\Mavoric\Cheat\Combat\CombatModule;
 use Bavfalcon9\Mavoric\Cheat\Movement\MovementModule;
 
 class CheatManager {
+    public const MODULES = [
+        'Movement',
+        'Combat'
+    ];
     /** @var Loader */
     private $plugin;
     /** @var Mavoric */
     private $mavoric;
-    /** @var CheatModule[] */
+    /** @var ModuleMap */
     private $modules;
     /** @var bool */
     private $registered = false;
@@ -49,23 +53,51 @@ class CheatManager {
      * @return void
      */
     public function registerModules(): void {
-        if ($this->registered === true) {
-            //throw new \Exception("Cheats are already registered.");
-            return;
-        } else {
-            $this->modules[] = new CombatModule();
-            $this->modules[] = new MovementModule();
-            $this->registered = true;
-            foreach ($this->modules as $module) {
-                $module->registerAll($this->mavoric, $this->plugin, []);
+        foreach (self::MODULES as $module) {
+            $this->modules[$module] = [];
+            $cheats = \scandir($this->getPathBase() . $module);
+            foreach ($cheats as $cheat) {
+                $cheat = explode('.php', $cheat)[0];
+                if (in_array($cheat, ['.', '..'])) continue;
+                if (class_exists($this->getClassBase() . $module . "\\" . $cheat)) {
+                    $class = '\\' . $this->getClassBase() . $module . '\\' . $cheat;
+                    $detection = new $class($this->mavoric);
+                    $this->plugin->getServer()->getPluginManager()->registerEvents($detection, $this->plugin);
+                    $this->plugin->getLogger()->debug("Cheat Detection: [$module] $cheat enabled.");
+                }
             }
         }
     }
 
+    /**
+     * Unregister all cheat modules from mavoric.
+     * @return void
+     */
     public function disableModules(): void {
-        $this->registered = false;
-        foreach ($this->modules as $module) {
-            $module->unregisterAll($this->mavoric, $this->plugin);
+        foreach ($this->modules as $moduleName => $cheats) {
+            foreach ($cheats as $cheat) {
+                // call an event?
+                
+            }
+            unset($this->modules[$moduleName]);
         }
+
+        $this->modules = [];
+    }
+
+    /**
+     * Gets the base path for the cheats.
+     * @return sting
+     */
+    protected function getPathBase(): string {
+        return $this->plugin->getFilePath() . 'src/Bavfalcon9/Mavoric/Cheat/';
+    }
+
+    /**
+     * Gets the base path for the cheats.
+     * @return sting
+     */
+    protected function getClassBase(): string {
+        return "Bavfalcon9\\Mavoric\\Cheat\\";
     }
 }
