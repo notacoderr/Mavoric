@@ -26,12 +26,13 @@ use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
 class Reach extends Cheat {
-    public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, 'Reach', 'Combat', 1, true);
+    public function __construct(Mavoric $mavoric, int $id = 1) {
+        parent::__construct($mavoric, 'Reach', 'Combat', $id, true);
     }
 
     /**
-     * Called when a entity is damaged by an entity
+     * @param EntityDamageByEntityEvent $ev
+     * @return void
      */
     public function onAttack(EntityDamageByEntityEvent $ev): void {
         $damager = $ev->getDamager();
@@ -41,18 +42,16 @@ class Reach extends Cheat {
         if ($ev instanceof EntityDamageByChildEntityEvent) return;
         if ($damager->isCreative()) return;
         
-        $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.003) : 6;
+        $allowed = ($damager->getPing() >= 200) ? 6 + ($damager->getPing() * 0.003) : 6.2;
         
         if ($damager->distance($damaged) > $allowed) {
-            $this->increment($damager->getName(), 1);
-            
-            if ($this->getViolation($damager->getName()) % 3 === 0) {
-                $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
-                $violations = $this->mavoric->getViolationDataFor($damager);
-                $violations->incrementLevel($this->getName());
-                $notifier = $this->mavoric->getVerboseNotifier();
-                $notifier->notify($msg, "§8(§7Entity-§b{$damaged->getId()}§7, §7Distance-§b{$damager->distance($damaged)}§7, Ping-§b{$damager->getPing()}§8)");
-            }
+            $this->increment($damager->getName(), 1); // increments Cheat flag
+            $this->notifyAndIncrement($damager, 4, 1, [
+                "Entity" => $damaged->getId(),
+                "Distance" => $damager->distance($damaged),
+                "Ping" => $damager->getPing()
+            ]);
+            return;
         }
     }    
 }

@@ -41,7 +41,7 @@ class Notifier {
      * @param string $message - Message to notify as
      * @param string $append - Message to append
      */
-    public function notify(string $message, string $append): void {
+    public function notify(string $message, string $append = ''): void {
         if (isset($this->times[$message]) && $this->times[$message] + 2 >= microtime(true)) {
             return;
         }

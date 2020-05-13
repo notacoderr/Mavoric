@@ -20,10 +20,15 @@ namespace Bavfalcon9\Mavoric;
 use pocketmine\Player;
 use pocketmine\Server;
 use Bavfalcon9\Mavoric\Utils\Notifier;
+use Bavfalcon9\Mavoric\Utils\TpsCheck;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 
 class Mavoric {
+    /** @var TpsCheck */
+    public $tpsCheck;
+    /** @var Loader */
+    private $plugin;
     /** @var Notifier */
     private $verboseNotifier;
     /** @var Notifier */
@@ -33,14 +38,23 @@ class Mavoric {
     /** @var EventListener */
     private $eventListener;
     /** @var ViolationData[] */
-    private $violations = [];
+    private $violations;
 
     public function __construct(Loader $plugin) {
-        $this->cheatManager = new CheatManager($this, $plugin, true);
-        $this->eventListener = new EventListener($this, $plugin);
+        $this->plugin = $plugin;
+        $this->tpsCheck = new TpsCheck($plugin, $this);
         $this->verboseNotifier = new Notifier($this, $plugin);
         $this->checkNotifier = new Notifier($this, $plugin);
+        $this->cheatManager = new CheatManager($this, $plugin, true);
+        $this->eventListener = new EventListener($this, $plugin);
         $this->violations = [];
+    }
+
+    /**
+     * Temporary function to post tick to tpscheck
+     */
+    public function postTick(int $tick) {
+        $this->tpsCheck->postTick($tick);
     }
 
     /**
@@ -54,14 +68,17 @@ class Mavoric {
     /**
      * Gets the violation level data for a player
      */
-    public function getViolationDataFor(Player $player): ?ViolationData {
-        if (!$player) return null;
-
-        if (!isset($this->violations[$player->getName()])) {
-            $this->violations[$player->getName()] = new ViolationData($player);
+    public function getViolationDataFor(string $player): ?ViolationData {
+        if (!isset($this->violations[$player])) {
+            $resolvedPlayer = $this->plugin->getServer()->getPlayer($player);
+            if ($resolvedPlayer) {
+                $this->violations[$player] = new ViolationData($resolvedPlayer);
+            } else {
+                return null;
+            }
         }
 
-        return $this->violations[$player->getName()];
+        return $this->violations[$player]->forceUpdateStoredPlayer();
     }
 
     /**

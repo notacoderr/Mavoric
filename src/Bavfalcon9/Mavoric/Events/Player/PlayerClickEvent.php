@@ -3,7 +3,7 @@
  *      __  __                       _      
  *     |  \/  |                     (_)     
  *     | \  / | __ ___   _____  _ __ _  ___ 
- *     | |\/| |/ _` \ \ / / _ \| "__| |/ __|
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
@@ -15,21 +15,19 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Cheat\Movement;
+
+namespace Bavfalcon9\Mavoric\Events\Player;
 
 use pocketmine\Player;
-use pocketmine\event\Listener;
-use pocketmine\event\player\PlayerMoveEvent;
-use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Cheat\Cheat;
-use Bavfalcon9\Mavoric\Cheat\CheatManager;
+use pocketmine\math\Vector3;
+use pocketmine\event\player\PlayerEvent;
+use pocketmine\event\Cancellable;
 
-class Speed extends Cheat {
-    public function __construct(Mavoric $mavoric, int $id = 5) {
-        parent::__construct($mavoric, "Speed", "Movement", $id, false);
-    }
-
-    public function onPlayerMove(PlayerMoveEvent $ev): void {
-
+/**
+ * Im not finished with this yet ._.
+ */
+class PlayerClickEvent extends PlayerEvent implements Cancellable {
+    public function __construct(Player $player) {
+        $this->player = $player;
     }
 }
