@@ -19,8 +19,6 @@ namespace Bavfalcon9\Mavoric\Cheat;
 
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Loader;
-use Bavfalcon9\Mavoric\Cheat\Combat\CombatModule;
-use Bavfalcon9\Mavoric\Cheat\Movement\MovementModule;
 
 class CheatManager {
     public const MODULES = [
@@ -53,6 +51,7 @@ class CheatManager {
      * @return void
      */
     public function registerModules(): void {
+        $modulesLoaded = 0;
         foreach (self::MODULES as $module) {
             $this->modules[$module] = [];
             $cheats = \scandir($this->getPathBase() . $module);
@@ -60,10 +59,11 @@ class CheatManager {
                 $cheat = explode('.php', $cheat)[0];
                 if (in_array($cheat, ['.', '..'])) continue;
                 if (class_exists($this->getClassBase() . $module . "\\" . $cheat)) {
+                    $modulesLoaded++;
                     $class = '\\' . $this->getClassBase() . $module . '\\' . $cheat;
-                    $detection = new $class($this->mavoric);
+                    $detection = new $class($this->mavoric, $modulesLoaded);
                     $this->plugin->getServer()->getPluginManager()->registerEvents($detection, $this->plugin);
-                    $this->plugin->getLogger()->debug("Cheat Detection: [$module] $cheat enabled.");
+                    $this->plugin->getLogger()->debug("Cheat Detection: [$module] $cheat enabled with id $modulesLoaded");
                 }
             }
         }

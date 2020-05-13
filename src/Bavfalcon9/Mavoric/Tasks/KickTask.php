@@ -15,29 +15,26 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Cheat;
+namespace Bavfalcon9\Mavoric\Tasks;
 
+use pocketmine\Player;
+use pocketmine\Server;
+use pocketmine\scheduler\Task;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Loader;
 
-abstract class CheatModule {
-    /**
-     * Whether or not the module is enabled
-     */
-    abstract public function isEnabled(): bool;
+class KickTask extends Task {
+    private $player;
+    private $reason;
 
-    /**
-     * Gets the list of cheats in a module
-     */
-    abstract public function getAll(): array;
+    public function __construct(Player $player, string $reason) {
+        $this->player = $player;
+        $this->reason = $reason;
+    }
 
-    /**
-     * Called when mavoric is loaded or module is enabled
-     */
-    abstract public function registerAll(Mavoric $mavoric, Loader $plugin, array $disabled): void;
+    public function onRun(int $tick) {
+        if (!Server::getInstance()->getPlayerExact($this->player->getName())) return;
 
-    /**
-     * Called when mavoric is unloaded or module is disabled
-     */
-    abstract public function unregisterAll(Mavoric $mavoric, Loader $plugin): void;
+        $this->player->close('', $this->reason);
+    }
 }

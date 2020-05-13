@@ -24,7 +24,7 @@ use pocketmine\command\PluginIdentifiableCommand;
 use Bavfalcon9\Mavoric\Loader;
 use Bavfalcon9\Mavoric\Mavoric;
 
-class Alerts extends Command implements PluginIdentifiableCommand {
+class AlertCommand extends Command implements PluginIdentifiableCommand {
     /** @var Loader */
     private $plugin;
     /** @var Mavoric */

@@ -27,7 +27,7 @@ use Bavfalcon9\Mavoric\Cheat\CheatManager;
 use Bavfalcon9\Mavoric\Events\Player\PlayerVelocityEvent;
 
 class Velocity extends Cheat {
-    public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, 'Velocity', 'Movement', 4, false);
+    public function __construct(Mavoric $mavoric, int $id = 6) {
+        parent::__construct($mavoric, 'Velocity', 'Movement', 6, false);
     }
 }

@@ -26,8 +26,8 @@ use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
 class Reach extends Cheat {
-    public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, 'Reach', 'Combat', 1, true);
+    public function __construct(Mavoric $mavoric, int $id = 1) {
+        parent::__construct($mavoric, 'Reach', 'Combat', $id, true);
     }
 
     /**

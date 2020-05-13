@@ -27,6 +27,8 @@ use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 class Mavoric {
     /** @var TpsCheck */
     public $tpsCheck;
+    /** @var Loader */
+    private $plugin;
     /** @var Notifier */
     private $verboseNotifier;
     /** @var Notifier */
@@ -39,6 +41,7 @@ class Mavoric {
     private $violations;
 
     public function __construct(Loader $plugin) {
+        $this->plugin = $plugin;
         $this->tpsCheck = new TpsCheck($plugin, $this);
         $this->verboseNotifier = new Notifier($this, $plugin);
         $this->checkNotifier = new Notifier($this, $plugin);
@@ -65,14 +68,17 @@ class Mavoric {
     /**
      * Gets the violation level data for a player
      */
-    public function getViolationDataFor(Player $player): ?ViolationData {
-        if (!$player) return null;
-
-        if (!isset($this->violations[$player->getName()])) {
-            $this->violations[$player->getName()] = new ViolationData($player);
+    public function getViolationDataFor(string $player): ?ViolationData {
+        if (!isset($this->violations[$player])) {
+            $resolvedPlayer = $this->plugin->getServer()->getPlayer($player);
+            if ($resolvedPlayer) {
+                $this->violations[$player] = new ViolationData($resolvedPlayer);
+            } else {
+                return null;
+            }
         }
 
-        return $this->violations[$player->getName()]->forceUpdateStoredPlayer();
+        return $this->violations[$player]->forceUpdateStoredPlayer();
     }
 
     /**

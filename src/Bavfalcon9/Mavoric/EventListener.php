@@ -23,8 +23,13 @@ use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityMotionEvent;
 use pocketmine\event\player\PlayerMoveEvent;
 use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
+use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use Bavfalcon9\Mavoric\Events\Player\PlayerVelocityEvent;
+use Bavfalcon9\Mavoric\Events\Player\PlayerClickEvent;
 use Bavfalcon9\Mavoric\Events\Violation\ViolationChangeEvent;
+use Bavfalcon9\Mavoric\Tasks\KickTask;
 
 class EventListener implements Listener {
     /** @var Mavoric */
@@ -56,22 +61,56 @@ class EventListener implements Listener {
         $violation = $ev->getViolation();
 
         if ($violation->getLastAdditionFromNow() >= 2 && $violation->getViolationCountSum() <= 3) {
-            $this->mavoric->getViolationDataFor($ev->getPlayer())->clear();
+            $this->mavoric->getViolationDataFor($ev->getPlayer()->getName())->clear();
             return;
         }
 
         $cNotifier = $this->mavoric->getCheckNotifier();
         $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7detected for §c{$ev->getCheat()}", "§8[§7{$violation->getCheatProbability()}§f% | §7VL §f{$ev->getCurrent()}§8]");
 
+        if ($violation->getIncrementsInPastSecond() >= 20) {
+            $this->kickPlayer($ev->getPlayer(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been banned for: " . $violation->getMostDetectedCheat(), "");
+            $banList = $this->plugin->getServer()->getNameBans();
+            $banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new \DateTime("+7 Day"), 'Mavoric');
+            return; 
+        }
         if ($violation->getViolationCountSum() % 50 === 0 && $violation->getViolationCountSum() >= 50) {
             $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7is most likely cheating.", "");
+            return;
         } 
         if ($violation->getViolationCountSum() % 80 === 0 && $violation->getViolationCountSum() >= 80) {
-            $ev->getPlayer()->close('', '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
-            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been autobanned for cheating.", "");
+            $this->kickPlayer($ev->getPlayer(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
+            $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been banned for cheating.", "");
             $banList = $this->plugin->getServer()->getNameBans();
-            #$banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new DateTime("+7 Day"), 'Mavoric');
+            $banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new \DateTime("+7 Day"), 'Mavoric');
             return;
         }
+    }
+
+    /**
+     * @param DataPacketReceiveEvent $ev
+     */
+    public function onClickCheck(DataPacketReceiveEvent $ev): void {
+        if ($ev->getPacket()::NETWORK_ID === InventoryTransactionPacket::NETWORK_ID) {
+            if ($ev->getPacket()->transactionType === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY) {
+                $event = new PlayerClickEvent($ev->getPlayer());
+                $event->call();
+            }
+        } else if ($ev->getPacket()::NETWORK_ID === LevelSoundEventPacket::NETWORK_ID) {
+            if ($ev->getPacket()->sound === LevelSoundEventPacket::SOUND_ATTACK_NODAMAGE) {
+                $event = new PlayerClickEvent($ev->getPlayer());
+                $event->call();
+            }
+        } 
+    }
+
+    /**
+     * Kick a player from the server
+     * @param Player $p - Player to kick
+     * @param string $reason - Reason to kick
+     */
+    public function kickPlayer(Player $p, string $reason = 'Cheating'): void {
+        $this->plugin->getScheduler()->scheduleDelayedTask(new KickTask($p, $reason), 20);
     }
 }

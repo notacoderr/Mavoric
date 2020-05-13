@@ -1,6 +1,9 @@
 Clips/*
 Tests/*
 Compiled/*
-resources/assets/uknd.txt
 Tools/*
 .idea/*
+
+# other
+resources/assets/uknd.txt
+SpeedTest.php

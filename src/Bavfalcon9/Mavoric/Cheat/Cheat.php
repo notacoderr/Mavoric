@@ -125,20 +125,20 @@ class Cheat implements Listener {
      * @return void
      */
     public function notifyAndIncrement(Player $player, int $remainder, int $increment, array $verboseData = []): void {
-        if ($remainder !== -1 && ($this->getViolation($player->getName()) % $remainder !== 0)) return;
-
-        $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->module}[{$this->name}-{$this->id}]";
+        if (($remainder !== -1) && ($this->getViolation($player->getName()) % $remainder === 0) === false) return;
+        $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->module}[{$this->name}-{$this->id}]";
         $verboseMsg = '§8(';
         foreach ($verboseData as $name => $value) {
-            $verboseMsg += "§7$name-§b$value" . '§7, ';
-            if (array_search($value, $verboseData) === count($verboseData - 1)) {
-                $verboseMsg += '§8)';
+            $verboseMsg .= "§7{$name}-§b{$value}" . '§7, ';
+            if (array_search($value, $verboseData) === (count($verboseData) - 1)) {
+                $verboseMsg .= '§8)';
             }
         }
-        $violations = $this->mavoric->getViolationDataFor($damager);
+        $violations = $this->mavoric->getViolationDataFor($player->getName());
         $violations->incrementLevel($this->getName(), $increment);
         $notifier = $this->mavoric->getVerboseNotifier();
         $notifier->notify($msg, $verboseMsg);
+        return;
     }
 
     /**

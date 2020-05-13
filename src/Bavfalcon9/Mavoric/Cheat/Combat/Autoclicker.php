@@ -18,37 +18,24 @@
 namespace Bavfalcon9\Mavoric\Cheat\Combat;
 
 use pocketmine\Player;
-use pocketmine\event\Listener;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
-use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\network\mcpe\protocol\InventoryTransactionPacket;
-use pocketmine\network\mcpe\protocol\LevelSoundEventPacket;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
-use Bavfalcon9\Mavoric\Cheat\CheatManager;
+use Bavfalcon9\Mavoric\Events\Player\PlayerClickEvent;
 
 class Autoclicker extends Cheat {
     /** @var int[] */
     private $cps;
 
-    public function __construct(Mavoric $mavoric) {
-        parent::__construct($mavoric, "Autoclicker", "Combat", 3, true);
+    public function __construct(Mavoric $mavoric, int $id = 4) {
+        parent::__construct($mavoric, "Autoclicker", "Combat", $id, true);
         $this->cps = [];
     }
 
     /**
-     * @param DataPacketReceiveEvent $ev
+     * @param PlayerClickEvent $ev
      */
-    public function onClickCheck(DataPacketReceiveEvent $ev): void {
-        if ($ev->getPacket()::NETWORK_ID === InventoryTransactionPacket::NETWORK_ID) {
-            if ($ev->getPacket()->transactionType === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY) {
-                $this->dueCheck($ev->getPlayer());
-            }
-        } else if ($ev->getPacket()::NETWORK_ID === LevelSoundEventPacket::NETWORK_ID) {
-            if ($ev->getPacket()->sound === LevelSoundEventPacket::SOUND_ATTACK_NODAMAGE) {
-                $this->dueCheck($ev->getPlayer());
-            }
-        } 
+    public function onClick(PlayerClickEvent $ev) {
+        $this->dueCheck($ev->getPlayer());
     }
 
     private function dueCheck(Player $player): void {
