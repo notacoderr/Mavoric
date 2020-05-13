@@ -66,25 +66,19 @@ class Autoclicker extends Cheat {
         
         if ($cps >= 100) {
             $this->increment($player->getName(), 1);
-            $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
-            $notifier = $this->mavoric->getVerboseNotifier();
-            $notifier->notify($msg, "§8(§7CPS-§b".$cps."§7, Ping-§b{$player->getPing()}§8)");
-            if ($this->getViolation($player->getName()) % 2 === 0) {
-                $violations = $this->mavoric->getViolationDataFor($player);
-                $violations->incrementLevel($this->getName(), 100);
-            }
+            $this->notifyAndIncrement($player, 2, 100, [
+                "CPS" => $cps,
+                "Ping" => $player->getPing()
+            ]);
             return;
         }
 
         if ($cps >= 22) {
             $this->increment($player->getName(), 1);
-            $msg = "§4[MAVORIC]: §c{$player->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
-            $notifier = $this->mavoric->getVerboseNotifier();
-            $notifier->notify($msg, "§8(§7CPS-§b{$cps}§7, Ping-§b{$player->getPing()}§8)");
-            if ($this->getViolation($player->getName()) % 2 === 0) {
-                $violations = $this->mavoric->getViolationDataFor($player);
-                $violations->incrementLevel($this->getName());
-            }
+            $this->notifyAndIncrement($player, 2, 1, [
+                "CPS" => $cps,
+                "Ping" => $player->getPing()
+            ]);
         }
     }
 }

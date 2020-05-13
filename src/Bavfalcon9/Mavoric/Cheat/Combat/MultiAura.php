@@ -34,7 +34,8 @@ class MultiAura extends Cheat {
     }
 
     /**
-     * Called when a entity is damaged by an entity
+     * @param EntityDamageByEntityEvent $ev
+     * @return void
      */
     public function onAttack(EntityDamageByEntityEvent $ev): void {
         $damager = $ev->getDamager();
@@ -59,13 +60,11 @@ class MultiAura extends Cheat {
         
         if (count($unique) >= 4) {
             $this->increment($damager->getName(), 1);
-            $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
-            $notifier = $this->mavoric->getVerboseNotifier();
-            $notifier->notify($msg, "§8(§7Entity-§b{$damaged->getId()}§7, §7UniqueHits-§b".count($unique)."§7, Ping-§b{$damager->getPing()}§8)");
-            if ($this->getViolation($damager->getName()) % 2 === 0) {
-                $violations = $this->mavoric->getViolationDataFor($damager);
-                $violations->incrementLevel($this->getName());
-            }
+            $this->notifyAndIncrement($damager, 2, 1, [
+                "Entity" => $damaged->getId(),
+                "UniqueHits" => count($unique),
+                "Ping" => $damager->getPing()
+            ]);
             return;
         }
 
@@ -77,13 +76,11 @@ class MultiAura extends Cheat {
                 }
                 if ($entity->distance($lastEntity) >= 2) {
                     $this->increment($damager->getName(), 1);
-                    $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->getName()}[{$this->getId()}]";
-                    $notifier = $this->mavoric->getVerboseNotifier();
-                    $notifier->notify($msg, "§8(§7Entity-§b{$damaged->getId()}§7, §7Hits-§b".count($attack['hits'])."§7, Ping-§b{$damager->getPing()}§8)");
-                    if ($this->getViolation($damager->getName()) % 5 === 0) {
-                        $violations = $this->mavoric->getViolationDataFor($damager);
-                        $violations->incrementLevel($this->getName());
-                    }
+                    $this->notifyAndIncrement($damager, 4, 1, [
+                        "Entity" => $damaged->getId(),
+                        "Hits" => count($attack['hits']),
+                        "Ping" => $damager->getPing()
+                    ]);
                     return;
                 }
 

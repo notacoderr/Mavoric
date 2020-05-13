@@ -51,8 +51,6 @@ class EventListener implements Listener {
      */
     public function onViolationChange(ViolationChangeEvent $ev): void {
         if ($this->mavoric->tpsCheck->isHalted()) {
-            //$cNotifier = $this->mavoric->getCheckNotifier();
-            //$cNotifier->notify('§4[MAVORIC]§4: §cVIOLATIONS HALTED DUE TO LOW TPS: ', '');
             return;
         }
         $violation = $ev->getViolation();
@@ -75,55 +73,5 @@ class EventListener implements Listener {
             #$banList->addBan($ev->getPlayer()->getName(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']', new DateTime("+7 Day"), 'Mavoric');
             return;
         }
-    }
-
-    /**
-     * Calls the knockback event, we can check packets to see if the player is being respective to them
-     */
-    public function onAttackEntity(EntityDamageByEntityEvent $ev): void {
-        $damager = $ev->getDamager();
-        $victim = $ev->getEntity();
-
-        if (!($victim instanceof Player)) return;
-        if ($ev->isCancelled()) return;
-
-        $knockback = $ev->getKnockBack();
-        $this->kbSession[$victim->getId()] = [microtime(true), $knockback];
-    }
-
-    /**
-     * The server sends this to the client we can check this for kb
-     */
-    public function onMotion(EntityMotionEvent $ev): void {
-        $entity = $ev->getEntity();
-        // we're not gonna bother checking non-player entities, saves ticktime
-        // clean this up and move to velocity check itself
-        if (!($entity instanceof Player)) return;
-        if (!isset($this->kbSession[$entity->getId()])) return;
-
-        $session = $this->kbSession[$entity->getId()];
-
-        if ($session[0] + 1 < microtime(true)) {
-            unset($this->kbSession[$entity->getId()]);
-            return;
-        }
-
-        $motion = $ev->getVector();
-        $previousVector = $entity;
-        $vertical = abs($motion->y - $previousVector->y);
-        $base = $motion->y;
-
-        $event = new PlayerVelocityEvent($entity, $motion, 0, $vertical, $base);
-        $event->call();
-
-        if ($event->isCancelled()) {
-            $ev->setCancelled(true);
-        }
-        unset($this->kbSession[$entity->getId()]);
-        return;
-    }
-
-    public function onPlayerMove(PlayerMoveEvent $ev): void {
-        $player = $ev->getPlayer();
     }
 }

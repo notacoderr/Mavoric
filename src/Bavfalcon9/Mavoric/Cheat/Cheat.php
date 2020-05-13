@@ -31,7 +31,7 @@ class Cheat implements Listener {
     /** @var string */
     private $name;
     /** @var string */
-    private $type;
+    private $module;
     /** @var int */
     private $id;
     /** @var bool */
@@ -39,10 +39,10 @@ class Cheat implements Listener {
     /** @var string[] */
     private static $registered = [];
 
-    public function __construct(Mavoric $mavoric, string $name, string $type, int $id, bool $enabled = true) {
+    public function __construct(Mavoric $mavoric, string $name, string $module, int $id, bool $enabled = true) {
         $this->mavoric = $mavoric;
         $this->name = $name;
-        $this->type = $type;
+        $this->module = $module;
         $this->id = $id;
         $this->enabled = $enabled;
         $this->violations = [];
@@ -58,11 +58,11 @@ class Cheat implements Listener {
     }
 
     /**
-     * Gets the type of cheat
+     * Gets the module of cheat
      * @return String
      */
-    public function getType(): string {
-        return $this->type;
+    public function getModule(): string {
+        return $this->module;
     }
 
     /**
@@ -116,8 +116,29 @@ class Cheat implements Listener {
         return $this->violations[$name];
     }
 
-    public function incrementAndNotify(Player $player, string $details, array $verboseData = []) {
+    /**
+     * Notifies the verbose notifier and increments the specified players data
+     * @param int $remainder - Remainder to notify at (IF condition is met), -1 for non
+     * @param Player $player - Player to increment the level for
+     * @param string[] $verboseData - Array of Verbose Indexes to append to default alert string
+     * 
+     * @return void
+     */
+    public function notifyAndIncrement(Player $player, int $remainder, int $increment, array $verboseData = []): void {
+        if ($remainder !== -1 && ($this->getViolation($player->getName()) % $remainder !== 0)) return;
 
+        $msg = "§4[MAVORIC]: §c{$damager->getName()} §7failed §c{$this->module}[{$this->name}-{$this->id}]";
+        $verboseMsg = '§8(';
+        foreach ($verboseData as $name => $value) {
+            $verboseMsg += "§7$name-§b$value" . '§7, ';
+            if (array_search($value, $verboseData) === count($verboseData - 1)) {
+                $verboseMsg += '§8)';
+            }
+        }
+        $violations = $this->mavoric->getViolationDataFor($damager);
+        $violations->incrementLevel($this->getName(), $increment);
+        $notifier = $this->mavoric->getVerboseNotifier();
+        $notifier->notify($msg, $verboseMsg);
     }
 
     /**
