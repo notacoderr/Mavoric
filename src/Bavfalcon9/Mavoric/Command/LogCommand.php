@@ -59,7 +59,7 @@ class LogCommand extends Command implements PluginIdentifiableCommand {
         $data = $this->mavoric->getViolationDataFor($args[0]);
 
         if ($data === null) {
-            $sender->sendMessage("§c§lError: §r§cPlayer provided has no logs.");
+            $sender->sendMessage("§c§lError: §r§cPoayer provided has no logs.");
             return;
         }
 
