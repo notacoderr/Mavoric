@@ -25,10 +25,12 @@ use Bavfalcon9\Mavoric\Events\Player\PlayerClickEvent;
 class Autoclicker extends Cheat {
     /** @var int[] */
     private $cps;
+    private $constant;
 
     public function __construct(Mavoric $mavoric, int $id = 4) {
         parent::__construct($mavoric, "Autoclicker", "Combat", $id, true);
         $this->cps = [];
+        $this->constant = [];
     }
 
     /**
@@ -67,5 +69,7 @@ class Autoclicker extends Cheat {
                 "Ping" => $player->getPing()
             ]);
         }
+       
     }
+    
 }
