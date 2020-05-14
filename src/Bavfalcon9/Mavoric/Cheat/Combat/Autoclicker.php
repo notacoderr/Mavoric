@@ -27,7 +27,7 @@ class Autoclicker extends Cheat {
     private $cps;
     private $constant;
 
-    public function __construct(Mavoric $mavoric, int $id = 4) {
+    public function __construct(Mavoric $mavoric, int $id = -1) {
         parent::__construct($mavoric, "Autoclicker", "Combat", $id, true);
         $this->cps = [];
         $this->constant = [];

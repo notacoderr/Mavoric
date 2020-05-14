@@ -25,7 +25,7 @@ use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 
 class Speed extends Cheat {
-    public function __construct(Mavoric $mavoric, int $id = 5) {
+    public function __construct(Mavoric $mavoric, int $id = -1) {
         parent::__construct($mavoric, "Speed", "Movement", $id, false);
     }
 

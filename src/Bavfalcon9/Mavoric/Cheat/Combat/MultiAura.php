@@ -28,7 +28,7 @@ class MultiAura extends Cheat {
     /** @var int[] */
     private $attacks;
 
-    public function __construct(Mavoric $mavoric, int $id = 2) {
+    public function __construct(Mavoric $mavoric, int $id = -2) {
         parent::__construct($mavoric, "MultiAura", "Combat", $id, true);
         $this->attacks = [];
     }

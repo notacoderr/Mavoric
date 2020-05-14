@@ -34,18 +34,18 @@ class MacroCheck extends Cheat{
     /** @var int[] */
     private $level;
 
-    public function __construct(Mavoric $mavoric, int $id = 5) {
+    public function __construct(Mavoric $mavoric, int $id = -1) {
         parent::__construct($mavoric, "Autoclicker", "Combat", $id, true);
         $this->cps = [];
         $this->clicks = [];
         $this->level = [];
     }
 
-    public function onClick(PlayerClickEvent $ev) {
+    public function onClick(PlayerClickEvent $ev): void {
         $this->macroCheck($ev->getPlayer());
     }
 
-    private function macroCheck(Player $player){
+    private function macroCheck(Player $player): void {
         if (!isset($this->cps[$player->getName()])) {
             $this->cps[$player->getName()] = [];
         }
@@ -65,7 +65,7 @@ class MacroCheck extends Cheat{
         if(!isset($this->level[$player->getName()])) $this->level[$player->getName()] = 1;
 
         array_push($this->clicks[$player->getName()], $cps);
-        if(count($this->clicks[$player->getName()]) === 40){
+        if(count($this->clicks[$player->getName()]) === 40) {
             if($this->macroTest($this->clicks[$player->getName()], $cps, $player) === true){
                 $this->level[$player->getName()] = 2;
                 $this->increment($player->getName(), 1);
@@ -80,24 +80,27 @@ class MacroCheck extends Cheat{
         }
     }
 
-    private function macroTest(array $clicks, int $cps, Player $player) : bool{
+    private function macroTest(array $clicks, int $cps, Player $player): bool {
         $min = min($clicks);
         $max = max($clicks);
 
-        if($max - $min <= 2){
-            if(count(array_unique($clicks)) <= 3){
-                if(end($clicks) === $cps){
+        if ($max - $min <= 2) {
+            if (count(array_unique($clicks)) <= 3) {
+                if (end($clicks) === $cps) {
                     $this->level[$player->getName()] = $this->level[$player->getName()] + 1;
                     if($this->level[$player->getName()] === 5) return true;
                     else return false;
                 }
-                if($this->level[$player->getName()] !== 1) $this->level[$player->getName()] = $this->level[$player->getName()] - 1;
+                // this is repetitive, remove 
+                if ($this->level[$player->getName()] !== 1) $this->level[$player->getName()] = $this->level[$player->getName()] - 1;
                 return false;
             }
-            if($this->level[$player->getName()] !== 1) $this->level[$player->getName()] = $this->level[$player->getName()] - 1;
+            // this is repetitive, remove 
+            if ($this->level[$player->getName()] !== 1) $this->level[$player->getName()] = $this->level[$player->getName()] - 1;
             return false;
         }
-        if($this->level[$player->getName()] !== 1) $this->level[$player->getName()] = $this->level[$player->getName()] - 1;
+        // this is repetitive, remove 
+        if ($this->level[$player->getName()] !== 1) $this->level[$player->getName()] = $this->level[$player->getName()] - 1;
         return false;
     }
 

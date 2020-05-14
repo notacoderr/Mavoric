@@ -3,7 +3,7 @@
  *      __  __                       _      
  *     |  \/  |                     (_)     
  *     | \  / | __ ___   _____  _ __ _  ___ 
- *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
+ *     | |\/| |/ _` \ \ / / _ \| "__| |/ __|
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
@@ -20,14 +20,16 @@ namespace Bavfalcon9\Mavoric\Cheat\Movement;
 use pocketmine\Player;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerMoveEvent;
-use pocketmine\event\entity\EntityDamageByEntityEvent;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
-use Bavfalcon9\Mavoric\Events\Player\PlayerVelocityEvent;
 
-class Velocity extends Cheat {
+class NoClip extends Cheat {
     public function __construct(Mavoric $mavoric, int $id = -1) {
-        parent::__construct($mavoric, 'Velocity', 'Movement', 6, false);
+        parent::__construct($mavoric, "NoClip", "Movement", $id, false);
+    }
+
+    public function onPlayerMove(PlayerMoveEvent $ev): void {
+
     }
 }
