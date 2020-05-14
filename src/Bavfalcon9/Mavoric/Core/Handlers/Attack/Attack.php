@@ -15,39 +15,40 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Olybear9/Mavoric                                  
  */
+namespace Bavfalcon9\Mavoric\Core\Handlers\Attack;
 
-namespace Bavfalcon9\Mavoric\Events\player;
-
-use pocketmine\Player;
-use pocketmine\item\Item;
-use Bavfalcon9\Mavoric\Mavoric;
-use Bavfalcon9\Mavoric\Events\MavoricEvent;
-
-/**
- * Called when a player consumes an item.
- */
-class PlayerConsume extends MavoricEvent {
-    /** @var Player */
-    private $player;
-    /** @var Item */
-    private $item;
-
-    public function __construct($e, Mavoric $mavoric, Player $player, Item $item) {
-        parent::__construct($e, $mavoric, $player);
-        $this->player = $player;
-        $this->item = $item;
+class Attack {
+    /** @var int */
+    private $id;
+    /** @var int */
+    private $vid;
+    /** @var int */
+    private $time;
+    
+    public function __construct(int $id, int $vid) {
+        $this->id = $id;
+        $this->vid = $vid;
+        $this->time = microtime(true);
     }
 
     /**
-     * Get the item that was consumed
-     * @return Item|Null
+     * @return int
      */
-    public function getItem(): ?Item {
-        return $this->item;
+    public function getDamagerId(): int {
+        return $this->id;
     }
 
+    /**
+     * @return int
+     */
+    public function getVictimId(): int {
+        return $this->vid;
+    }
+
+    /**
+     * @return int
+     */
     public function getTime(): int {
-        // TO DO
-        return -1;
+        return $this->time;
     }
 }

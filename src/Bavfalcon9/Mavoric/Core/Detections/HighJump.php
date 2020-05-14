@@ -24,7 +24,8 @@ use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
 use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
 use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
-use Bavfalcon9\Mavoric\events\MavoricEvent;
+use Bavfalcon9\Mavoric\Core\Handlers\AttackHandler;
+use Bavfalcon9\Mavoric\Events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\player\PlayerMove;
 use pocketmine\Player;
 /* use pocketmine\math\Facing; uncomment when api 4.0.0 */
@@ -46,12 +47,19 @@ class HighJump implements Detection {
             $to = $event->getTo();
             $from = $event->getFrom();
 
-            if ($player->getAllowFlight() === true) {
+            /**
+             * To do: Check effects for jumpboost
+             */
+
+            $lastDamageTime = AttackHandler::getLastDamageTime($player->getId());
+            $allowed = ($lastDamageTime === -1) ? 0 : ((microtime(true) - $lastDamageTime) * 10);
+
+            if ($player->getInAirTicks() <= $allowed) {
                 return;
             }
 
             if (LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::UP)->getId() === 0) {
-                if (MathUtils::getFallDistance($from, $to) < -0.6854) {
+                if (MathUtils::getFallDistance($from, $to) < -0.7854) {
                     $event->sendAlert('HighJump', "Illegal jump, jumped too high.");
                     $event->issueViolation(CheatIdentifiers::CODES['HighJump']);
                     $event->cancel(false);
@@ -62,6 +70,6 @@ class HighJump implements Detection {
     }
 
     public function isEnabled(): Bool {
-        return false;
+        return true;
     }
 }

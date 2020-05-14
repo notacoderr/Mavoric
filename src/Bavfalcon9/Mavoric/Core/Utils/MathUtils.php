@@ -67,4 +67,15 @@ class MathUtils {
 
         return ($fall - $fall2);
     }
+
+    /**
+     * Gets the distance from two points on a circle
+     * @param int $a - First position
+     * @param int $b - Second position
+     * @return int - The distance
+     */
+    public static function getDifferenceFrom360(int $a, int $b): int {
+        $diff = abs($a - $b);
+        return ($diff > 180) ? (360 - $diff) : $diff;
+    }
 }

@@ -43,26 +43,26 @@ class MultiAura implements Detection {
         $victim = $event->getVictim();
         $damager = $event->getPlayer();
 
-        if (isset($this->queue[$damager->getName()])) {
-            $multiAura = $this->queue[$damager->getName()];
-            $distance = $damager->getPosition()->distance($victim->getPosition());
-            if (($distance[0] <= 1.5 || $distance[1] <= 1.5) && ($distance[0] >= -1.5 || $distance[1] >= -1.5)) return;
-            if (!in_array($victim->getName(), $multiAura['targets'])) array_push($this->queue[$damager->getName()]['targets'], $victim->getName());    
-            if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.20) >= time()) {
-                $inTime = time() - ($multiAura['time']);
+        if (isset($this->queue[$damager->getId()])) {
+            $multiAura = $this->queue[$damager->getId()];
+            $distance = $damager->distance($victim);
+            if ($distance[0] <= 1.5) return;
+            if (!in_array($victim->getId(), $multiAura['targets'])) array_push($this->queue[$damager->getId()]['targets'], $victim->getId());    
+            if (sizeof($multiAura['targets']) >= 2 && ($multiAura['time'] + 0.20) >= microtime(true)) {
+                $inTime = microtime(true) - ($multiAura['time']);
                 $event->issueViolation(CheatIdentifiers::CODES['MultiAura']);
                 $event->sendAlert('MultiAura', 'Illegal attack, hit ' . sizeof($multiAura['targets']) . ' entities in ' . $inTime . ' seconds');
             }
-            if (($multiAura['time'] + 0.25) <= time()) {
-                $this->queue[$damager->getName()] = [
-                    "time" => time(),
+            if (($multiAura['time'] + 0.25) <= microtime(true)) {
+                $this->queue[$damager->getId()] = [
+                    "time" => microtime(true),
                     "targets" => []
                 ];
             }
         } else {
-            $this->queue[$damager->getName()] = [
-                "time" => time(),
-                "targets" => [$victim->getName()]
+            $this->queue[$damager->getId()] = [
+                "time" => microtime(true),
+                "targets" => [$victim->getId()]
             ];
         }
     }

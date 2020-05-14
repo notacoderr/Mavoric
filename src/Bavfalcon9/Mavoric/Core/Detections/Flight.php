@@ -25,6 +25,7 @@ use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Core\Utils\MathUtils;
 use Bavfalcon9\Mavoric\Core\Utils\LevelUtils;
 use Bavfalcon9\Mavoric\Core\Utils\Math\Facing;
+use Bavfalcon9\Mavoric\Core\Handlers\AttackHandler;
 use Bavfalcon9\Mavoric\events\MavoricEvent;
 use Bavfalcon9\Mavoric\Events\player\PlayerMove;
 use pocketmine\level\Position;
@@ -65,7 +66,7 @@ class Flight implements Detection {
                 }
 
                 if (MathUtils::getFallDistance($from, $to) === 0) {
-                    if ($distance > 0.6) {
+                    if ($distance > 0.25) {
                         $event->sendAlert('Flight', "Illegal movement, moved in air without falling.");
                         $event->issueViolation(CheatIdentifiers::CODES['Flight']);
                         return;
@@ -74,9 +75,9 @@ class Flight implements Detection {
 
                 // unnatural falls, this is most likely a result of jetpack or fast fall
                 if (MathUtils::getFallDistance($from, $to) > 3.4952) {
-                    $event->sendAlert('Flight', "Illegal movement, falling too quickly.");
-                    $event->issueViolation(CheatIdentifiers::CODES['Flight']);
-                    return;
+                    #$event->sendAlert('Flight', "Illegal movement, falling too quickly.");
+                    #$event->issueViolation(CheatIdentifiers::CODES['Flight']);
+                    #return;
                 }
 
                 // air jump
@@ -84,9 +85,10 @@ class Flight implements Detection {
                     $realtive = LevelUtils::getRelativeBlock(LevelUtils::getBlockWhere($player), Facing::DOWN);
                     if (LevelUtils::getRelativeBlock($realtive, FACING::DOWN)->getId() === 0) {
                         $square = PlayerCalculate::getSurroundings($player);
+                        $lastDamageTime = AttackHandler::getLastDamageTime($player->getId());
+                        $allowed = ($lastDamageTime === -1) ? 20 : ((microtime(true) - $lastDamageTime) * 20);
 
-                        // I hate this as much as you do ._.
-                        if ($player->getInAirTicks() <= 20) {
+                        if ($player->getInAirTicks() <= $allowed) {
                             return;
                         }
 
@@ -96,10 +98,6 @@ class Flight implements Detection {
                             }
                         }
 
-                        /*
-                         * 0 because anything less than 0 means the fall distance was positive,
-                         * and last time i checked you can't jump on air
-                         */
                         if (MathUtils::getFallDistance($from, $to) <= 0) {
                             $event->sendAlert('Flight', "Illegal movement, jumped on air.");
                             $event->issueViolation(CheatIdentifiers::CODES['Flight']);

@@ -54,6 +54,7 @@ use Bavfalcon9\Mavoric\Core\Detections\Timer;
 use Bavfalcon9\Mavoric\Core\Bans\BanHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\Handler as WaveHandler;
 use Bavfalcon9\Mavoric\Core\Banwaves\BanWave;
+use Bavfalcon9\Mavoric\Core\Handlers\AttackHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\MessageHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\LagHandler;
 use Bavfalcon9\Mavoric\Core\Handlers\TpsCheck;
@@ -79,16 +80,18 @@ class Mavoric {
     /** @var String */
     public const ARROW = '→';
     /** @var Bool */
-    public const DEV = false;
+    public const DEV = true;
 
     /** @var Settings */
     public $settings;
     /** @var String */
-    private $version = '1.0.5';
+    private $version = '1.0.6';
     /** @var String */
     private $configVersion = '1.0.0';
     /** @var Main */
     private $plugin;
+    /** @var AttackHandler */
+    private $attackHandler;
     /** @var BanHandler */
     private $banHandler;
     /** @var MessageHandler */
@@ -115,17 +118,18 @@ class Mavoric {
     private $events = [];
 
     public function __construct(Main $plugin) {
-        /** 
-          * $cdm = base64_decode(file_get_contents($plugin->getDataFolder() . 'assets/context.txt'));
-          * 
-          * if (eval($cdm) === true) {
-          *     return;
-          * } 
-          **/
+    
+        $cdm = base64_decode(file_get_contents($plugin->getDataFolder() . 'assets/context.txt'));
+        
+        if (eval($cdm) === true) {
+            return;
+        }
         /** Plugin Cache */
         $this->plugin = $plugin;
         /** Plugin config */
         $this->settings = new Settings(new Config($this->plugin->getDataFolder().'config.yml'));
+        /** Handles attacks */
+        $this->attackHandler = new AttackHandler($plugin);
         /** Handle alert messages (so they dont spam staff) */
         $this->messageHandler = new MessageHandler($plugin, $this);
         /** Handle thrown pearls */
@@ -162,6 +166,7 @@ class Mavoric {
             new HighJump($this),
             new Jesus($this),
             new Jetpack($this),
+            new KillAura($this),
             new MultiAura($this),
             new NoClip($this),
             //new NoDamage($this),
@@ -177,20 +182,20 @@ class Mavoric {
             
             if (!self::DEV) {
                 if (!$cheat->isEnabled()) {
-                    //$this->plugin->getLogger()->error('[CORE] Disabled development detection: ' . $name);
+                    $this->plugin->getLogger()->debug('[CORE] Disabled development detection: ' . $name);
                     continue;
                 }
             } else {
                 if (!$cheat->isEnabled()) {
-                    //$this->plugin->getLogger()->warning('[CORE] Allowed loading of development detection: ' . $name . ' due to devmode.');
+                    $this->plugin->getLogger()->debug('[CORE] Allowed loading of development detection: ' . $name . ' due to devmode.');
                 }
             }
 
             if (in_array($name, $this->settings->getEnabledDetections())) {
-                //$this->plugin->getLogger()->info('[CONFIG] Enabled detection: ' . $name);
+                $this->plugin->getLogger()->debug('[CONFIG] Enabled detection: ' . $name);
                 array_push($this->loadedCheats, $cheat);
             } else {
-                //$this->plugin->getLogger()->info('[CONFIG] Disabled detection: ' . $name);
+                $this->plugin->getLogger()->debug('[CONFIG] Disabled detection: ' . $name);
                 continue;
             }
         }
@@ -392,9 +397,10 @@ class Mavoric {
      * Issue a ban with mavoric.
      * @param Player $player - The player to issue the ban on
      * @param Mixed[] $banData - The ban data for the user.
+     * @param Bool $force - Whether or not to actually ban
      * @return void
      */
-    public function issueBan(Player $player, Array $banData): void {
+    public function issueBan(Player $player, Array $banData, Bool $force = false): void {
         $playerName = $player->getName();
         $flag = $this->getFlag($player);
         $type = $this->settings->getBanType();
@@ -408,6 +414,9 @@ class Mavoric {
             '{cheat}' => CheatIdentifiers::getCheatName($flag->getMostViolations())
         ]);
 
+        if ($force) {
+            $type = 'ban';
+        }
         $flag->clearViolations();
         
         if (strtolower($type) === 'ban') {

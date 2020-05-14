@@ -84,48 +84,75 @@ class PlayerClick extends MavoricEvent {
         }
     }
 
+    /**
+     * Whether or not the player clicked a block
+     * @return Bool
+     */
     public function clickedBlock(): Bool {
         return $this->clickedBlk;
     }
 
+    /**
+     * Whether or not the player clicked air
+     * @return Bool
+     */
     public function isAir(): Bool {
         return $this->clickedAir;
     }
 
+    /**
+     * Whether or not the player clicked an entity
+     * @return Bool
+     */
     public function isEntity(): Bool {
         return $this->clickedEnt;
     }
 
+    /**
+     * Whether or not the player attacked
+     * @return Bool
+     */
     public function isLeftClick(): Bool {
         return $this->leftClick;
     }
 
+    /**
+     * Whether or not the player interacted with something
+     * @return Bool
+     */
     public function isRightClick(): Bool {
         return $this->rightClick;
     }
 
+    /**
+     * Get the block the player clicked
+     * @return Bool
+     */
     public function getBlock(): Block {
         return $this->block;
     }
 
+    /**
+     * Get the item the player used when clicking
+     * @return Bool
+     */
     public function getItem(): Item {
         return $this->item;
     }
 
+    /**
+     * Get the location of the click
+     * @return Bool
+     */
     public function getLocation(): Vector3 {
         return $this->location;
     }
 
+    /**
+     * Get the face of the block that was clicked
+     * @return Bool
+     */
     public function getFace(): int {
         return $this->face;
-    }
-
-    /** 
-     * Needs to be updated.
-     * @deprecated
-     */
-    public function threwEnderPearl(): Bool {
-        $inventory = $this->player->getInventory();
-        return ($this->isRightClick() && $inventory->getItemInHand() instanceof EnderPearl);
     }
 }

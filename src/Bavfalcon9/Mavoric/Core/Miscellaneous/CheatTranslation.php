@@ -35,7 +35,7 @@ class CheatTranslation {
 
     public static function TranslateCheat(String $cheat): ?float {
         $cheat = self::findExactCheat($cheat);
-        return (!$cheat) ? null : CheatIdentifiers::getCheatFromString($cheat);
+        return (!$cheat) ? null : CheatIdentifiers::getCheatIdentity($cheat);
     }
 
     public static function findExactCheat(String $cheat): ?String {

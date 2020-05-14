@@ -19,6 +19,7 @@ namespace Bavfalcon9\Mavoric\Command;
 
 use pocketmine\plugin\Plugin;
 use Bavfalcon9\Mavoric\Core\Miscellaneous\CheatTranslation;
+use Bavfalcon9\Mavoric\Core\Utils\CheatIdentifiers;
 use Bavfalcon9\Mavoric\Mavoric;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
@@ -105,7 +106,7 @@ class mreport extends Command implements PluginIdentifiableCommand {
     private function getNames(Array $cheats) {
         $name = false;
         foreach ($cheats as $cheat) {
-            $c = Mavoric::getCheatName($cheat);
+            $c = CheatIdentifiers::getCheatName($cheat);
             if (!$c) continue;
             if (!$name) $name = $c;
             else $name .= ', '. $c;

@@ -30,7 +30,7 @@ use Bavfalcon9\Mavoric\events\{
 };
 use pocketmine\event\Listener;
 use pocketmine\utils\TextFormat as TF;
-
+use pocketmine\entity\Human;
 use pocketmine\Player;
 use pocketmine\Server;
 
@@ -55,10 +55,22 @@ class Reach implements Detection {
             $pearlHandler = $this->mavoric->getPearlHandler();
             $amt = 6;
             
-            $throws = [$pearlHandler->getMostRecentThrowFrom($damager->getName()), $pearlHandler->getMostRecentThrowFrom($entity->getName())];
+            if ($damager->getPing() >= 300 || ($entity instanceof Player && $entity->getPing() >= 300)) {
+                $highest = ($damager->getPing() > ($entity instanceof Player) ? $entity->getPing() : -1) ? $damager->getPing() : $entity->getPing();
+                $amt += ($highest * 0.004);
+            }
+
+            $throws = [$pearlHandler->getMostRecentThrowFrom($damager->getName())];
+
+            if ($entity instanceof Player) {
+                $throws[] = $pearlHandler->getMostRecentThrowFrom($entity->getName());
+            }
 
             foreach ($throws as $throw) {
                 if ($throw !== null) {
+                    if (!$throw->getLandingLocation()) {
+                        return;
+                    }
                     if ($throw->getLandingTime() + 4 <= time()) {
                         $pos = $throw->getLandingLocation();
                         if ($throw->getPlayer()->distance($pos) >= 20) {
@@ -71,8 +83,14 @@ class Reach implements Detection {
             if ($event->getDistance() >= $amt) {
                 if (!$damager->isCreative()) {
                     $event->issueViolation(CheatIdentifiers::CODES['Reach']);
-                    $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
-                    return;
+                    
+                    if ($entity instanceof Human) {
+                        $event->sendAlert('Reach', 'Illegal hit while attacking ' . $entity->getName() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
+                        return;
+                    } else {
+                        $event->sendAlert('Reach', 'Illegal hit while attacking dead entity ' . $entity->getId() . ' over distance ' . round($event->getDistance(), 2) . ' blocks');
+                        return;      
+                    }
                 }
             }
         }
