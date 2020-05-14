@@ -7,3 +7,6 @@ Tools/*
 # other
 resources/assets/uknd.txt
 SpeedTest.php
+
+#ignore github fixes
+.githubFixes/*
