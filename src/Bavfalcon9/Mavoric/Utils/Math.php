@@ -54,7 +54,7 @@ class MathUtils {
      * Gets the total fall distance
      * @param Vector3 $from - Vector position 1
      * @param Vector3 $to - Vector position 2
-     * @return Float - Total fall distance
+     * @return float - Total fall distance
      */
     public static function getFallDistance(Vector3 $from, Vector3 $to): float {
         $from = clone $from;
@@ -64,6 +64,18 @@ class MathUtils {
         $fall2 = $to->y;
 
         return ($fall - $fall2);
+    }
+
+    /**
+     * Gets the distance XZ of to vectors
+     * @param Vector3 $a
+     * @param Vector3 $b
+     * @return float
+     */
+    public static function getDistanceXZ(Vector3 $a, Vector3 $b): float {
+        $a->y = 0;
+        $b->y = 0;
+        return $a->distance($b);
     }
 
     /**

@@ -1,6 +1,6 @@
 <div align="center">
   <p>
-    <img width="150" alt="portfolio_view" src="https://raw.githubusercontent.com/Olybear9/Mavoric/stable/resources/assets/mavoric_black_and_white.png">
+    <img width="150" alt="portfolio_view" src="https://raw.githubusercontent.com/Bavfalcon9/Mavoric/stable/resources/assets/mavoric_black_and_white.png">
   </p>
   <p>
     <h1> Mavoric Anticheat</h1>
@@ -36,7 +36,7 @@ Mavoric currently features detections for:
  - HighJump
 
  Disclaimer: Mavoric is still currently in development and I can not ensure that you will recieve a 100% bug free experience.
-If you have any bugs or suggestions, please feel free to report them on this repository by clicking [here](https://github.com/Olybear9/Mavoric/issues/new).
+If you have any bugs or suggestions, please feel free to report them on this repository by clicking [here](https://github.com/Bavfalcon9/Mavoric/issues/new).
 
 
 ## History
@@ -50,15 +50,15 @@ This is a list of **public** releases, and with detail about each release and a 
 
 Version | Released | Completed | Download 
 ------- | ------- | ---------- | --------
-v0.0.6 | October 26th 2019 | ✔ Yes | [Mavoric_v0.1.6](https://github.com/Olybear9/Mavoric/releases/download/v0.1.6/Mavoric_v0.1.6.phar)
-v0.0.7 | November 3rd 2019 | ✔ Yes | [Mavoric_v0.1.7](https://github.com/Olybear9/Mavoric/releases/download/v0.1.7/Mavoric_v0.1.7.phar)
-v1.0.0 | Janurary 22nd 2020 | ✔ Yes | [Mavoric_v1.0.0](https://github.com/Olybear9/Mavoric/releases/download/v1.0.0/Mavoric_v1.0.0.phar)
-v1.0.1 | Never | ✔ Yes | ~~[Mavoric_v1.0.1](https://github.com/Olybear9/Mavoric/releases)~~
-v1.0.2 | Feburary 7th 2020 | ✔ Yes | [Mavoric_v1.0.2](https://github.com/Olybear9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
-v1.0.3 | March 3rd 2020 | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Olybear9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
-v1.0.4 | March 19th 2020 | ✔ Yes | [Mavoric_v1.0.4](https://github.com/Olybear9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
-v1.0.5 | March 23rd 2020 | ✔ Yes | [Mavoric_v1.0.5](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
-v1.0.6 | Unknown | ❌ No | [Mavoric_v1.0.6](https://github.com/Olybear9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.6.phar)
+v0.0.6 | October 26th 2019 | ✔ Yes | [Mavoric_v0.1.6](https://github.com/Bavfalcon9/Mavoric/releases/download/v0.1.6/Mavoric_v0.1.6.phar)
+v0.0.7 | November 3rd 2019 | ✔ Yes | [Mavoric_v0.1.7](https://github.com/Bavfalcon9/Mavoric/releases/download/v0.1.7/Mavoric_v0.1.7.phar)
+v1.0.0 | Janurary 22nd 2020 | ✔ Yes | [Mavoric_v1.0.0](https://github.com/Bavfalcon9/Mavoric/releases/download/v1.0.0/Mavoric_v1.0.0.phar)
+v1.0.1 | Never | ✔ Yes | ~~[Mavoric_v1.0.1](https://github.com/Bavfalcon9/Mavoric/releases)~~
+v1.0.2 | Feburary 7th 2020 | ✔ Yes | [Mavoric_v1.0.2](https://github.com/Bavfalcon9/Mavoric/releases/download/v1.0.2/Mavoric_v1.0.2.phar)
+v1.0.3 | March 3rd 2020 | ✔ Yes | [Mavoric_v1.0.3](https://github.com/Bavfalcon9/Mavoric/releases/download/v1.0.3/Mavoric_v1.0.3.phar)
+v1.0.4 | March 19th 2020 | ✔ Yes | [Mavoric_v1.0.4](https://github.com/Bavfalcon9/Mavoric/releases/download/v1.0.4/Mavoric_v1.0.4.phar)
+v1.0.5 | March 23rd 2020 | ✔ Yes | [Mavoric_v1.0.5](https://github.com/Bavfalcon9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.5.phar)
+v1.0.6 | Unknown | ❌ No | [Mavoric_v1.0.6](https://github.com/Bavfalcon9/Mavoric/releases/download/v1.0.5/Mavoric_v1.0.6.phar)
 
 ### API Versions
 Version | Released | Maintained | Details
