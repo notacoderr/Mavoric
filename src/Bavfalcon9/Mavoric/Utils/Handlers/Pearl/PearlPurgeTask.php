@@ -3,7 +3,7 @@
  *      __  __                       _      
  *     |  \/  |                     (_)     
  *     | \  / | __ ___   _____  _ __ _  ___ 
- *     | |\/| |/ _` \ \ / / _ \| "__| |/ __|
+ *     | |\/| |/ _` \ \ / / _ \| '__| |/ __|
  *     | |  | | (_| |\ V / (_) | |  | | (__ 
  *     |_|  |_|\__,_| \_/ \___/|_|  |_|\___|
  *                                          
@@ -13,9 +13,23 @@
  *  (at your option) any later version.
  * 
  *  @author Bavfalcon9
- *  @link https://github.com/Bavfalcon9/Mavoric                                  
+ *  @link https://github.com/Olybear9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Cheat\Combat;
 
-abstract class BaseHandler implements Listener {
-};
+namespace Bavfalcon9\Mavoric\Utils\Handlers\Pearl;
+
+use pocketmine\scheduler\Task;
+use Bavfalcon9\Mavoric\Utils\Handlers\PearlHandler;
+
+class PearlPurgeTask extends Task {
+    /** @var PearlHandler */
+    private $handler;
+
+    public function __construct(PearlHandler $handler) {
+        $this->handler = $handler;
+    }
+
+    public function onRun(int $tick) {
+        $this->handler->purge();
+    }
+}

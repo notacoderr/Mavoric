@@ -68,7 +68,7 @@ class EventListener implements Listener {
         $cNotifier = $this->mavoric->getCheckNotifier();
         $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7detected for §c{$ev->getCheat()}", "§8[§7{$violation->getCheatProbability()}§f% | §7VL §f{$ev->getCurrent()}§8]");
 
-        if ($violation->getIncrementsInPastSecond() >= 20) {
+        if ($violation->getIncrementsInPastSecond() >= 20 && $ev->getPlayer()->getPing() <= 200) {
             $this->kickPlayer($ev->getPlayer(), '§4[Mavoric] Cheating [VC: ' . $violation->getViolationCountSum() . ']');
             $cNotifier->notify("§4[MAVORIC]§4: §c{$ev->getPlayer()->getName()} §7has been banned for: " . $violation->getMostDetectedCheat(), "");
             $banList = $this->plugin->getServer()->getNameBans();

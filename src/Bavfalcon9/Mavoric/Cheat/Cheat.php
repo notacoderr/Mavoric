@@ -82,6 +82,14 @@ class Cheat implements Listener {
     }
 
     /**
+     * Whether or not the cheat is enabled
+     * @return Bool
+     */
+    protected function setEnabled(bool $val): bool {
+        return $this->enabled = $val;
+    }
+
+    /**
      * @param string $name - Name to increment
      * @param int $amount - Amount to increment
      */
@@ -130,10 +138,8 @@ class Cheat implements Listener {
         $verboseMsg = '§8(';
         foreach ($verboseData as $name => $value) {
             $verboseMsg .= "§7{$name}-§b{$value}" . '§7, ';
-            if (array_search($value, $verboseData) === (count($verboseData) - 1)) {
-                $verboseMsg .= '§8)';
-            }
         }
+        $verboseMsg .= '§8)';
         $violations = $this->mavoric->getViolationDataFor($player->getName());
         $violations->incrementLevel($this->getName(), $increment);
         $notifier = $this->mavoric->getVerboseNotifier();

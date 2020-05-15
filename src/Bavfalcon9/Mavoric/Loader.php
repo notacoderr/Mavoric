@@ -44,6 +44,7 @@ class Loader extends PluginBase {
      * 
      */
     public function onDisable(): void {
+        if (!$this->mavoric) return; //nothing to unload
         $this->mavoric->disable();
     }
 

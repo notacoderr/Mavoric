@@ -35,7 +35,7 @@ class MacroCheck extends Cheat{
     private $level;
 
     public function __construct(Mavoric $mavoric, int $id = -1) {
-        parent::__construct($mavoric, "Autoclicker", "Combat", $id, true);
+        parent::__construct($mavoric, "Autoclicker", "Combat", $id, false);
         $this->cps = [];
         $this->clicks = [];
         $this->level = [];
@@ -58,15 +58,15 @@ class MacroCheck extends Cheat{
             return ($time - $t) <= 1;
         }));
 
-        if($player->getPing() >= 200) return;
-        if($player->getServer()->getTicksPerSecond() <= 17) return;
+        if ($player->getPing() >= 200) return;
+        if ($player->getServer()->getTicksPerSecond() <= 17) return;
 
-        if(!isset($this->clicks[$player->getName()])) $this->clicks[$player->getName()] = [];
-        if(!isset($this->level[$player->getName()])) $this->level[$player->getName()] = 1;
+        if (!isset($this->clicks[$player->getName()])) $this->clicks[$player->getName()] = [];
+        if (!isset($this->level[$player->getName()])) $this->level[$player->getName()] = 1;
 
         array_push($this->clicks[$player->getName()], $cps);
-        if(count($this->clicks[$player->getName()]) === 40) {
-            if($this->macroTest($this->clicks[$player->getName()], $cps, $player) === true){
+        if (count($this->clicks[$player->getName()]) === 20) {
+            if ($this->macroTest($this->clicks[$player->getName()], $cps, $player) === true) {
                 $this->level[$player->getName()] = 2;
                 $this->increment($player->getName(), 1);
                 $this->notifyAndIncrement($player, 2, 1, [
@@ -74,6 +74,8 @@ class MacroCheck extends Cheat{
                     "Ping" => $player->getPing()
                 ]);
             }
+
+
             Server::getInstance()->getLogger()->debug($player->getName() . "'s CPS: " . implode(", ", $this->clicks[$player->getName()]));
             unset($this->clicks[$player->getName()]);
             $this->clicks[$player->getName()] = [];
@@ -88,7 +90,7 @@ class MacroCheck extends Cheat{
             if (count(array_unique($clicks)) <= 3) {
                 if (end($clicks) === $cps) {
                     $this->level[$player->getName()] = $this->level[$player->getName()] + 1;
-                    if($this->level[$player->getName()] === 5) return true;
+                    if ($this->level[$player->getName()] === 5) return true;
                     else return false;
                 }
                 // this is repetitive, remove 

@@ -19,12 +19,17 @@ namespace Bavfalcon9\Mavoric;
 
 use pocketmine\Player;
 use pocketmine\Server;
+use pocketmine\item\ItemFactory;
+use Bavfalcon9\Mavoric\Utils\Handlers\Pearl\FakePearl;
 use Bavfalcon9\Mavoric\Utils\Notifier;
 use Bavfalcon9\Mavoric\Utils\TpsCheck;
+use Bavfalcon9\Mavoric\Utils\Handlers\PearlHandler;
 use Bavfalcon9\Mavoric\Cheat\CheatManager;
 use Bavfalcon9\Mavoric\Cheat\Violation\ViolationData;
 
 class Mavoric {
+    /** @var string - Branch*/
+    public static $MATH_MODE = 'master';
     /** @var TpsCheck */
     public $tpsCheck;
     /** @var Loader */
@@ -39,8 +44,11 @@ class Mavoric {
     private $eventListener;
     /** @var ViolationData[] */
     private $violations;
+    /** @var BaseHandler[] */
+    private $handlers;
 
     public function __construct(Loader $plugin) {
+        /** Set variables */
         $this->plugin = $plugin;
         $this->tpsCheck = new TpsCheck($plugin, $this);
         $this->verboseNotifier = new Notifier($this, $plugin);
@@ -48,6 +56,17 @@ class Mavoric {
         $this->cheatManager = new CheatManager($this, $plugin, true);
         $this->eventListener = new EventListener($this, $plugin);
         $this->violations = [];
+        $this->handlers = [];
+
+        /** Registeration */
+        $this->handlers[] = new Pearlhandler($plugin);
+        ItemFactory::registerItem(new FakePearl(), true);
+
+        /** Other checks */
+        if (!class_exists('pocketmine\math\Facing')) {
+            $plugin->getServer()->getLogger()->debug('Using mathlib 0.2 instead of master (set by vendor)');
+            self::$MATH_MODE = '0.2';
+        }
     }
 
     /**

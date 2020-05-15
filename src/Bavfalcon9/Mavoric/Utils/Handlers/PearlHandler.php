@@ -15,26 +15,29 @@
  *  @author Bavfalcon9
  *  @link https://github.com/Bavfalcon9/Mavoric                                  
  */
-namespace Bavfalcon9\Mavoric\Core\Handlers;
+namespace Bavfalcon9\Mavoric\Utils\Handlers;
 
 use pocketmine\event\Listener;
 use pocketmine\event\entity\EntityDespawnEvent;
-use Bavfalcon9\Mavoric\Main;
-use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlThrow;
-use Bavfalcon9\Mavoric\Entity\Pearl\Events\PearlThrownEvent;
-use Bavfalcon9\Mavoric\Core\Handlers\Pearl\PearlPurgeTask;
+use Bavfalcon9\Mavoric\Loader;
+use Bavfalcon9\Mavoric\Utils\Handlers\Pearl\PearlThrownEvent;
+use Bavfalcon9\Mavoric\Utils\Handlers\Pearl\PearlThrow;
+use Bavfalcon9\Mavoric\Utils\Handlers\Pearl\PearlPurgeTask;
 
 class PearlHandler implements Listener {
     /** @var PearlThrow[] */
-    private $throws;
-    /** @var Main */
+    private static $throws = [];
+    /** @var PearlHandler */
+    private static $instance;
+    /** @var Loader */
     private $plugin;
 
-    public function __construct(Main $plugin) {
+    public function __construct(Loader $plugin) {
         $plugin->getServer()->getPluginManager()->registerEvents($this, $plugin);
         $plugin->getScheduler()->scheduleRepeatingTask(new PearlPurgeTask($this), 20 * 10);
         $this->plugin = $plugin;
-        $this->throws = [];
+        self::$throws = [];
+        self::$instance = $this;
     }
 
     /**
@@ -51,7 +54,7 @@ class PearlHandler implements Listener {
         }
 
         $throw = new PearlThrow($player, $entity->getId());
-        $this->throws[] = $throw;
+        self::$throws[] = $throw;;
         return;
     }
 
@@ -64,7 +67,7 @@ class PearlHandler implements Listener {
         if ($event->isProjectile()) {
             $id = $event->getEntity()->getId();
 
-            foreach ($this->throws as &$throw) {
+            foreach (self::$throws as &$throw) {
                 if ($throw->getPearlEntityId() === $id) {
                     $throw->setCompleted(microtime(true), $event->getEntity()->getPosition());
                 }
@@ -78,9 +81,9 @@ class PearlHandler implements Listener {
      */
     public function purge(): int {
         $purged = 0;
-        foreach ($this->throws as $index=>$throw) {
+        foreach (self::$throws as $index=>$throw) {
             if ($throw->getLandingTime() + 10 <= time()) {
-                unset($this->throws[$index]);
+                unset(self::$throws[$index]);
                 $purged++;
             }
         }
@@ -89,13 +92,13 @@ class PearlHandler implements Listener {
 
     /**
      * Returns a list of throws from a player
-     * @param String $player - Player name
+     * @param string $player - Player name
      * @return PearlThrow[] - Array of throws
      */
-    public function getThrowsFrom(String $player): Array {
+    public static function getThrowsFrom(string $player): Array {
         $allThrows = [];
 
-        foreach ($this->throws as $throw) {
+        foreach (self::$throws as $throw) {
             if ($throw->getPlayer()->getName() === $player) {
                 $allThrows[] = $throw;
             }
@@ -106,11 +109,11 @@ class PearlHandler implements Listener {
 
     /**
      * Returns the most recent throw from a player
-     * @param String $player - Player name
+     * @param string $player - Player name
      * @return PearlThrow|Null - The most recent thrown pearl from player
      */
-    public function getMostRecentThrowFrom(String $player): ?PearlThrow {
-        $throws = $this->getThrowsFrom($player);
+    public static function getMostRecentThrowFrom(string $player): ?PearlThrow {
+        $throws = self::getThrowsFrom($player);
         $recent = null;
 
         foreach ($throws as $throw) {
@@ -126,5 +129,27 @@ class PearlHandler implements Listener {
         }
 
         return $recent;
+    }
+
+    /**
+     * Gets the most recent throw from a player within the provided time of the pearl landing
+     * @param string $player - Player name
+     * @param int $time - Time span
+     */
+    public static function recentThrowFromWithin(string $player, int $time = 2): ?PearlThrow {
+        $throw = self::getMostRecentThrowFrom($player);
+        if ($throw !== null) {
+            if ($throw->getLandingTime() + $time >= time()) {
+                return $throw;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Gets the pearlHandler instance.
+     */
+    public static function getInstance(): ?PearlHandler {
+        return self::$instance;
     }
 }

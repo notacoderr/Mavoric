@@ -17,6 +17,7 @@
  */
 namespace Bavfalcon9\Mavoric\Cheat;
 
+use pocketmine\utils\TextFormat as TF;
 use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Loader;
 
@@ -62,8 +63,12 @@ class CheatManager {
                     $modulesLoaded++;
                     $class = '\\' . $this->getClassBase() . $module . '\\' . $cheat;
                     $detection = new $class($this->mavoric, $modulesLoaded);
-                    $this->plugin->getServer()->getPluginManager()->registerEvents($detection, $this->plugin);
-                    $this->plugin->getLogger()->debug("Cheat Detection: [$module] $cheat enabled with id $modulesLoaded");
+                    if (!$detection->isEnabled()) {
+                        $this->plugin->getLogger()->debug(TF::RED . "Cheat Detection: [$module] $cheat disabled with id $modulesLoaded");
+                    } else {
+                        $this->plugin->getServer()->getPluginManager()->registerEvents($detection, $this->plugin);
+                        $this->plugin->getLogger()->debug(TF::GREEN . "Cheat Detection: [$module] $cheat enabled with id $modulesLoaded");
+                    }
                 }
             }
         }
