@@ -32,11 +32,10 @@ class Speed extends Cheat {
     private $lastTime = [];
 
     public function __construct(Mavoric $mavoric, int $id = -1) {
-        parent::__construct($mavoric, "Speed", "Movement", $id, true);
+        parent::__construct($mavoric, "SpeedB", "Movement", $id, false);
     }
 
     public function onPlayerMove(PlayerMoveEvent $event): void {
-
         $player = $event->getPlayer();
 
         $from = $event->getFrom();
@@ -45,7 +44,7 @@ class Speed extends Cheat {
         $dX = $to->x - $from->x;
         $dZ = $to->z - $from->z;
 
-        if(!isset($this->lastDistance[$player->getName()])){
+        if(!isset($this->lastDistance[$player->getName()])) {
             $this->lastDistance[$player->getName()] = [
                 0 => $dX,
                 1 => $dZ
@@ -77,11 +76,11 @@ class Speed extends Cheat {
         }
 
         $speeds = [$dX, $dZ];
-        print_r("Expected speed is: " . $expected . "\n");
-        print_r("Speed Given: [DX: " . $dX . " | DZ: " . $dZ . "]\n");
+        $this->debug("Expected speed is: " . $expected . "\n");
+        $this->debug("Speed Given: [DX: " . $dX . " | DZ: " . $dZ . "]\n");
         
 
-        if($dX > $expected || $dX < -$expected){
+        if($dX > $expected || $dX < -$expected) {
             if($this->lastDistance[$player->getName()][0] >= $expected){
                 $this->increment($player->getName(), 1);
                 $this->notifyAndIncrement($player, 2, 1, [
@@ -91,7 +90,7 @@ class Speed extends Cheat {
             }
         }
 
-        if($dZ > $expected || $dZ < -$expected){
+        if($dZ > $expected || $dZ < -$expected) {
             if($this->lastDistance[$player->getName()][1] >= $expected){
                 $this->increment($player->getName(), 1);
                 $this->notifyAndIncrement($player, 2, 1, [
@@ -108,7 +107,6 @@ class Speed extends Cheat {
 
         unset($this->lastTime[$player->getName()]);
         $this->lastTime[$player->getName()] = microtime(true);
-        
     }
 
 }

@@ -22,13 +22,13 @@ use Bavfalcon9\Mavoric\Mavoric;
 use Bavfalcon9\Mavoric\Cheat\Cheat;
 use Bavfalcon9\Mavoric\Events\Player\PlayerClickEvent;
 
-class Autoclicker extends Cheat {
+class AutoclickerA extends Cheat {
     /** @var int[] */
     private $cps;
     private $constant;
 
     public function __construct(Mavoric $mavoric, int $id = -1) {
-        parent::__construct($mavoric, "Autoclicker", "Combat", $id, true);
+        parent::__construct($mavoric, "AutoclickerA", "Combat", $id, true);
         $this->cps = [];
         $this->constant = [];
     }

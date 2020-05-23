@@ -156,7 +156,20 @@ class Cheat implements Listener {
         return;
     }
 
+    /**
+     * Get the server instance from the cheat
+     * @return Server
+     */
     public function getServer(): Server {
         return Server::getInstance();
+    }
+
+    /**
+     * Debug a cheat kek
+     * @param string $message
+     */
+    protected function debug(string $message): void {
+        $this->getServer()->getLogger()->debug('[MAVORIC/' . $this->getName() . "-" . $this->getId() . "] " . $message);
+        return;
     }
 }
