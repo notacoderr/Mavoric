@@ -270,19 +270,19 @@ class Mavoric {
                 default;
             break;
             case self::INFORM:
-                $message = '§c[MAVORIC]§8:§7 ' . $message;
+                $message = '§c[LN]§8:§7 ' . $message;
                 $color = 0xF7FF03;
             break;
             case self::ERROR:
-                $message = '§c[MAVORIC] [ERROR]§8:§f ' . $message;
+                $message = '§c[LN] [ERROR]§8:§f ' . $message;
                 $color = 0xFF4040;
             break;
             case self::FATAL:
-                $message = '§4[MAVORIC] [CRITICAL]§8:§c ' . $message;
+                $message = '§4[LN] [CRITICAL]§8:§c ' . $message;
                 $color = 0xFF0000;
             break;
             case self::WARN:
-                $message = '§4[MAVORIC] [WARNING]§8:§f ' . $message;
+                $message = '§4[LN] [WARNING]§8:§f ' . $message;
                 $color = 0xFF5A1F;
             break;
         }
